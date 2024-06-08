@@ -1,0 +1,8 @@
+MANIFEST.in
+setup.py
+lieToolbox.egg-info/PKG-INFO
+lieToolbox.egg-info/SOURCES.txt
+lieToolbox.egg-info/dependency_links.txt
+lieToolbox.egg-info/not-zip-safe
+lieToolbox.egg-info/requires.txt
+lieToolbox.egg-info/top_level.txt

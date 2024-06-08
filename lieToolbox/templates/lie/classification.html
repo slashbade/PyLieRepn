@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nilpotent Orbit - Toolbox</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href={{ url_for('static', filename='favicon.ico')}} type="image/x-icon">
+    <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='draw.js') }}"></script>
+    <script type="text/javascript">
+        function draw() {
+            var u = JSON.parse('{{ obtInfojs | safe }}');
+            if (u) {
+                var p = u.Orbit;
+                var canvas = document.getElementById("canvas");
+                var borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
+                var faceColor = getComputedStyle(document.documentElement).getPropertyValue('--face-color');
+                drawTable(canvas, p, borderColor, faceColor);
+        
+                if (u.lieType === 'A') {
+                    var tableNum = u.UnitList.length;
+                    for (var i = 0; i < tableNum; i++) {
+                        var partition = u.UnitList[i].Partition;
+                        var tableCanvas = document.getElementById("table" + (i + 1));
+                        drawTable(tableCanvas, partition, borderColor, faceColor);
+                    }
+                } else {
+                    var partition1 = u.Integral.Partition2;
+                    var partition2 = u.HIntegral.Partition2;
+                    var nHIntegral = u.NHIntegral;
+                    var veryEvenTypeInfo = u.veryEvenTypeInfo;
+        
+                    if (partition1.length > 0) {
+                        var tableCanvas1 = document.getElementById("table11");
+                        drawTable(tableCanvas1, partition1, borderColor, faceColor);
+                    }
+        
+                    if (partition2.length > 0) {
+                        var tableCanvas2 = document.getElementById("table12");
+                        drawTable(tableCanvas2, partition2, borderColor, faceColor);
+                    }
+        
+                    for (var i = 0; i < nHIntegral.length; i++) {
+                        var nhPartition = nHIntegral[i].Partition;
+                        var nhTableCanvas = document.getElementById("table" + (i + 1));
+                        drawTable(nhTableCanvas, nhPartition, borderColor, faceColor);
+                    }
+        
+                    if (u.lieType === 'D' && u.isVeryEven === true) {
+                        var dominoTable1 = veryEvenTypeInfo.Integral.DominoTableau;
+                        var dominoTable2 = veryEvenTypeInfo.HIntegral.DominoTableau;
+        
+                        var dominoCanvas1 = document.getElementById("tabled1");
+                        drawDominoTable(dominoCanvas1, dominoTable1, borderColor, faceColor);
+        
+                        var dominoCanvas2 = document.getElementById("tabled2");
+                        drawDominoTable(dominoCanvas2, dominoTable2, borderColor, faceColor);
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+ <body {% if obtInfojs %}onload="draw();"{% endif %}>
+        <nav>
+            <h1>Toolbox</h1>
+            <ul>
+                <li><a>Index</a>
+            </ul>
+        </nav>
+        <section class="content">
+            <header>
+                <h1>Classification</h1>
+            </header>
+            <p> Let \(\mathfrak{g}\) be a classical Lie algebra. Let \(L(\lambda)\) be a highest weight module of \(\mathfrak{g}\) with highest weight \(\lambda - \rho\), where \( \rho \) is half the sum of positive roots and \(\lambda\) is the infinitesimal character. It is known that the annihilator variety of any highest weight module \(L(\lambda)\) is the Zariski closure of a nilpotent orbit in \(\mathfrak{g}^*\). This page demonstrates a combinatorial method to find the nilpotent orbit using H-algorithm based on the Robinson-Schensted insertion algorithm. </p>
+            <details>
+                <summary> Instruction </summary>
+                A highest weight module is given by a Lie algebra along with an infinitesimal character. <br>
+                Input sequence of weight seperated by ',' or space, e.g. -3.5,2.5,1.5,3,6,9,-7,2,5,-8,-4 for real case or 3+i,2+i,1.5+i,i for complex case. 
+                And then choose the Lie type below. This algorithm automatically determines whether it is of real or complex case.
+                <br>
+                Reference: <a href="https://arxiv.org/abs/2304.03475"> A combinatorial characterization of the annihilator varieties of highest weight modules for classical Lie algebras </a>
+            </details>
+            {% for message in get_flashed_messages() %}
+              <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <form method="post">
+                <label for="weight">Infinitesimal Character for \(L(\lambda)\)</label>
+                <input name="weight" id="weight">
+                <label for="lieType">Lie Type</label>
+                <div>
+                    <input type="radio" name="lieType" id="TypeA" value="A">
+                    <label for="TypeA" style=font-weight:normal>\(A_{n-1}\):    \( \mathfrak{sl}(n, \mathbb{C})\) </label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeB" value="B">
+                    <label for="TypeB" style=font-weight:normal>\(B_{n}\):  \( \mathfrak{so}(2n-1, \mathbb{C})\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeC" value="C">
+                    <label for="TypeC" style=font-weight:normal>\(C_{n}\):  \( \mathfrak{sp}(2n, \mathbb{C})\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeD" value="D">
+                    <label for="TypeD" style=font-weight:normal>\(D_{n}\):  \( \mathfrak{so}(2n, \mathbb{C})\)</label>
+                </div>
+                <input type="submit" value="Calculate">
+            </form>
+            {% if obtInfo %}
+            <header>
+                <h1> Nilpotent Orbit </h1>
+            </header>
+            <div id="orbit-result">    
+                <div>
+                    <p class="body">
+                        {% if obtInfo['lieType'] == 'D' and obtInfo['isVeryEven'] == True %}
+                        The nilpotent orbit of \(L(\lambda)\) is \(\mathcal{O}_{{'{'}}{{ obtInfo['Orbit']}}
+                        {{obtInfo['veryEvenType']}}
+                        {{'}'}}\)
+                        {% else %}
+                        The nilpotent orbit of \(L(\lambda)\) is \(\mathcal{O}_{{'{'}}{{ obtInfo['Orbit']}}{{'}'}}\)
+                        {% endif %}
+                        <br>
+                        GK dimension of \(L(\lambda)\): \({{obtInfo['GKdim']}}\)
+                    </p>
+                </div>
+                <div id="canvas-container">
+                    <canvas id="canvas" width="150" height="150"></canvas>
+                </div>
+            </div>
+            {% endif %}
+            
+          
+          {% if obtInfo %}
+            <details>
+                <summary> <b>Detail Information</b> </summary>
+                {% if obtInfo['lieType'] == 'A' %}
+                    <p>For classical lie type A, the nilpotent orbit is the direct union of each partition, resp. \(p(\lambda_{Y_i})=\sqcup_i^c p(\lambda_Y)\) </p>
+                    <p>\(\mathfrak{g}=\mathfrak{sl}({{obtInfo['n']}}, \mathbb{C})\), and\(L(\lambda)\) is a highest weight module of \(\mathfrak{g}\), where the infinitesimal character is \(\lambda={{obtInfo['highestWeight']}}\) </p>
+                    <p>The decomposition of weight string is displayed in the table below.</p>
+                    <div class="table-container">
+                        <table>
+                            <tr> 
+                                <td width="25%">Weight \(\lambda\)</td>
+                                <td width="25%">Partition \(p(\lambda)\)</td>
+                                <td width="25%">Tableau \(T(\lambda)\)</td>
+                            </tr>
+                            {% for unit in obtInfo['UnitList']%}
+                                <tr>    
+                                    <td>\({{ unit['Weight'] }}\)</td>
+                                    <td>\({{ unit['Partition'] }}\)</td>
+                                    <td>
+                                        <canvas id="table{{ loop.index }}" width="150" height="150"></canvas>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <p>The union of each part is the nilpotent orbit \({{ obtInfo['Orbit'] }}\).</p>
+                
+                {% else %}
+                    <p>\(\mathfrak{g}={% if obtInfo['lieType'] == 'B' %}\mathfrak{so}({{2*obtInfo['n']+1}}, \mathbb{C}){% elif obtInfo['lieType'] == 'C'%}\mathfrak{sp}({{2*obtInfo['n']}}, \mathbb{C}){% else %}\mathfrak{so}({{2*obtInfo['n']}}, \mathbb{C}){% endif %}\), and\(L(\lambda)\) is a highest weight module of \(\mathfrak{g}\), where the infinitesimal character is \(\lambda={{obtInfo['highestWeight']}}\)</p>    
+                    
+                    <p>For type \(B_n\) or \(C_n\), the infinitesimal character \(\lambda\) is decomposed into \((\lambda)_0\), \((\lambda)_{\frac{1}{2}}\) and \([\lambda]_3\), The corresponding Young Tableau \(T(\lambda_0^-)\), \(T(\lambda_{\frac{1}{2}}^-)\) and \(T(\tilde{\lambda_{Y_i}})\) are obtained by Robinson Schensted insertion algorithm. Hollow Box algorithm is applied here to make partitions special. \(p_0\) and \(p_{\frac{1}{2}}\) are special partitions associated respectively to \((\lambda)_0\) and \((\lambda)_{\frac{1}{2}}\). \(p_i\) = \(T(\tilde{\lambda_{Y_i}})\) </p>
+
+                    
+                    <p>The decomposition of weight string is displayed in the table below.</p>
+                    
+                    {% if obtInfo['Integral']['Weight'] != 'None'%}
+                        <h3>Integral Part</h3>
+                        <div class="table-container">
+                            <table>
+                                <tr> 
+                                    <td width="25%">Weight \(\lambda^-\)</td>
+                                    <td width="25%">Partition (before H-algorithm) \(p(\lambda^-)\))</td>
+                                    <td width="25%">Partition (after H-algorithm) \(p\)</td>
+                                    <td width="25%">Tableau \(T(\lambda^-)\)</td>
+                                <tr> 
+                                </tr>
+                                    <td>\({{obtInfo['Integral']['Weight']}}\)</td>
+                                    <td>\({{obtInfo['Integral']['Partition1']}}\)</td>
+                                    <td>\({{obtInfo['Integral']['Partition2']}}\)</td>
+                                    <td>
+                                        <canvas id="table11" width="150" height="150"></canvas>
+                                    </td>
+                                <tr>
+                            </table>
+                        </div>
+                    {% endif %}
+
+                    {% if obtInfo['HIntegral']['Weight'] != 'None'%}
+                        <h3>Half-integral Part</h3>
+                        <div class="table-container">
+                            <table>
+                                <tr> 
+                                    <td width="25%">Weight \(\lambda^-\)</td>
+                                    <td width="25%">Partition (before H-algorithm) \(p(\lambda^-)\))</td>
+                                    <td width="25%">Partition (after H-algorithm) \(p\)</td>
+                                    <td width="25%">Tableau \(T(\lambda^-)\)</td>
+                                <tr> 
+                                <tr> 
+                                    <td>\({{obtInfo['HIntegral']['Weight']}}\)</td>
+                                    <td>\({{obtInfo['HIntegral']['Partition1']}}\)</td>
+                                    <td>\({{obtInfo['HIntegral']['Partition2']}}\)</td>
+                                    <td>
+                                        <canvas id="table12" width="150" height="150"></canvas>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    {% endif %}
+
+                    {% if obtInfo['NHIntegral'] | length != 0%}
+                        <h3>Non-integral Part</h3>
+                        <div class="table-container">
+                            <table>
+                                <tr> 
+                                    <td width="25%">Weight \(\tilde{\lambda}\)</td>
+                                    <td width="25%">Partition \(p(\tilde{\lambda})\)</td>
+                                    <td width="25%">Tableau \(T(\tilde{\lambda})\)</td>
+                                </tr>
+                                {% for unit in obtInfo['NHIntegral']%}
+                                    <tr> 
+                                        <td>\({{unit['Weight']}}\)</td>
+                                        <td>\({{unit['Partition']}}\)</td>
+                                        <td>
+                                            <canvas id="table{{ loop.index }}" width="150" height="150"></canvas>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    {% endif %}
+
+                    <p>Orbit can be obtained by the collapse of \( p = p_0 \sqcup^c p_{\frac{1}{2}} \sqcup^c \sqcup_i^c 2p_i \). So the orbit belongs to \({{ obtInfo['Orbit'] }}\)</p>
+                    {% if obtInfo['lieType'] == 'D' and obtInfo['isVeryEven'] == True %}
+                        <h3>Very Even Orbit</h3>
+                        <p>The orbit partition is very even.</p>
+                        {% if obtInfo['veryEvenTypeInfo']['Integral'] == 'none' and obtInfo['veryEvenTypeInfo']['HIntegral'] == 'none' %}
+                            <p> Both integral part and half-integral part are empty. From the computation of \(q(\lambda)\), corresponding maximum Levi algebra will conjugate to type \({{obtInfo['veryEvenType']}}\).
+                        {% else %}
+                        Orbits are contributed by interal weight, half-integral weight and the rest weights. Very even type of integral and half-integral weights are obtained by Domino Robinson-Schensted Algorithm. And very even type of the rest part (A type) is obtained by q-negative index. The 3 small orbits altogether determine the combined very even orbit type.
+                        <h3>Integral and half-integral part</h3>
+                            <div class="table-container">
+                                <table>
+                                    <tr>
+                                        <td> Type </td>
+                                        <td> Weight \(\lambda\)</td>
+                                        <td> Antidominant Weight \(\mu\)</td>
+                                        <td> Weyl Group Element \(\omega\)</td>
+                                        <td> Domino Tableau \(T(\omega)\)</td>
+                                        <td> Very Even Type </td>
+                                    </tr>
+                                    {% if obtInfo['veryEvenTypeInfo']['Integral'] != 'None' %}
+                                    <tr>
+                                        <td> Integral </td>
+                                        <td> \({{obtInfo['veryEvenTypeInfo']['Integral']['Weight']}}\) </td>
+                                        <td> \({{obtInfo['veryEvenTypeInfo']['Integral']['AntidominantWeight']}}\) </td>
+                                        <td> \({{obtInfo['veryEvenTypeInfo']['Integral']['WeylGroupElement']}}\) </td>
+                                        <td>
+                                            <canvas id="tabled1" width="150" height="150"></canvas>
+                                        </td>
+                                        <td> \({{obtInfo['veryEvenTypeInfo']['Integral']['VeryEvenType']}}\) </td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if obtInfo['veryEvenTypeInfo']['HIntegral'] != 'None' %}
+                                    <tr>
+                                        <td> Half-integral </td>
+                                        <td> \({{obtInfo['veryEvenTypeInfo']['HIntegral']['Weight']}}\) </td>
+                                        <td> \({{obtInfo['veryEvenTypeInfo']['HIntegral']['AntidominantWeight']}}\) </td>
+                                        <td> \({{obtInfo['veryEvenTypeInfo']['HIntegral']['WeylGroupElement']}}\) </td>
+                                        <td>
+                                            <canvas id="tabled2" width="150" height="150"></canvas>
+                                        </td>
+                                        <td> \({{obtInfo['veryEvenTypeInfo']['HIntegral']['VeryEvenType']}}\) </td>
+                                    </tr>
+                                    {% endif %}
+                                </table>
+                            </div>
+                            {% if obtInfo['veryEvenTypeInfo']['NHIntegral'] != 'None' %}
+                            <h3>Rest part</h3>
+                            <div class = "table-container">
+                                <table>
+                                    <tr>
+                                        <td> Type </td>
+                                        <td> Weight \(\lambda\)</td>
+                                        <td> q-negative</td>
+                                        <td> Very Even Type </td>
+                                    </tr>   
+                                    {% for unit in obtInfo['veryEvenTypeInfo']['NHIntegral']%}
+                                    <tr>
+                                        <td> Non-integral Part </td>
+                                        <td> \({{unit['Weight']}}\) </td>
+                                        <td> \({{unit['qNegtive']}}\) </td>
+                                        <td> \({{unit['VeryEvenType']}}\) </td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+                        <p>Very even nilpotent orbit type is \({{obtInfo['veryEvenType']}}\)</p>
+                    {% endif %}
+                {% endif %}
+                <h3> Gelfand–Kirillov Dimension </h3>
+                <p> Rank of Lie algebra is \({{obtInfo['GKdimInfo']['n']}}\), and Lusztig's \(a\) function value is \({{obtInfo['GKdimInfo']['a']}}\). Then Gelfand–Kirillov dimension of \(L(\lambda)\) is \({{obtInfo['GKdim']}}\).</p>
+            </details>
+          {% endif %}
+        </section>
+           
+    </body>
+</html>

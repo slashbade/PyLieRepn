@@ -1,0 +1,58 @@
+html { font-family: sans-serif; background: #eee; padding: 1rem; }
+body { max-width: 960px; margin: 0 auto; background: white; }
+h1 { font-family: serif; color: #377ba8; margin: 1rem 0; }
+a { color: #377ba8; }
+hr { border: none; border-top: 1px solid lightgray; }
+nav { background: lightgray; display: flex; align-items: center; padding: 0 0.5rem; }
+nav h1 { flex: auto; margin: 0; }
+nav h1 a { text-decoration: none; padding: 0.25rem 0.5rem; }
+nav ul  { display: flex; list-style: none; margin: 0; padding: 0; }
+nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
+.content { padding: 0 1rem 1rem; }
+.content > header { border-bottom: 1px solid lightgray; display: flex; align-items: flex-end; }
+.content > header h1 { flex: auto; margin: 1rem 0 0.25rem 0; }
+.flash { margin: 1em 0; padding: 1em; background: #cae6f6; border: 1px solid #377ba8; }
+.content:last-child { margin-bottom: 0; }
+.content form { margin: 1em 0; display: flex; flex-direction: column; }
+.content label { font-weight: bold; margin-bottom: 0.5em; }
+.content input, .content textarea { margin-bottom: 1em; }
+.content textarea { min-height: 12em;}
+input.danger { color: #cc2f2e; }
+input[type=submit] { align-self: start; min-width: 10em; }
+
+.table-container {
+  overflow-x: auto;
+}
+table {
+    border-collapse: collapse;
+    border: 2px solid #377ba8dd;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+  }
+  td, th {border: 1px solid #377ba8ca; padding: 10px 20px;}
+  th {background-color: #377ba837;}
+  td {text-align: center;}
+  tr:nth-child(even) td {background-color: #377ba80b;}
+  tr:nth-child(odd) td {background-color: #377ba81e;}
+  
+caption {padding: 10px;}
+details {background-color: #377ba811; padding: 10px;}
+
+#canvas-container {
+  padding: 10px;
+  display: flex;
+  margin: 0 auto;
+}
+
+#orbit-result {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+:root {
+  --border-color: #d1e6f5; /* Red color */
+  --face-color: #377ba8ca; /* Green color */
+  /* Other CSS variables */
+}

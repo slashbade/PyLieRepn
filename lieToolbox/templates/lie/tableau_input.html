@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Tableau - Toolbox</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+</head>
+<body>
+    <nav>
+        <h1>Toolbox</h1>
+        <ul>
+            <li><a>Index</a>
+        </ul>
+    </nav>
+    <section class="content">
+        <header>
+            <h1>Generate Tableau</h1>
+        </header>
+        Generate a tableau \(T(\lambda)\) from a given weight \(\lambda\).
+        <form method="POST" action="{{ url_for('lie.tableau') }}">
+            <label for="tableau_type">Tableau Type:</label>
+            <select id="tableau_type" name="tableau_type">
+                <option value="rs_algorithm">RS Algorithm</option>
+                <option value="domino_rs_algorithm">Domino RS Algorithm</option>
+            </select>
+            <label for="int_list">Weight Sequence:</label>
+            <input type="text" id="int_list" name="int_list" required>
+            <input type="submit" value="Generate Tableau">
+        </form>
+    </section>
+</body>
+</html>

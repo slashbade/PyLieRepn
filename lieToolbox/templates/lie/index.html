@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lie algebra - Toolbox</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href={{ url_for('static', filename='favicon.ico')}} type="image/x-icon">
+    <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='draw.js') }}"></script>
+</head>
+<body>
+    <nav>
+        <h1>Toolbox</h1>
+    </nav>
+    <section class="content">
+        <h1>Classification of Nilpotent Orbit</h1>
+        <a href="{{url_for('lie.classification')}}"> Classification </a>
+        <br>
+        <a href="{{url_for('lie.tableau')}}"> Young Tableau and Domino Tableau </a>
+    </section>
+    备案号：<a href="https://beian.miit.gov.cn/" target="_blank">苏ICP备2023017940号</a>
+</body>

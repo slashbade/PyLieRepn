@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nilpotent Orbit - Toolbox</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script type="text/javascript">
+        function draw() {
+            function drawTable(canvas, p) {
+                if (canvas===null) {}
+                else {
+                    if (canvas.getContext) {
+                        var ctx = canvas.getContext("2d");
+        
+                        let d = 20;
+                        let x0 = 0;
+                        let y0 = 0;
+        
+                        width = p[0] * d
+                        console.log(Math.max(p))
+                        height = p.length * d
+                        canvas.setAttribute("width", width)
+                        canvas.setAttribute("height", height)
+                        var x = x0;
+                        var y = y0;
+                        ctx.fillStyle = "rgb(200,0,0)";
+                        for (var i = 0; i < p.length; i++) {
+                            x = x0;
+                            for (var j = 0; j < p[i]; j++) {
+                                ctx.strokeRect (x, y, d, d);
+                                x += d;
+                            }
+                            y += d;
+                        }
+                    }
+                    else {
+                        alert("cannot get context")
+                    }
+                }
+                
+            }
+            
+            
+            function drawDominoTable(canvas, domino) {
+                if (canvas===null){}
+                else{
+                    if (canvas.getContext) {
+                        
+                        var ctx = canvas.getContext("2d");
+                        let d = 20;
+                        let x0 = 0;
+                        let y0 = 0;
+                        var x = x0;
+                        var y = y0;
+                        ctx.fillStyle = "rgb(200,0,0)";
+                        dominoList = domino['dominoList']
+                        console.log(dominoList[0])
+                        for (var i = 0; i < dominoList.length; i++) {
+                            
+                            if (dominoList[i]['horizontal']) {
+                                var dmnWd = 2 * d;
+                                var dmnHt = d;
+                            }
+                            else {
+                                var dmnWd = d;
+                                var dmnHt = 2 * d;
+                            }
+                            ctx.strokeRect(x0 + d * dominoList[i]['x'], y0 + d * dominoList[i]['y'], dmnWd, dmnHt)
+                        }
+                    }
+                }
+                
+        
+            }
+        
+            
+        
+            {% if obtInfo %}
+                var u = {{obtInfojs | safe}}
+                var p = JSON.parse('{{obtEntry}}');
+                var canvas = document.getElementById("canvas");
+                drawTable(canvas, p)
+                
+                {% if obtInfo['lieType'] == 'A'%}
+                    let tableNum = JSON.parse('{{obtInfo['UnitList'] | length}}')
+                    for (var i = 0; i < tableNum; i++) {
+                        var p = u['UnitList'][i]['Partition']
+                        var canvas = document.getElementById("table" + String(i+1))
+                        drawTable(canvas, p)
+                    }
+                
+                {% else %}
+                
+                    var p = u['Integral']['Partition2']
+                    if (p.length > 0){
+                        var canvas = document.getElementById("table11")
+                        drawTable(canvas, p)
+                    }
+                    
+        
+                    var p = u['HIntegral']['Partition2']
+                    if (p.length > 0) {
+                        var canvas = document.getElementById("table12")
+                        drawTable(canvas, p)
+                    }
+                    
+                    
+                    let tableNum = JSON.parse('{{obtInfo['NHIntegral'] | length}}')
+                    for (var i = 0; i < tableNum; i++) {
+                        var p = u['NHIntegral'][i]['Partition']
+                        var canvas = document.getElementById("table" + String(i+1))
+                        drawTable(canvas, p)
+                    }
+                    
+                    {% if obtInfo['lieType'] == 'D' and obtInfo['isVeryEven'] == True %}
+                    
+                    var rst = u['veryEvenTypeInfo']['Integral']['DominoTableau'];
+                    var canvas = document.getElementById("tabled1");
+                    drawDominoTable(canvas, rst)
+        
+                    var rst = u['veryEvenTypeInfo']['HIntegral']['DominoTableau'];
+                    var canvas = document.getElementById("tabled2");
+                    drawDominoTable(canvas, rst)
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        }
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+ </head>
+ <body onload="draw();">
+        <nav>
+            <h1>Lie algebra</h1>
+            <ul>
+                <li><a>Index</a>
+            </ul>
+        </nav>
+        <section class="content">
+            <header>
+                <h1>Classification</h1>
+            </header>
+            <p> Let \(\mathfrak{g}\) be a classical Lie algebra. Let \(L(\lambda)\) be a highest weight module of g with highest weight \(\lambda - \rho\), where \( \rho \) is half the sum of positive roots. It is known that the annihilator variety of any highest weight module \(L(\lambda)\) is the Zariski closure of a nilpotent orbit in \(\mathfrak{g}^*\). This page demonstrates a new method to find the nilpotent orbit using H-algorithm based on the Robinson-Schensted insertion algorithm </p>
+            {% for message in get_flashed_messages() %}
+              <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <form method="post">
+                <label for="weight">Highest Weight for \(L(\lambda)\)</label>
+                <input name="weight" id="weight">
+                <label for="lieType">Lie Type</label>
+                <div>
+                    <input type="radio" name="lieType" id="TypeA" value="A">
+                    <label for="TypeA" style=font-weight:normal>\(A_{n-1}\):    \( \mathfrak{sl}(n, \mathbb{C})\) </label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeB" value="B">
+                    <label for="TypeB" style=font-weight:normal>\(B_{n}\):  \( \mathfrak{so}(2n-1, \mathbb{C})\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeC" value="C">
+                    <label for="TypeC" style=font-weight:normal>\(C_{n}\):  \( \mathfrak{sp}(2n, \mathbb{C})\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeD" value="D">
+                    <label for="TypeD" style=font-weight:normal>\(D_{n}\):  \( \mathfrak{so}(2n, \mathbb{C})\)</label>
+                </div>
+                <input type="submit" value="Calculate">
+            </form>
+            {% if obtInfo %}
+                <div>
+                    <h1> Nilpotent Orbit </h1>
+                    <p class="body">
+                        {% if obtInfo['lieType'] == 'D' and obtInfo['isVeryEven'] == True %}
+                        The nilpotent orbit of \(L(\lambda)\) is \(\mathcal{O}_{{'{'}}{{ obtInfo['Orbit']}}
+                        {{obtInfo['veryEvenType']}}
+                        {{'}'}}\)
+                        {% else %}
+                        The nilpotent orbit of \(L(\lambda)\) is \(\mathcal{O}_{{'{'}}{{ obtInfo['Orbit']}}{{'}'}}\)
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    <canvas id="canvas" width="150" height="150"></canvas>
+                </div>
+            {% endif %}
+            
+          
+          {% if obtInfo %}
+            <details>
+                <summary> <b>Detail Information</b> </summary>
+                {% if obtInfo['lieType'] == 'A' %}
+                    <p>For classical lie type A, the nilpotent orbit is the direct union of each partition, resp. \(p(\lambda_{Y_i})=\sqcup_i^c p(\lambda_Y)\) </p>
+                    <p>\(\mathfrak{g}=\mathfrak{sl}({{obtInfo['n']}}, \mathbb{C})\), and\(L(\lambda)\) is a highest weight module of \(\mathfrak{g}\), where the highest weight \(\lambda={{obtInfo['highestWeight']}}\) </p>
+                    <p>The decomposition of weight string is displayed in the table below.</p>
+                    <table>
+                        <tr> 
+                            <td width="25%">Weight \(\lambda\)</td>
+                            <td width="25%">Partition \(p(\lambda)\)</td>
+                            <td width="25%">Tableau \(T(\lambda)\)</td>
+                        </tr>
+                        {% for unit in obtInfo['UnitList']%}
+                            <tr>    
+                                <td>{{ unit['Weight'] }}</td>
+                                <td>{{ unit['Partition'] }}</td>
+                                <td>
+                                    <canvas id="table{{ loop.index }}" width="150" height="150"></canvas>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <p>The union of each part is the nilpotent orbit {{ obtInfo['Orbit'] }}.</p>
+                
+                {% else %}
+                <p>\(\mathfrak{g}={% if obtInfo['lieType'] == 'B' %}\mathfrak{so}({{2*obtInfo['n']+1}}, \mathbb{C}){% elif obtInfo['lieType'] == 'C'%}\mathfrak{sp}({{2*obtInfo['n']}}, \mathbb{C}){% else %}\mathfrak{so}({{2*obtInfo['n']}}, \mathbb{C}){% endif %}\), and\(L(\lambda)\) is a highest weight module of \(\mathfrak{g}\), where the highest weight \(\lambda={{obtInfo['highestWeight']}}\)</p>    
+                
+                <p>For type \(B_n\) or \(C_n\), the highest weight \(\lambda\) is decomposed into \((\lambda)_0\), \((\lambda)_{\frac{1}{2}}\) and \([\lambda]_3\), The corresponding Young Tableau \(T(\lambda_0^-)\), \(T(\lambda_{\frac{1}{2}}^-)\) and \(T(\tilde{\lambda_{Y_i}})\) are obtained by Robinson Schensted insertion algorithm. Hollow Box algorithm is applied here to make partitions special. \(p_0\) and \(p_{\frac{1}{2}}\) are special partitions associated respectively to \((\lambda)_0\) and \((\lambda)_{\frac{1}{2}}\). \(p_i\) = \(T(\tilde{\lambda_{Y_i}})\) </p>
+
+                    
+                    <p>The decomposition of weight string is displayed in the table below.</p>
+                    
+                    {% if obtInfo['Integral']['Weight'] | length != 0%}
+                        <h3>Integral Part</h3>
+                        <table>
+                            <tr> 
+                                <td width="25%">Weight \(\lambda^-\)</td>
+                                <td width="25%">Partition (before H-algorithm) \(p(\lambda^-)\))</td>
+                                <td width="25%">Partition (after H-algorithm) \(p\)</td>
+                                <td width="25%">Tableau \(T(\lambda^-)\)</td>
+                            <tr> 
+                            </tr>
+                                <td>{{obtInfo['Integral']['Weight']}}</td>
+                                <td>{{obtInfo['Integral']['Partition1']}}</td>
+                                <td>{{obtInfo['Integral']['Partition2']}}</td>
+                                <td>
+                                    <canvas id="table11" width="150" height="150"></canvas>
+                                </td>
+                            <tr>
+                        </table>
+                    {% endif %}
+
+                    {% if obtInfo['HIntegral']['Weight'] | length != 0%}
+                        <h3>Half-integral Part</h3>
+                        <table>
+                            <tr> 
+                                <td width="25%">Weight \(\lambda^-\)</td>
+                                <td width="25%">Partition (before H-algorithm) \(p(\lambda^-)\))</td>
+                                <td width="25%">Partition (after H-algorithm) \(p\)</td>
+                                <td width="25%">Tableau \(T(\lambda^-)\)</td>
+                            <tr> 
+                            <tr> 
+                                <td>{{obtInfo['HIntegral']['Weight']}}</td>
+                                <td>{{obtInfo['HIntegral']['Partition1']}}</td>
+                                <td>{{obtInfo['HIntegral']['Partition2']}}</td>
+                                <td>
+                                    <canvas id="table12" width="150" height="150"></canvas>
+                                </td>
+                            </tr>
+                        </table>
+                    {% endif %}
+
+                    {% if obtInfo['NHIntegral'] | length != 0%}
+                        <h3>Non-integral Part</h3>
+                        <table>
+                            <tr> 
+                                <td width="25%">Weight \(\lambda\)</td>
+                                <td width="25%">Partition \(p(\lambda)\)</td>
+                                <td width="25%">Tableau \(T(\lambda)\)</td>
+                            </tr>
+                            {% for unit in obtInfo['NHIntegral']%}
+                                <tr> 
+                                    <td>{{unit['Weight']}}</td>
+                                    <td>{{unit['Partition']}}</td>
+                                    <td>
+                                        <canvas id="table{{ loop.index }}" width="150" height="150"></canvas>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+
+                    <p>Orbit can be obtained by the collapse of \( p = p_0 \sqcup^c p_{\frac{1}{2}} \sqcup^c \sqcup_i^c 2p_i \). So the orbit belongs to {{ obtInfo['Orbit'] }}</p>
+                    {% if obtInfo['lieType'] == 'D' and obtInfo['isVeryEven'] == True %}
+                        <h2>Very Even Orbit</h2>
+                        <p>The orbit partition is very even.</p>
+                        {% if obtInfo['veryEvenTypeInfo']['Integral'] == 'none' and obtInfo['veryEvenTypeInfo']['HIntegral'] == 'none' %}
+                            <p> Both integral part and half-integral part are empty. From the computation of \(q(\lambda)\), corresponding maximum Levi algebra will conjugate to type {{obtInfo['veryEvenType']}}.
+                        {% else %}
+                        For 
+                            <table>
+                                <tr>
+                                    <td> Type </td>
+                                    <td> Weight \(\lambda\)</td>
+                                    <td> Antidominant Weight \(\mu\)</td>
+                                    <td> Weyl Group Element \(\omega\)</td>
+                                    <td> Domino Tableau \(T(\omega)\)</td>
+                                    <td> Very Even Type </td>
+                                </tr>
+                                {% if obtInfo['veryEvenTypeInfo']['Integral'] != 'none' %}
+                                <tr>
+                                    <td> Integral </td>
+                                    <td> {{obtInfo['veryEvenTypeInfo']['Integral']['Weight']}} </td>
+                                    <td> {{obtInfo['veryEvenTypeInfo']['Integral']['AntidominantWeight']}} </td>
+                                    <td> {{obtInfo['veryEvenTypeInfo']['Integral']['WeylGroupElement']}} </td>
+                                    <td>
+                                        <canvas id="tabled1" width="150" height="150"></canvas>
+                                    </td>
+                                    <td> {{obtInfo['veryEvenTypeInfo']['Integral']['VeryEvenType']}} </td>
+                                </tr>
+                                {% endif %}
+                                {% if obtInfo['veryEvenTypeInfo']['HIntegral'] != 'none' %}
+                                <tr>
+                                    <td> Half-integral </td>
+                                    <td> {{obtInfo['veryEvenTypeInfo']['HIntegral']['Weight']}} </td>
+                                    <td> {{obtInfo['veryEvenTypeInfo']['HIntegral']['AntidominantWeight']}} </td>
+                                    <td> {{obtInfo['veryEvenTypeInfo']['HIntegral']['WeylGroupElement']}} </td>
+                                    <td>
+                                        <canvas id="tabled2" width="150" height="150"></canvas>
+                                    </td>
+                                    <td> {{obtInfo['veryEvenTypeInfo']['HIntegral']['VeryEvenType']}} </td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        {% endif %}
+                        <p>Very even nilpotent orbit type is {{obtInfo['veryEvenType']}}</p>
+                    {% endif %}
+
+                {% endif %}
+
+
+                
+            </details>
+          {% endif %}
+        </section>
+           
+    </body>
+</html>
