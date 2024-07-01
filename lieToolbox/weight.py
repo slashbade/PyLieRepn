@@ -688,7 +688,8 @@ class HighestWeightModule:
             lbdStruct.HIntegral.rightMinus()
             p2 = lbdStruct.HIntegral.constructPartition()
             if lbd.lieType == 'B':
-                p2.hollowBoxAlgorithm('D')
+                # p2.hollowBoxAlgorithm('D')
+                p2.hollowBoxAlgorithm('C')
             elif lbd.lieType == 'C' or 'D':
                 p2.hollowBoxAlgorithm('metaplectic')
             # Rest part
@@ -1484,7 +1485,8 @@ if __name__ == '__main__':
     lbd3 = Weight([3,2,1,-5,-6,7], 'D')
     lbd4 = Weight([1.1, 2, 1.5, 4, 2.5,-1, 7,-3, 6,-8, 5, 0.1], 'D')
     lbd5 = Weight([2.1,1.1,-0.1,2.1,2,4,2,0.9], 'B')
-    L_lbd1 = HighestWeightModule(lbd1)
+    lbd6 = Weight([])
+    L_lbd1 = HighestWeightModule(lbd3)
     obt1 = L_lbd1.nilpotentOrbit()
     obt1.show()
     obtinfo1 = L_lbd1.nilpotentOrbitInfo()

@@ -73,25 +73,6 @@ def change_basis(v: np.ndarray, basis: np.ndarray) -> np.ndarray:
     """
     return v @ basis
 
-def direct_sum_decomposition(vectors: np.ndarray) -> List[np.ndarray]:
-    partitions = []
-    ind_partitions = []
-    for iv, v in enumerate(vectors):
-        found = False
-        for i, (ip, p) in enumerate(zip(ind_partitions, partitions)):
-            if not np.all(p @ v == 0):
-                partitions[i] = np.append(p, v[np.newaxis, :], axis=0)
-                ip.append(iv)
-                # print(p.shape)
-                found = True
-                break
-        
-        if not found:
-            # print(type(v))
-            partitions.append(v[np.newaxis, :])
-            ind_partitions.append([iv])
-    return partitions, ind_partitions
-
 def root_data(typ: str, rank: int, format: str = "bourbaki") -> np.ndarray:
     if typ == "A":
         mat = np.zeros((rank, rank + 1))
@@ -340,6 +321,9 @@ def root_system_decomposition(roots: NDArray) -> np.ndarray:
                   for c in nx.connected_components(root_graph)]
     return decomposed
 
+def simple_roots_of_positive_roots(positive_roots: NDArray) -> NDArray:
+    pass
+
 def cartan_type(roots: NDArray) -> Tuple[str, int, NDArray]:
     pass
 
@@ -388,3 +372,5 @@ if __name__ == "__main__":
     # print(rt.shape)
     # pts, ipts = direct_sum_decomposition(rt)
     print(half_positive_sum('A', 5))
+    
+    
