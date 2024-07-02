@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nilpotent Orbit - Toolbox</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href={{ url_for('static', filename='favicon.ico')}} type="image/x-icon">
+    <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+</head>
+ <body>
+        <nav>
+            <h1>Toolbox</h1>
+            <ul>
+                <li><a>Index</a>
+            </ul>
+        </nav>
+        <section class="content">
+            <header>
+                <h1>Antidominant Element</h1>
+            </header>
+            <p> Input weight should be represented in fundamental weight basis </p>
+            <details>
+                <summary> Instruction </summary>
+                A highest weight module is given by a Lie algebra along with an infinitesimal character. <br>
+                Input sequence of weight seperated by ',' or space, e.g. -3.5,2.5,1.5,3,6,9,-7,2,5,-8,-4 for real case or 3+i,2+i,1.5+i,i for complex case. 
+                And then choose the Lie type below. This algorithm automatically determines whether it is of real or complex case.
+                <br>
+                Reference: <a href="https://arxiv.org/abs/2304.03475"> A combinatorial characterization of the annihilator varieties of highest weight modules for classical Lie algebras </a>
+            </details>
+            {% for message in get_flashed_messages() %}
+              <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <form method="post">
+                <label for="weight">Infinitesimal Character for \(L(\lambda)\)</label>
+                <input name="weight" id="weight">
+                <label for="lieType">Lie Type</label>
+                <div>
+                    <input type="radio" name="lieType" id="TypeA" value="A">
+                    <label for="TypeA" style=font-weight:normal>\(A_{n-1}\):    \( \mathfrak{sl}(n, \mathbb{C})\) </label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeB" value="B">
+                    <label for="TypeB" style=font-weight:normal>\(B_{n}\):  \( \mathfrak{so}(2n-1, \mathbb{C})\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeC" value="C">
+                    <label for="TypeC" style=font-weight:normal>\(C_{n}\):  \( \mathfrak{sp}(2n, \mathbb{C})\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeD" value="D">
+                    <label for="TypeD" style=font-weight:normal>\(D_{n}\):  \( \mathfrak{so}(2n, \mathbb{C})\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeE" value="E">
+                    <label for="TypeE" style=font-weight:normal>\(E_{n}\):  \( n = 6, 7, 8\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeF" value="F">
+                    <label for="TypeF" style=font-weight:normal>\(F_4\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeG" value="G">
+                    <label for="TypeG" style=font-weight:normal>\(G_2\)</label>
+                </div>
+                <input type="submit" value="Calculate">
+            </form>
+            {% if antidominant_weyl %}
+            <header>
+                <h1> Weyl Element </h1>
+            </header>
+            <div id="orbit-result">    
+                <div>
+                    <p class="body">
+                    Proposed Weyl Group element is \({{ antidominant_weyl }}\), which results in antidominant weight \({{ antidominant_weight }}\).
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+            
+        </section>
+           
+    </body>
+</html>

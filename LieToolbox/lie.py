@@ -4,8 +4,10 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from re import split
-from lieToolbox.weight import Weight, HighestWeightModule
+from LieToolbox.Repn.weight import Weight, HighestWeightModule
+from LieToolbox.Repn.roots import antidominant
 import json
+import numpy as np
 
 bp = Blueprint('lie', __name__, url_prefix='/')
 
@@ -50,4 +52,20 @@ def tableau():
         return render_template('lie/tableau.html', tableau_data=pt.entry)
 
     return render_template('lie/tableau_input.html')
+
+@bp.route('/lie/antidominant', methods=('GET', 'POST'))
+def antidominant_get():
+    if request.method == 'POST':
+        # This support only real weights
+        input_str = request.form['weight']
+        weight = np.array(list(map(eval, split(', |,|，| ', input_str))))
+        rank = len(weight)
+        typ = request.form['lieType']
+        antidominant_weyl, antidominant_weight = antidominant(typ=typ, rank=rank, weight=weight)
+        
+        return render_template('lie/antidominant.html', 
+                               antidominant_weyl=str(antidominant_weyl), 
+                               antidominant_weight=str(np.round(antidominant_weight, 3)))
+    else:
+        return render_template('lie/antidominant.html')
     

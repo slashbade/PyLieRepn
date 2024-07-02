@@ -9,9 +9,9 @@ from re import split
 from math import ceil
 
 # For flask
-from lieToolbox import RSAlgorithm as rsa
-from lieToolbox import HAlgorithm as ha
-import lieToolbox.DRS_algorithm as drsa
+from . import RSAlgorithm as rsa
+from . import HAlgorithm as ha
+from . import DRS_algorithm as drsa
 
 # # For test
 # import RSAlgorithm as rsa

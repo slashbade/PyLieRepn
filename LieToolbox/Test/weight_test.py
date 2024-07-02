@@ -1,0 +1,1 @@
+from LieToolbox.Repn import weight

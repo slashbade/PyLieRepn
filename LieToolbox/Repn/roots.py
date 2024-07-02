@@ -4,8 +4,8 @@ It follows the Bourbaki conventions if not specified otherwise.
 Vectors are represented as row vectors.
 """
 
-from PyCox import chv1r6180 as pycox
-from weight import *
+from ..PyCox import chv1r6180 as pycox
+from .weight import *
 import numpy as np
 import cProfile
 from typing import Iterable, List, Tuple, Callable, Any
