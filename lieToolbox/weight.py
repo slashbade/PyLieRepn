@@ -8,15 +8,15 @@ from copy import deepcopy
 from re import split
 from math import ceil
 
-# # For flask
-# from lieToolbox import RSAlgorithm as rsa
-# from lieToolbox import HAlgorithm as ha
-# import lieToolbox.DRS_algorithm as drsa
+# For flask
+from lieToolbox import RSAlgorithm as rsa
+from lieToolbox import HAlgorithm as ha
+import lieToolbox.DRS_algorithm as drsa
 
-# For test
-import RSAlgorithm as rsa
-import HAlgorithm as ha
-import DRS_algorithm as drsa
+# # For test
+# import RSAlgorithm as rsa
+# import HAlgorithm as ha
+# import DRS_algorithm as drsa
 
 
 """
@@ -761,7 +761,7 @@ class HighestWeightModule:
             p2 = lbdStruct.HIntegral.constructPartition()
             p2oEntry = deepcopy(p2.entry)
             if lbd.lieType == 'B':
-                p2.hollowBoxAlgorithm('D')
+                p2.hollowBoxAlgorithm('C')
             elif lbd.lieType == 'C' or 'D':
                 p2.hollowBoxAlgorithm('metaplectic')
             # Rest part
