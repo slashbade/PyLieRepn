@@ -4,8 +4,9 @@ It follows the Bourbaki conventions if not specified otherwise.
 Vectors are represented as row vectors.
 """
 
-from ..PyCox import chv1r6180 as pycox
-from .weight import *
+from PyCox import chv1r6180 as pycox
+
+# from .weight import *
 import numpy as np
 import cProfile
 from typing import Iterable, List, Tuple, Callable, Any
@@ -13,6 +14,7 @@ from numpy.typing import NDArray, ArrayLike
 import networkx as nx
 
 TOL = 1e-7
+
 
 # Essential Algorithms
 def is_integer(x: float, tol: float = TOL) -> bool:
@@ -24,8 +26,10 @@ def is_integer(x: float, tol: float = TOL) -> bool:
     """
     return np.abs(x - np.round(x)) < tol
 
+
 def is_half_integer(x: float, tol: float = TOL) -> bool:
     return is_integer(2 * x, tol)
+
 
 def partition_equivalence(
     l: Iterable[Any], r: Callable[[Any, Any], bool]
@@ -57,23 +61,24 @@ def partition_equivalence(
 
 
 # Linear algebra functions
-def dual_basis(basis: np.ndarray) -> np.ndarray:
+def dual_basis(basis: NDArray) -> NDArray:
     return np.linalg.inv(basis.T)
 
 
-def change_basis(v: np.ndarray, basis: np.ndarray) -> np.ndarray:
+def change_basis(v: NDArray, basis: NDArray) -> NDArray:
     """Basis change function.
 
     Args:
-        v (np.ndarray): vector in the original basis.
-        basis (np.ndarray): new basis represented by original basis.
+        v (NDArray): vector in the original basis.
+        basis (NDArray): new basis represented by original basis.
 
     Returns:
-        np.ndarray: new vector in the new basis.
+        NDArray: new vector in the new basis.
     """
     return v @ basis
 
-def root_data(typ: str, rank: int, format: str = "bourbaki") -> np.ndarray:
+
+def root_data(typ: str, rank: int, format: str = "bourbaki") -> NDArray:
     if typ == "A":
         mat = np.zeros((rank, rank + 1))
         for i in range(rank):
@@ -140,13 +145,12 @@ def root_data(typ: str, rank: int, format: str = "bourbaki") -> np.ndarray:
         else:
             return mat
 
-def fundamental_weight_data(
-    typ: str, rank: int, format: str = "bourbaki"
-) -> np.ndarray:
+
+def fundamental_weight_data(typ: str, rank: int, format: str = "bourbaki") -> NDArray:
     """Fundamental weights of the Lie algebra in terms of the simple roots.
 
     Returns:
-        np.ndarray: each line is a fundamental weight.
+        NDArray: each line is a fundamental weight.
     """
     if typ == "A":
         mat = np.zeros((rank, rank))
@@ -237,39 +241,38 @@ def fundamental_weight_data(
 def is_root_system(vectors: NDArray) -> bool:
     pass
 
+
 def half_positive_sum(typ: str, rank: int) -> NDArray:
-    simple_roots = root_data(typ, rank, 'gap')
+    simple_roots = root_data(typ, rank, "gap")
     roots_ = np.array(pycox.roots(pycox.cartanmat(typ, rank))[0])
-    positive_roots_ = roots_[:roots_.shape[0] // 2]
+    positive_roots_ = roots_[: roots_.shape[0] // 2]
     half_positive_sum_ = np.sum(positive_roots_, axis=0) / 2
     # print(half_positive_sum_[np.newaxis, :])
     return half_positive_sum_[np.newaxis, :] @ simple_roots
 
 
-def as_coord(v: np.ndarray, typ: str, rank: int) -> np.ndarray:
+def as_coord(v: NDArray, typ: str, rank: int) -> NDArray:
     """Converts a vector in the root basis to the coordinate representation."""
     simple_roots = root_data(typ, rank)
     return change_basis(v, simple_roots)
 
 
-def cartan_matrix_(simple_roots: np.ndarray) -> np.ndarray:
+def cartan_matrix_(simple_roots: NDArray) -> NDArray:
     return 2 * simple_roots @ simple_roots.T / np.sum(simple_roots**2, axis=1)
 
 
-def antidominant(
-    typ: str, rank: int, weight: np.ndarray, weyl: list = []
-) -> np.ndarray:
+def antidominant(typ: str, rank: int, weight: NDArray, weyl: list = []) -> NDArray:
     """A fast recursive algorithm to compute the antidominant weight of a given weight.
 
     Args:
         typ (str): type of the Lie algebra.
         rank (int): rank of the Lie algebra.
-        weight (np.ndarray): weight to compute the antidominant weight,
+        weight (NDArray): weight to compute the antidominant weight,
         represented in the fundamental weight basis.
         weyl (list, optional): weyl group element. Defaults to [].
 
     Returns:
-        np.ndarray: the antidominant weight, represented in the fundamental weight basis.
+        NDArray: the antidominant weight, represented in the fundamental weight basis.
     """
     if np.all(weight <= 0):
         return weyl, weight
@@ -282,50 +285,104 @@ def antidominant(
         return antidominant(typ, rank, new_weight, new_weyl)
 
 
-def act_on_weight(
-    typ: str, rank: int, root_index: np.ndarray, weight: np.ndarray
-) -> np.ndarray:
+def act_on_weight(typ: str, rank: int, root_index: NDArray, weight: NDArray) -> NDArray:
     """Compute the result of the action of the simple root indexed by root_index on the weight.
 
     Args:
         typ (str): type of the Lie algebra.
         rank (int): rank of the Lie algebra.
-        root_index (np.ndarray): index of the simple root.
-        weight (np.ndarray): weight to act on, represented in the fundamental weight basis.
+        root_index (NDArray): index of the simple root.
+        weight (NDArray): weight to act on, represented in the fundamental weight basis.
 
     Returns:
-        np.ndarray: the new weight, represented in the fundamental weight basis.
+        NDArray: the new weight, represented in the fundamental weight basis.
     """
     cmat = np.array(pycox.cartanmat(typ, rank))
     return weight - weight[root_index] * cmat[root_index]
 
-def weight_partition(typ: str, rank: int, weight: np.ndarray):
-    congruence = lambda a, b : is_integer(a - b) or is_integer(a + b)
+
+def weight_partition(typ: str, rank: int, weight: NDArray):
+    congruence = lambda a, b: is_integer(a - b) or is_integer(a + b)
     weights, _ = partition_equivalence(weight, congruence)
     return weights
-    
-def integral_root_system(typ: str, rank: int, weight: np.ndarray) -> Tuple[np.ndarray, NDArray[np.intp]]:
+
+
+def integral_root_system(
+    typ: str, rank: int, weight: NDArray
+) -> Tuple[NDArray, NDArray[np.intp]]:
     simple_roots = root_data(typ, rank, "gap")
     roots = np.array(pycox.roots(pycox.coxeter(typ, rank).cartan)[0]) @ simple_roots
     # print((roots @ weight)[12])
-    roots_weight_ind = np.argwhere(is_integer(2 * roots @ weight / np.sum(roots**2, axis=1))).ravel()
+    roots_weight_ind = np.argwhere(
+        is_integer(2 * roots @ weight / np.sum(roots**2, axis=1))
+    ).ravel()
     return roots[roots_weight_ind], roots_weight_ind
 
-def root_system_decomposition(roots: NDArray) -> np.ndarray:
-    positive_roots = roots[:roots.shape[0]//2]
+
+def root_system_decomposition(roots: NDArray) -> list[NDArray]:
+    positive_roots = roots[: roots.shape[0] // 2]
     mat = np.abs(positive_roots @ positive_roots.T) > TOL
-    for i in mat.shape[0]:
+    for i in range(mat.shape[0]):
         mat[i, i] = False
     root_graph = nx.from_numpy_array(mat)
-    decomposed = [np.array([positive_roots[i] for i in c])
-                  for c in nx.connected_components(root_graph)]
+    decomposed = [
+        np.array([positive_roots[i] for i in c])
+        for c in nx.connected_components(root_graph)
+    ]
     return decomposed
 
-def simple_roots_of_positive_roots(positive_roots: NDArray) -> NDArray:
-    pass
 
-def cartan_type(roots: NDArray) -> Tuple[str, int, NDArray]:
-    pass
+def simple_roots_of_positive_roots(positive_roots: NDArray) -> Tuple[NDArray, NDArray]:
+
+    half_positive_sum = np.sum(positive_roots, axis=0) / 2
+    aprod = 2 * half_positive_sum @ positive_roots.T / np.sum(positive_roots**2, axis=1)
+    simple_roots = positive_roots[aprod == 1]
+    simple_roots_ind = np.argwhere(aprod == 1).ravel()
+    return simple_roots, simple_roots_ind
+
+
+def cartan_type(positive_roots: NDArray, simple_roots: NDArray) -> Tuple[str, int]:
+    rank = len(simple_roots)
+    # Check root lengths
+    root_lengths = np.linalg.norm(positive_roots, axis=1)
+    root_unique_lengths = np.unique(root_lengths)
+    root_length_num = root_unique_lengths.shape[0]
+    if root_length_num == 1:
+        # same root lengths -> case: A D E
+        if len(positive_roots) == 36 and rank == 6:
+            return "E", 6
+        elif len(positive_roots) == 63 and rank == 7:
+            return "E", 7
+        elif len(positive_roots) == 120 and rank == 8:
+            return "E", 8
+        elif rank * (rank + 1) // 2 == len(positive_roots):
+            return "A", rank
+        elif rank * (rank - 1) == len(positive_roots):
+            return "D", rank
+        else:
+            raise ValueError
+
+    elif root_length_num == 2:
+        # long roots and short roots -> case: B C F G
+        if len(positive_roots) == 24 and rank == 4:
+            return "F", 4
+        elif len(positive_roots) == 6 and rank == 2:
+            return "G", 2
+        elif len(positive_roots) == rank**2:
+            short_length = np.min(root_unique_lengths)
+            long_length = np.max(root_unique_lengths)
+            if len(positive_roots[root_lengths == short_length]) == rank and rank >= 2:
+                return "B", rank
+            elif len(positive_roots[root_lengths == long_length]) == rank and rank >= 3:
+                return "C", rank
+            else:
+                raise ValueError
+        # elif len(posi)
+        else:
+            raise ValueError
+    else:
+        raise ValueError
+
 
 if __name__ == "__main__":
     np.set_printoptions(
@@ -335,42 +392,32 @@ if __name__ == "__main__":
     typ, rank = "E", 7
     W = pycox.coxeter(typ=typ, rank=rank)
     v = pycox.lpol([1], 1, "v")
-    # cProfile.run("pycox.klcells(W, 1, v)", sort='cumtime', filename='klcells.profile')
-    # replm = pycox.klcells(W, 1, v)
-    # print(replm)
-    # print(np.array(pycox.roots(W.cartan)[0]))
-    # simple_roots = root_data('F', 4)
-    # cmat = cartan_matrix_(simple_roots)
-    # print(cmat)
-    roots = np.array(pycox.roots(W.cartan)[0]) @ root_data(typ, rank, format="gap")
-    simple_roots = roots[:rank]
-    fundamental_weights = fundamental_weight_data(typ, rank, "gap") @ root_data(
-        typ, rank, "gap"
+    rt1, rt_ind1 = integral_root_system(
+        "D", 8, np.array([2, 1, 1.1, 3, 0.9, 1.9, 4, 2.1])
     )
-    ttt = 2 * fundamental_weights @ simple_roots.T / np.sum(simple_roots**2, axis=1)
-    # print(fundamental_weight_data(typ, rank, 'bourbaki') @ root_data(typ, rank, 'bourbaki'))
-    # print(np.round(ttt, 8) + 0)
-    # lbd = Weight([2, 1, 1.1, 3, 0.9, 1.9, 4, 2.1], 'D')
-    lbd_1 = np.array([2, -1, 0, -5, -6, -8, 12, -12])
-    lbd_2 = np.array([1, 1, 1, 1, 1, 1, -1, 1])
-    lbd_3 = np.array([-1, 2, 0, -5, -6, -8, 12, -12])
-    lbd_1_new_coord = 2 * lbd_1 @ simple_roots.T / np.sum(simple_roots**2, axis=1)
-    lbd_2_new_coord = 2 * lbd_2 @ simple_roots.T / np.sum(simple_roots**2, axis=1)
-    lbd_3_new_coord = 2 * lbd_3 @ simple_roots.T / np.sum(simple_roots**2, axis=1)
-    print(lbd_2_new_coord)
-    weyl, antidominant_lbd = antidominant(typ, rank, lbd_2_new_coord, [])
-    print(f"anti-dominant: {antidominant_lbd}\nweyl: {weyl}")
-    print(f"reduced word: {W.reducedword(weyl, W)}")
+    rt2, rt_ind2 = integral_root_system("F", 4, np.array([4, 5, 3 / 2, 1 / 2]))
+    rt3, rt_ind3 = integral_root_system(
+        "E", 8, np.array([1 / 2, -3 / 2, -3, -2, -1, -4, -5, -19])
+    )
+    rt4, rt_ind4 = integral_root_system("F", 4, np.array([7 / 4, 1 / 4, 5 / 4, -3 / 4]))
+    rt5, rt_ind5 = integral_root_system(
+        "E", 6, np.array([1, 2, 1, 4, 4.5, 0.5, 0.5, -0.5])
+    )
+    rt6, rt_ind6 = integral_root_system(
+        "E", 7, np.array([1 / 4, 1 / 4, 1 / 4, 1 / 4, 1 / 4, -3 / 4, -1, 1])
+    )
+    rt7, rt_ind7 = integral_root_system("E", 8, np.array([1, 5, 9, 13, 9, 1, 5, 9]) / 4)
+    rt8, rt_ind8 = integral_root_system(
+        "E", 7, np.array([1, 3, 5, -7, -9, -11, -1 / 2, 1 / 2])
+    )
+    rt9, rt_ind9 = integral_root_system(
+        "E", 8, np.array([1, 1, 1, 1, 1, 1, 1 / 2, 5 / 2])
+    )
 
-    def relation(a, b):
-        return is_integer(a - b) or is_integer(a + b)
-    
-    p, ip = partition_equivalence([2, 1, 1.1, 3, 0.9, 1.9, 4, 2.1, 0.3, 1.7, 0.6, 1.6, 0.5], relation)
-    print(p)
-    # lbd.decomposition().show()
-    rt = integral_root_system('D', 8, np.array([2, 1, 1.1, 3, 0.9, 1.9, 4, 2.1]))
-    # print(rt.shape)
-    # pts, ipts = direct_sum_decomposition(rt)
-    print(half_positive_sum('A', 5))
-    
-    
+    pts = root_system_decomposition(rt1)
+    for pt in pts:
+        sp, spi = simple_roots_of_positive_roots(pt)
+        print(cartan_type(pt, sp))
+
+    # print(half_positive_sum('A', 5))
+    # print(simple_roots_of_positive_roots(pts[0]))
