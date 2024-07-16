@@ -310,6 +310,16 @@ def weight_partition(typ: str, rank: int, weight: NDArray):
 def integral_root_system(
     typ: str, rank: int, weight: NDArray
 ) -> Tuple[NDArray, NDArray[np.intp]]:
+    """Give a integral root system by a highest weight. Note that this func gives all roots
+
+    Args:
+        typ (str): type
+        rank (int): rank
+        weight (NDArray): Highest weight as np array
+
+    Returns:
+        Tuple[NDArray, NDArray[np.intp]]: roots and indices
+    """ 
     simple_roots = root_data(typ, rank, "gap")
     roots = np.array(pycox.roots(pycox.coxeter(typ, rank).cartan)[0]) @ simple_roots
     # print((roots @ weight)[12])
@@ -319,7 +329,7 @@ def integral_root_system(
     return roots[roots_weight_ind], roots_weight_ind
 
 
-def root_system_decomposition(roots: NDArray) -> list[NDArray]:
+def root_system_decomposition(roots: NDArray) -> Tuple[list[NDArray], list[list]]:
     positive_roots = roots[: roots.shape[0] // 2]
     mat = np.abs(positive_roots @ positive_roots.T) > TOL
     for i in range(mat.shape[0]):
@@ -329,7 +339,10 @@ def root_system_decomposition(roots: NDArray) -> list[NDArray]:
         np.array([positive_roots[i] for i in c])
         for c in nx.connected_components(root_graph)
     ]
-    return decomposed
+    decomposed_ind = [
+        [i for i in c] for c in nx.connected_components(root_graph)
+    ]
+    return decomposed, decomposed_ind
 
 
 def simple_roots_of_positive_roots(positive_roots: NDArray) -> Tuple[NDArray, NDArray]:
@@ -413,11 +426,18 @@ if __name__ == "__main__":
     rt9, rt_ind9 = integral_root_system(
         "E", 8, np.array([1, 1, 1, 1, 1, 1, 1 / 2, 5 / 2])
     )
+    rt10, rt_ind10 = integral_root_system(
+        'F', 4, np.array([7/4, 1/4, 5/4, -3/4])
+    )
 
-    pts = root_system_decomposition(rt1)
-    for pt in pts:
-        sp, spi = simple_roots_of_positive_roots(pt)
-        print(cartan_type(pt, sp))
+    prts, prtsi = root_system_decomposition(rt1)
+    result = []
+    for prt in prts:
+        srt, srti = simple_roots_of_positive_roots(prt)
+        print(cartan_type(prt, srt))
+        result.append(cartan_type(prt, srt))
+    print(result)
+
 
     # print(half_positive_sum('A', 5))
     # print(simple_roots_of_positive_roots(pts[0]))
