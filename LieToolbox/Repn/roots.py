@@ -77,6 +77,14 @@ def change_basis(v: NDArray, basis: NDArray) -> NDArray:
     """
     return v @ basis
 
+def is_in_subspace(subspace_basis: NDArray, new_coord: NDArray):
+    matrix_rank = np.linalg.matrix_rank(subspace_basis, tol=TOL)
+    ext_matrix = np.concatenate([subspace_basis, new_coord.reshape([1, -1])], axis=0)
+    ext_matrix_rank = np.linalg.matrix_rank(ext_matrix)
+    if matrix_rank >= ext_matrix_rank:
+        return True
+    return False
+
 
 def root_data(typ: str, rank: int, format: str = "bourbaki") -> NDArray:
     if typ == "A":
@@ -306,6 +314,20 @@ def weight_partition(typ: str, rank: int, weight: NDArray):
     weights, _ = partition_equivalence(weight, congruence)
     return weights
 
+def root_system(typ: str, rank: int) -> Tuple[NDArray, NDArray]:
+    """Silimar to PyCox, representing all roots as absolute coordinates in root space,
+    where first rank-th roots are simple roots and first half are positive roots.
+
+    Args:
+        typ (str): Lie type
+        rank (int): rank
+
+    Returns:
+        NDArray: root system as required
+    """
+    simple_roots = root_data(typ, rank, "gap")
+    roots = np.array(pycox.roots(pycox.coxeter(typ, rank).cartan)[0]) @ simple_roots
+    return simple_roots, roots
 
 def integral_root_system(
     typ: str, rank: int, weight: NDArray
@@ -321,6 +343,7 @@ def integral_root_system(
         Tuple[NDArray, NDArray[np.intp]]: roots and indices
     """ 
     simple_roots = root_data(typ, rank, "gap")
+    # Trigger PyCox root enumerating, but with a transformation
     roots = np.array(pycox.roots(pycox.coxeter(typ, rank).cartan)[0]) @ simple_roots
     # print((roots @ weight)[12])
     roots_weight_ind = np.argwhere(
@@ -328,8 +351,59 @@ def integral_root_system(
     ).ravel()
     return roots[roots_weight_ind], roots_weight_ind
 
+def integral_root_system_compl(
+    typ: str, rank: int, weight: NDArray
+) -> Tuple[NDArray, NDArray]:
+    """Compute a complement root system of integral root system
+
+    Args:
+        typ (str): ttype
+        rank (int): rank
+        weight (NDArray): weight
+    """
+    simple_roots = root_data(typ, rank, "gap")
+    
+    # Trigger PyCox root enumerating, but with a transformation
+    roots = np.array(pycox.roots(pycox.coxeter(typ, rank).cartan)[0]) @ simple_roots
+    
+    # Compute integral roots
+    integral_roots, integral_root_ind = integral_root_system(typ, rank, weight)
+    
+    # Get Simple root for basis
+    decomposed_intl_rts = root_system_decomposition(integral_roots)
+    decomposed_spl_rts = []
+    for comp_posi_rts in decomposed_intl_rts[0]:
+        comp_sp_rts, _ = simple_roots_of_positive_roots(comp_posi_rts)
+        decomposed_spl_rts.append(comp_sp_rts)
+    combine_basis = np.concatenate(decomposed_spl_rts, axis=0)
+        
+    # Compute list diff
+    integral_root_compl_ind = []
+    for ind in range(len(roots)):
+        if ind not in integral_root_ind:
+            integral_root_compl_ind.append(ind)
+    
+    # Find roots that cannot be spanned by proposed system basis
+    intl_rt_compl_basis_ind = []
+    for ind in integral_root_compl_ind:
+        # this works by linear independecy
+        if not is_in_subspace(combine_basis, roots[ind]):
+            intl_rt_compl_basis_ind.append(ind)
+    
+            
+    
+    return roots[intl_rt_compl_basis_ind], intl_rt_compl_basis_ind
 
 def root_system_decomposition(roots: NDArray) -> Tuple[list[NDArray], list[list]]:
+    """Decomposition is carried out on positive roots
+
+    Args:
+        roots (NDArray): root
+
+    Returns:
+        Tuple[list[NDArray], list[list]]: decomposed positive systems with their index
+        in orginal system.
+    """
     positive_roots = roots[: roots.shape[0] // 2]
     mat = np.abs(positive_roots @ positive_roots.T) > TOL
     for i in range(mat.shape[0]):
@@ -352,6 +426,7 @@ def simple_roots_of_positive_roots(positive_roots: NDArray) -> Tuple[NDArray, ND
     simple_roots = positive_roots[aprod == 1]
     simple_roots_ind = np.argwhere(aprod == 1).ravel()
     return simple_roots, simple_roots_ind
+
 
 
 def cartan_type(positive_roots: NDArray, simple_roots: NDArray) -> Tuple[str, int]:
@@ -429,8 +504,11 @@ if __name__ == "__main__":
     rt10, rt_ind10 = integral_root_system(
         'F', 4, np.array([7/4, 1/4, 5/4, -3/4])
     )
-
-    prts, prtsi = root_system_decomposition(rt1)
+    
+    rt1_compl, rt1_compl_ind = integral_root_system_compl(
+        "D", 8, np.array([2, 1, 1.1, 3, 0.9, 1.9, 4, 2.1])
+    )
+    prts, prtsi = root_system_decomposition(rt1_compl)
     result = []
     for prt in prts:
         srt, srti = simple_roots_of_positive_roots(prt)
