@@ -247,6 +247,7 @@ def fundamental_weight_data(typ: str, rank: int, format: str = "bourbaki") -> ND
 
 
 def is_root_system(vectors: NDArray) -> bool:
+    
     pass
 
 
@@ -351,6 +352,7 @@ def integral_root_system(
     ).ravel()
     return roots[roots_weight_ind], roots_weight_ind
 
+# Deprecated
 def integral_root_system_compl(
     typ: str, rank: int, weight: NDArray
 ) -> Tuple[NDArray, NDArray]:
@@ -373,7 +375,7 @@ def integral_root_system_compl(
     decomposed_intl_rts = root_system_decomposition(integral_roots)
     decomposed_spl_rts = []
     for comp_posi_rts in decomposed_intl_rts[0]:
-        comp_sp_rts, _ = simple_roots_of_positive_roots(comp_posi_rts)
+        comp_sp_rts, _ = simple_roots_from_irreducible(comp_posi_rts)
         decomposed_spl_rts.append(comp_sp_rts)
     combine_basis = np.concatenate(decomposed_spl_rts, axis=0)
         
@@ -404,6 +406,7 @@ def root_system_decomposition(roots: NDArray) -> Tuple[list[NDArray], list[list]
         Tuple[list[NDArray], list[list]]: decomposed positive systems with their index
         in orginal system.
     """
+    # This is a bit tricky, but we can use the fact that the positive roots are symmetric
     positive_roots = roots[: roots.shape[0] // 2]
     mat = np.abs(positive_roots @ positive_roots.T) > TOL
     for i in range(mat.shape[0]):
@@ -419,8 +422,12 @@ def root_system_decomposition(roots: NDArray) -> Tuple[list[NDArray], list[list]
     return decomposed, decomposed_ind
 
 
-def simple_roots_of_positive_roots(positive_roots: NDArray) -> Tuple[NDArray, NDArray]:
+def simple_roots_from_irreducible(positive_roots: NDArray) -> Tuple[NDArray, NDArray]:
+    """Get simple roots from positive roots
 
+    Returns:
+        Tuple[NDArray, NDArray]: simple roots and their indices
+    """
     half_positive_sum = np.sum(positive_roots, axis=0) / 2
     aprod = 2 * half_positive_sum @ positive_roots.T / np.sum(positive_roots**2, axis=1)
     simple_roots = positive_roots[aprod == 1]
@@ -428,8 +435,24 @@ def simple_roots_of_positive_roots(positive_roots: NDArray) -> Tuple[NDArray, ND
     return simple_roots, simple_roots_ind
 
 
+def simple_roots(roots: NDArray) -> NDArray:
+    """Get simple roots from the root system.
 
-def cartan_type(positive_roots: NDArray, simple_roots: NDArray) -> Tuple[str, int]:
+    Args:
+        roots (NDArray): root system.
+
+    Returns:
+        NDArray: simple roots.
+    """
+    decomposed, _ = root_system_decomposition(roots)
+    simple_roots = []
+    for comp_posi_rts in decomposed:
+        comp_sp_rts, _ = simple_roots_from_irreducible(comp_posi_rts)
+        simple_roots.append(comp_sp_rts)
+    return simple_roots
+
+
+def cartan_type_from_irreducible(positive_roots: NDArray, simple_roots: NDArray) -> Tuple[str, int]:
     rank = len(simple_roots)
     # Check root lengths
     root_lengths = np.linalg.norm(positive_roots, axis=1)
@@ -472,6 +495,24 @@ def cartan_type(positive_roots: NDArray, simple_roots: NDArray) -> Tuple[str, in
         raise ValueError
 
 
+def cartan_type(roots: NDArray) -> Tuple[str, int]:
+    """Get the Cartan type of the the root system.
+
+    Args:
+        roots (NDArray): root system.
+
+    Returns:
+        Tuple[str, int]: type and rank of the Lie algebra.
+    """
+    decomposed, _ = root_system_decomposition(roots)
+    cartan_type : list[Tuple[str, int]] = []
+    for comp_posi_rts in decomposed:
+        comp_sp_rts, _ = simple_roots_from_irreducible(comp_posi_rts)
+        typ, rank = cartan_type_from_irreducible(comp_posi_rts, comp_sp_rts)
+        cartan_type.append((typ, rank))
+    return cartan_type
+    
+
 if __name__ == "__main__":
     np.set_printoptions(
         precision=3,
@@ -511,9 +552,9 @@ if __name__ == "__main__":
     prts, prtsi = root_system_decomposition(rt1_compl)
     result = []
     for prt in prts:
-        srt, srti = simple_roots_of_positive_roots(prt)
-        print(cartan_type(prt, srt))
-        result.append(cartan_type(prt, srt))
+        srt, srti = simple_roots_from_irreducible(prt)
+        print(cartan_type_from_irreducible(prt, srt))
+        result.append(cartan_type_from_irreducible(prt, srt))
     print(result)
 
 
