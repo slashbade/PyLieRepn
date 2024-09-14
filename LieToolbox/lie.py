@@ -5,7 +5,7 @@ from werkzeug.exceptions import abort
 
 from re import split
 from LieToolbox.Repn.weight import Weight, HighestWeightModule
-from LieToolbox.Repn.roots import antidominant
+from LieToolbox.Repn.GK_dimension import antidominant
 import json
 import numpy as np
 
@@ -39,7 +39,17 @@ def classification():
     return render_template('lie/classification.html')
 
 @bp.route('/lie/GKdim', methods=('GET', 'POST'))
-
+def GKdim_get():
+    if request.method == 'POST':
+        input_str = request.form['weight']
+        weight = np.array(list(map(eval, split(', |,|，| ', input_str))))
+        rank = eval(request.form['rank'])
+        typ = request.form['lieType']
+        from LieToolbox.Repn.GK_dimension import GK_dimension
+        gkdim, info = GK_dimension(typ, rank, weight)
+        return render_template('lie/GKdim.html', gkdim=gkdim, info=info)
+    else:
+        return render_template('lie/GKdim.html')
 
 @bp.route('/lie/tableau', methods=('GET', 'POST'))
 def tableau():
@@ -61,7 +71,7 @@ def antidominant_get():
         weight = np.array(list(map(eval, split(', |,|，| ', input_str))))
         rank = len(weight)
         typ = request.form['lieType']
-        antidominant_weyl, antidominant_weight = antidominant(typ=typ, rank=rank, weight=weight)
+        antidominant_weyl, antidominant_weight = antidominant(typ=typ, rank=rank, weight_=weight)
         
         return render_template('lie/antidominant.html', 
                                antidominant_weyl=str(antidominant_weyl), 

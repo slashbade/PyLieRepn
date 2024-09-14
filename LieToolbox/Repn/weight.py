@@ -8,10 +8,13 @@ from copy import deepcopy
 from re import split
 from math import ceil
 
+import sys
+sys.path.append('..')
+sys.path.append('.')
 # For flask
-from . import RSAlgorithm as rsa
-from . import HAlgorithm as ha
-from . import DRS_algorithm as drsa
+from LieToolbox.Repn.algorithm import RSAlgorithm as rsa
+from LieToolbox.Repn.algorithm import HAlgorithm as ha
+from LieToolbox.Repn.algorithm import DRS_algorithm as drsa
 
 # # For test
 # import RSAlgorithm as rsa
@@ -832,13 +835,31 @@ class HighestWeightModule:
                 a_fun_val += i*ele
         return a_fun_val
     
+    
+    def a_value_integral(self):
+        obt_info = self.nilpotentOrbitInfo()
+        # print(obt_info)
+        assert 'Integral' in obt_info.keys() or len(obt_info['UnitList'])==1, "Integral part is empty"
+        if self.highestWeight.lieType == 'A':
+            integral_partition = Partition(obt_info['UnitList'][0]['Partition'])
+        else:
+            integral_partition = Partition(obt_info['Integral']['Partition2'])
+        if self.highestWeight.lieType == 'A':
+            return HighestWeightModule.a_fun(integral_partition, 'a')
+        elif self.highestWeight.lieType == 'B' or self.highestWeight.lieType == 'C':
+            return HighestWeightModule.a_fun(integral_partition, 'b')
+        elif self.highestWeight.lieType == 'D':
+            return HighestWeightModule.a_fun(integral_partition, 'd')
+        else:
+            raise ValueError("Invalid Lie Type")
+    
     def GKdim(self):
         lbd = self.highestWeight
         lieType = lbd.lieType
         n = lbd.n 
         L_lbd = HighestWeightModule(lbd)
         obt = L_lbd.nilpotentOrbit()
-        print(L_lbd.nilpotentOrbitInfo())
+        # print(L_lbd.nilpotentOrbitInfo())
         obt_info = L_lbd.nilpotentOrbitInfo()
         
         if lieType == 'A':

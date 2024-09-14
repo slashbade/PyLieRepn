@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nilpotent Orbit - Toolbox</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href={{ url_for('static', filename='favicon.ico')}} type="image/x-icon">
+    <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+</head>
+ <body>
+        <nav>
+            <h1>Toolbox</h1>
+            <ul>
+                <li><a>Index</a>
+            </ul>
+        </nav>
+        <section class="content">
+            <header>
+                <h1>Gelfand-Kirillov Dimension</h1>
+            </header>
+            <p> Input weight should be represented in orthonormal basis in the ambiant space. </p>
+            <details>
+                <summary> Instruction </summary>
+                A highest weight module is given by a Lie algebra along with an infinitesimal character. <br>
+                Input sequence of weight seperated by ',' or space, e.g. -3.5,2.5,1.5,3,6,9,-7,2,5,-8,-4 for real case or 3+i,2+i,1.5+i,i for complex case. 
+                This algorithm depends on H-algorithm and PyCox package.
+                <br>
+                <strong>Reference:</strong> <br> 
+                <a href="https://arxiv.org/abs/2304.03475"> A combinatorial characterization of the annihilator varieties of highest weight modules for classical Lie algebras </a>
+                <a href="http://dx.doi.org/10.1112/S1461157012001064"> PyCox: computing with (finite) Coxeter groups and Iwahori–Hecke algebras </a>
+            </details>
+            {% for message in get_flashed_messages() %}
+              <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <form method="post">
+                <label for="weight">Infinitesimal character for \(L(\lambda)\)</label>
+                <input name="weight" id="weight">
+                <label for="lieType">Cartan type</label>
+                <div>
+                    <input type="radio" name="lieType" id="TypeA" value="A">
+                    <label for="TypeA" style=font-weight:normal>\(A_{n-1}\):    \( \mathfrak{sl}(n, \mathbb{C})\) </label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeB" value="B">
+                    <label for="TypeB" style=font-weight:normal>\(B_{n}\):  \( \mathfrak{so}(2n-1, \mathbb{C})\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeC" value="C">
+                    <label for="TypeC" style=font-weight:normal>\(C_{n}\):  \( \mathfrak{sp}(2n, \mathbb{C})\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeD" value="D">
+                    <label for="TypeD" style=font-weight:normal>\(D_{n}\):  \( \mathfrak{so}(2n, \mathbb{C})\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeE" value="E">
+                    <label for="TypeE" style=font-weight:normal>\(E_{n}\):  \( n = 6, 7, 8\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeF" value="F">
+                    <label for="TypeF" style=font-weight:normal>\(F_4\): \(n = 4\)</label>
+                </div>
+                <div>
+                    <input type="radio" name="lieType" id="TypeG" value="G">
+                    <label for="TypeG" style=font-weight:normal>\(G_2\): \(n = 2\)</label>
+                </div>
+                
+                <label for="rank">Rank</label>
+                <input name="rank" id="rank">
+                <input type="submit" value="Calculate">
+            </form>
+            {% if gkdim %}
+            <header>
+                <h1> Gelfand-Kirillov Dimension </h1>
+            </header>
+            <div id="orbit-result">    
+                <div>
+                    <p class="body">
+                    Gelfand-Kirillov Dimension: {{ gkdim }} <br>
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+            {% if info %}
+            <details>
+                <summary> Information </summary>
+                <p> For weight \({{info['weight']}}\) of type \({{info['cartan_type']}}\), the integral root system is isomorphic to \({{info['pretty_cartan_types']}}\). The complement basis {% if info['complement_basis'] %} \(\Phi_{[\lambda]}^{\perp} = {{info['complement_basis']}}\) {% endif %}. The isomorphism from current bases and cananical bases \(\phi\) is found.</p>
+                <p>\[\phi = {{ info['isomap'] }}\]</p>
+                <div class="table-container">
+                <table>
+                    <tr>
+                        <td width="10%"> Cartan type </td>
+                        <td width="10%"> Simple roots </td>
+                        <td width="10%"> Cananical simple roots </td>
+                        <td width="10%"> Weight(Fundamental) </td>
+                        <td width="10%"> Transformed weight </td>
+                        <td width="10%"> \(\mathfrak{a}\) value </td>
+                    </tr>
+                    {% for ct in info['cartan_types']%}
+                    <tr>    
+                        <td>\({{ ct }}\)</td>
+                        <td>\({{ info['simple_roots'][loop.index0] }}\)</td>
+                        <td>\({{ info['cananical_simple_roots'][loop.index0] }}\)</td>
+                        <td>\({{ info['weights_'][loop.index0] }}\)</td>
+                        <td>\({{ info['transformed_weights'][loop.index0] }}\)</td>
+                        <td>\({{ info['a_values'][loop.index0] }}\)</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                </div>
+                <p> The Gelfand-Kirillov dimension is calculated by the formula \(\text{GKdim} = |\Phi^+| - \mathfrak{a}(\omega_{\lambda}) = {{gkdim}}\). </p>
+            </details>
+            {% endif %}
+            
+        </section>
+           
+    </body>
+</html>
