@@ -136,7 +136,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         # Compute the Gelfand-Kirillov dimension
         transformed_weight_ = np.round(transformed_weight_)
         a_value, character = a_value_integral(*ct, transformed_weight)
-        
+        # print(weight, weight_, sp)
         weights_.append(weight_)
         transformed_weights.append(transformed_weight)
         transformed_weights_.append(transformed_weight_)
@@ -149,11 +149,15 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
     
     info = {
         "cartan_type": pretty_print_lietype(typ, rank),
+        "simple_roots_weight": pretty_print_basis(simple_root_data(typ, rank)),
         "weight": pretty_print_weight(weight),
+        "integral_roots": pretty_print_basis(rt),
         "cartan_types": [pretty_print_lietype(*ct) for ct in cts],
         "pretty_cartan_types": pretty_print_lietypes(cts),
         "simple_roots": [pretty_print_basis(sp) for sp in sps],
+        "pretty_simple_roots": pretty_print_basises(sps),
         "cananical_simple_roots": [pretty_print_basis(simple_root_data(*ct)) for ct in cts],
+        "pretty_cananical_simple_roots": pretty_print_basises([simple_root_data(*ct) for ct in cts]),
         "complement_basis": pretty_print_basis(cpl_basis),
         "isomap": pretty_print_matrix(isomap),
         "weights_": [pretty_print_weight_(weight_) for weight_ in weights_],
@@ -221,4 +225,4 @@ if __name__ == "__main__":
     test_case = test_cases[8]
     # print(test_case)
     typ, rank, weight = test_case[0]
-    print(GK_dimension(typ, rank, weight))
+    # print(GK_dimension(typ, rank, weight))

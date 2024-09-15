@@ -4,6 +4,19 @@
     <title>Nilpotent Orbit - Toolbox</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" href={{ url_for('static', filename='favicon.ico')}} type="image/x-icon">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          extensions: ["tex2jax.js"],
+          tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true
+          },
+          "CommonHTML": { linebreaks: { automatic: true } },
+          "HTML-CSS": { linebreaks: { automatic: true } },
+          "SVG": { linebreaks: { automatic: true } },
+        });
+      </script>
     <script type="text/javascript" async
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
     </script>
@@ -85,8 +98,17 @@
             {% if info %}
             <details>
                 <summary> Information </summary>
-                <p> For weight \({{info['weight']}}\) of type \({{info['cartan_type']}}\), the integral root system is isomorphic to \({{info['pretty_cartan_types']}}\). The complement basis {% if info['complement_basis'] %} \(\Phi_{[\lambda]}^{\perp} = {{info['complement_basis']}}\) {% endif %}. The isomorphism from current bases and cananical bases \(\phi\) is found.</p>
-                <p>\[\phi = {{ info['isomap'] }}\]</p>
+                <p> For system \(\Phi\) of type \({{info['cartan_type']}}\) with base \(\Delta_{ {{info['cartan_type']}} }={{info['simple_roots_weight']}}\), the number of positive roots \(|\Phi^+| = {{info['num_positive_roots']}}\). </p>
+                
+                    
+                <p> For weight \({{info['weight']}}\) of type \({{info['cartan_type']}}\), the integral root system is computed as
+                    <details>
+                    <summary> integral system </summary>
+                    <p class=details-content>\[\Phi_{[\lambda]} = {{info['integral_roots']}},\]</p></details> <br>
+                    which is isomorphic to \({{info['pretty_cartan_types']}}\), with base \({{info['pretty_simple_roots']}}\). {% if info['complement_basis'] %} To span the ambiant space, the base of complement system is computed as \(\Phi_{[\lambda]}^{\perp} = {{info['complement_basis']}}\) {% endif %}. </p>
+                
+                <p>Suppose the cananical system be \(\Delta={{info['pretty_cananical_simple_roots']}}\), then the isomorphism \(\phi: \Phi_{[\lambda]} \to {{info['pretty_cartan_types']}}\) is written as \[\phi = {{ info['isomap'] }}.\]</p>
+                <p> Compute \(\mathfrak{a}\) for each component:
                 <div class="table-container">
                 <table>
                     <tr>
@@ -111,7 +133,8 @@
                     {% endfor %}
                 </table>
                 </div>
-                <p> The Gelfand-Kirillov dimension is calculated by the formula \(\text{GKdim} = |\Phi^+| - \mathfrak{a}(\omega_{\lambda}) = {{gkdim}}\). </p>
+                </p>
+                <p> The Gelfand-Kirillov dimension for \(L(\lambda)\) is computed by the formula \(\text{GKdim} = |\Phi^+| - \mathfrak{a}(\omega_{\lambda}) = {{gkdim}}\). </p>
             </details>
             {% endif %}
             

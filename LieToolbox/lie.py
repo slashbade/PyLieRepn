@@ -41,15 +41,30 @@ def classification():
 @bp.route('/lie/GKdim', methods=('GET', 'POST'))
 def GKdim_get():
     if request.method == 'POST':
-        input_str = request.form['weight']
-        weight = np.array(list(map(eval, split(', |,|，| ', input_str))))
-        rank = eval(request.form['rank'])
-        typ = request.form['lieType']
+        error = None
+        if not request.form['weight']:
+            error = 'Weight is required'
+        if not request.form['rank']:
+            error = 'Rank is required'
+        if not request.form['lieType']:
+            error = 'Please choose Cartan type'
+        try:
+            input_str = request.form['weight']
+            weight = np.array(list(map(eval, split(', |,|，| ', input_str))))
+            rank = eval(request.form['rank'])
+            typ = request.form['lieType']
+        except:
+            error = 'Invalid input format'
         from LieToolbox.Repn.GK_dimension import GK_dimension
-        gkdim, info = GK_dimension(typ, rank, weight)
-        return render_template('lie/GKdim.html', gkdim=gkdim, info=info)
-    else:
-        return render_template('lie/GKdim.html')
+        try:
+            gkdim, info = GK_dimension(typ, rank, weight)
+        except ValueError as e:
+            error = 'Invalid input, please check if the weight and rank matches.'
+            print(e)
+        if error is None:
+            return render_template('lie/GKdim.html', gkdim=gkdim, info=info)
+        flash(error)
+    return render_template('lie/GKdim.html')
 
 @bp.route('/lie/tableau', methods=('GET', 'POST'))
 def tableau():

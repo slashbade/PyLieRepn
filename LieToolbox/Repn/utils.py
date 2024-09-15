@@ -126,6 +126,8 @@ def pretty_print_array(array: NDArray, symbol='\\epsilon') -> str:
         else:
             lst.append(coo)
         is_first = False
+    if is_first:
+        lst.append('0')
     return "".join(lst)
 
 
@@ -133,6 +135,9 @@ def pretty_print_basis(basis: NDArray) -> str:
     if basis.shape[0] == 0:
         return '\emptyset'
     return '\{' + ', '.join([pretty_print_array(basis[i]) for i in range(basis.shape[0])]) + '\}'
+
+def pretty_print_basises(basis: NDArray) -> str:
+    return ' \\times '.join([pretty_print_basis(b) for b in basis])
 
 def pretty_print_weight(weight: NDArray) -> str:
     lst = []

@@ -37,7 +37,9 @@ table {
   
 caption {padding: 10px;}
 details {background-color: #377ba811; padding: 10px;}
-
+.details-content {
+    width: 80%;
+}
 #canvas-container {
   padding: 10px;
   display: flex;

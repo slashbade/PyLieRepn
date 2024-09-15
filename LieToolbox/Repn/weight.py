@@ -812,6 +812,8 @@ class HighestWeightModule:
                 orbitInfo['isVeryEven'] = orbit.veryEven
                 orbitInfo['veryEvenTypeInfo'] = WeightStruct.veryEvenOrbitTypeInfo(lbd.decomposition())
                 orbitInfo['veryEvenType'] = orbit.veryEvenType
+            else:
+                orbitInfo['isVeryEven'] = False
                 # print(orbitInfo)
                 
                 
