@@ -32,9 +32,9 @@
               <div class="flash">{{ message }}</div>
             {% endfor %}
             <form method="post">
-                <label for="weight">Infinitesimal Character for \(L(\lambda)\)</label>
+                <label for="weight">Infinitesimal character for \(L(\lambda)\)</label>
                 <input name="weight" id="weight">
-                <label for="lieType">Lie Type</label>
+                <label for="lieType">Cartan type</label>
                 <div>
                     <input type="radio" name="lieType" id="TypeA" value="A">
                     <label for="TypeA" style=font-weight:normal>\(A_{n-1}\):    \( \mathfrak{sl}(n, \mathbb{C})\) </label>
@@ -57,12 +57,15 @@
                 </div>
                 <div>
                     <input type="radio" name="lieType" id="TypeF" value="F">
-                    <label for="TypeF" style=font-weight:normal>\(F_4\)</label>
+                    <label for="TypeF" style=font-weight:normal>\(F_4\): \(n = 4\)</label>
                 </div>
                 <div>
                     <input type="radio" name="lieType" id="TypeG" value="G">
-                    <label for="TypeG" style=font-weight:normal>\(G_2\)</label>
+                    <label for="TypeG" style=font-weight:normal>\(G_2\): \(n = 2\)</label>
                 </div>
+                
+                <label for="rank">Rank</label>
+                <input name="rank" id="rank">
                 <input type="submit" value="Calculate">
             </form>
             {% if antidominant_weyl %}

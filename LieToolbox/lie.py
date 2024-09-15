@@ -69,7 +69,7 @@ def antidominant_get():
         # This support only real weights
         input_str = request.form['weight']
         weight = np.array(list(map(eval, split(', |,|，| ', input_str))))
-        rank = len(weight)
+        rank = eval(request.form['rank'])
         typ = request.form['lieType']
         antidominant_weyl, antidominant_weight = antidominant(typ=typ, rank=rank, weight_=weight)
         

@@ -145,7 +145,7 @@ def pretty_print_weight(weight: NDArray) -> str:
             else:
                 lst.append(f"-\\frac{{{int(np.round(-2 * weight[i]))}}}{{2}}")
         else:
-            lst.append(f"{weight[i]:.2}")
+            lst.append(f"{weight[i]:.4}")
     return '(' + ', '.join(lst) + ')'
 
 def pretty_print_weight_(weight: NDArray) -> str:

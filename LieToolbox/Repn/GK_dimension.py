@@ -1,3 +1,6 @@
+import sys
+sys.path.append("..")
+sys.path.append(".")
 import numpy as np
 from numpy.typing import NDArray
 from LieToolbox.Repn.utils import *
@@ -19,6 +22,9 @@ def antidominant(typ: str, rank: int, weight_: NDArray, weyl: list = []) -> NDAr
     Returns:
         NDArray: the antidominant weight, represented in the fundamental weight basis.
     """
+    for i in range(weight_.shape[0]):
+        if is_zero(weight_[i]):
+            weight_[i] = 0
     if np.all(weight_ <= 0):
         return weyl, weight_
     else:
@@ -61,9 +67,13 @@ def a_value_integral(typ, rank, weight):
         cananical_sp = simple_root_data(typ, rank)
         weight_ = (2 * weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
         W = pycox.coxeter(typ, rank)
+        
         w, adw = antidominant(typ, rank, weight_)
         cell_repm = pycox.klcellrepelm(W, w)
-        # print(w, adw, cell_repm)
+        # print('input weight fundam:', np.round(weight_,2))
+        # print('weyl:', w)
+        # print('antidom weight', np.round(adw))
+        # print('repm:', cell_repm)
         return cell_repm['a']
 
 
@@ -114,7 +124,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         weight_ = (2 * weight @ sp.T / np.sum(sp**2, axis=1))
         transformed_weight = weight_ @ transformed_fundamental_weights.T
         transformed_weight = restrict_array(transformed_weight, dim_sp)
-        
+        # print(f"transformed weight: {transformed_weight}")
         transformed_weight_ = (2 * transformed_weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
         # Compute the Gelfand-Kirillov dimension
         transformed_weight_ = np.round(transformed_weight_)
@@ -186,7 +196,10 @@ if __name__ == "__main__":
             ([('D', 6), ('A', 1)], None, None)
         ), (
             ('E', 8, np.array([1, 1, 1, 1, 1, 1, 1/2, 5/2])), 
-            ([('E', 7), ('A', 1)], None, None)
+            ([('E', 7), ('A', 1)], 7, 113)
+        ), (
+            ('E', 7, np.array([2.1, 1.1, -0.1, 2.1, 2, 4, 2, 0.9])),
+            ([('D', 6), ('A', 1)], None, None)
         )
     ]
     for test_case in test_cases:
@@ -196,6 +209,7 @@ if __name__ == "__main__":
             assert gk_dim == test_case[1][2]
         print(f"finish test case {weight}")
     print("All test cases passed.")
-    test_case = test_cases[0]
+    test_case = test_cases[8]
+    # print(test_case)
     typ, rank, weight = test_case[0]
     print(GK_dimension(typ, rank, weight))
