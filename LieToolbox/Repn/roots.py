@@ -110,6 +110,8 @@ def integral_root_system(
     roots_weight_ind = np.argwhere(
         is_integer(2 * roots @ weight / np.sum(roots**2, axis=1))
     ).ravel()
+    print(roots)
+    print(2 * roots @ weight / np.sum(roots**2, axis=1))
     return roots[roots_weight_ind], roots_weight_ind
 
 

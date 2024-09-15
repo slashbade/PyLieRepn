@@ -58,8 +58,8 @@ def simple_root_data(typ: str, rank: int, format: str = "gap") -> NDArray:
         mat[3, :] = [0.5, -0.5, -0.5, -0.5]
     elif typ == "G" and rank == 2:
         mat = np.zeros((rank, 3))
-        mat[0, :] = [1, -1, 0]
-        mat[1, :] = [-2, 1, 1]
+        mat[1, :] = [1, -1, 0]
+        mat[0, :] = [-2, 1, 1]
 
     if format == "bourbaki":
         return mat
