@@ -62,7 +62,12 @@ def a_value_integral(typ, rank, weight):
     if typ in ["A", "B", "C", "D"]:
         lbd = Weight(weight.tolist(), typ)
         L = HighestWeightModule(lbd)
-        return L.a_value_integral()
+        obtinfo = L.nilpotentOrbitInfo()
+        if typ == "D" and obtinfo['isVeryEven']:
+            obt = f"{obtinfo['Orbit']}, {obtinfo['veryEvenType']}"
+        else:
+            obt = f"{obtinfo['Orbit']}"
+        return L.a_value_integral(), obt
     else:
         cananical_sp = simple_root_data(typ, rank)
         weight_ = (2 * weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
@@ -74,7 +79,8 @@ def a_value_integral(typ, rank, weight):
         # print('weyl:', w)
         # print('antidom weight', np.round(adw))
         # print('repm:', cell_repm)
-        return cell_repm['a']
+        character = cell_repm['character']
+        return cell_repm['a'], f"{character[0][0]}, {character[0][1]}"
 
 
 def GK_dimension(typ, rank, weight: NDArray) -> int:
@@ -115,6 +121,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
     transformed_weights = []
     transformed_weights_ = []
     a_values = []
+    characters = []
     for ct, sp in zip(cts, sps):
         # Compute the weight in each cananical simple root basis
         cananical_sp = simple_root_data(*ct)
@@ -128,12 +135,13 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         transformed_weight_ = (2 * transformed_weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
         # Compute the Gelfand-Kirillov dimension
         transformed_weight_ = np.round(transformed_weight_)
-        a_value = a_value_integral(*ct, transformed_weight)
+        a_value, character = a_value_integral(*ct, transformed_weight)
         
         weights_.append(weight_)
         transformed_weights.append(transformed_weight)
         transformed_weights_.append(transformed_weight_)
         a_values.append(a_value)
+        characters.append(character)
     
     total_a_value = sum(a_values)
     num_postive_roots = num_positive_roots_data(typ, rank)
@@ -152,6 +160,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         "transformed_weights": [pretty_print_weight(transformed_weight) for transformed_weight in transformed_weights],
         "transformed_weights_": [pretty_print_weight_(transformed_weight_) for transformed_weight_ in transformed_weights_],
         "a_values": a_values,
+        "characters": characters,
         "num_positive_roots": num_postive_roots,
         "total_a_value": total_a_value,
         "GK_dimension": gk_dim

@@ -96,6 +96,7 @@
                         <td width="10%"> Weight(Fundamental) </td>
                         <td width="10%"> Transformed weight </td>
                         <td width="10%"> \(\mathfrak{a}\) value </td>
+                        <td width="10%"> Character </td>
                     </tr>
                     {% for ct in info['cartan_types']%}
                     <tr>    
@@ -105,6 +106,7 @@
                         <td>\({{ info['weights_'][loop.index0] }}\)</td>
                         <td>\({{ info['transformed_weights'][loop.index0] }}\)</td>
                         <td>\({{ info['a_values'][loop.index0] }}\)</td>
+                        <td>\({{ info['characters'][loop.index0] }}\)</td>
                     </tr>
                     {% endfor %}
                 </table>
