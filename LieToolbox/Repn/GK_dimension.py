@@ -79,8 +79,9 @@ def a_value_integral(typ, rank, weight):
         # print('weyl:', w)
         # print('antidom weight', np.round(adw))
         # print('repm:', cell_repm)
-        character = cell_repm['character']
-        return cell_repm['a'], f"{character[0][0]}, {character[0][1]}"
+        # character = cell_repm['character']
+        # character = cell_repm['special']
+        return cell_repm['a'], cell_repm['special']
 
 
 def GK_dimension(typ, rank, weight: NDArray) -> int:
@@ -164,7 +165,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         "transformed_weights": [pretty_print_weight(transformed_weight) for transformed_weight in transformed_weights],
         "transformed_weights_": [pretty_print_weight_(transformed_weight_) for transformed_weight_ in transformed_weights_],
         "a_values": a_values,
-        "characters": characters,
+        "characters": [pretty_print_character(character) for character in characters],
         "num_positive_roots": num_postive_roots,
         "total_a_value": total_a_value,
         "GK_dimension": gk_dim

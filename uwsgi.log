@@ -793,3 +793,48 @@ spawned uWSGI http 1 (pid: 299740)
 --- no python application found, check your startup logs for errors ---
 [pid: 299739|app: -1|req: -1/1] 127.0.0.1 () {46 vars in 730 bytes} [Tue Jul  2 18:43:22 2024] GET / => generated 21 bytes in 1 msecs (HTTP/1.1 500) 2 headers in 83 bytes (0 switches on core 0)
 Tue Jul  2 18:44:06 2024 - uWSGI worker 1 screams: UAAAAAAH my master disconnected: i will kill myself !!!
+*** Starting uWSGI 2.0.21 (64bit) on [Sun Sep 22 00:46:24 2024] ***
+compiled with version: 11.2.0 on 24 October 2023 19:58:16
+os: Linux-6.1.0-25-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.106-3 (2024-08-26)
+nodename: debian
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 32
+current working directory: /home/slashblade/Code/PyLieRepn
+detected binary path: /home/slashblade/miniconda3/envs/lie_repn_env/bin/uwsgi
+your processes number limit is 255207
+your memory page size is 4096 bytes
+detected max file descriptor number: 1048576
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uWSGI http bound on :5000 fd 4
+uwsgi socket 0 bound to TCP address 127.0.0.1:38239 (port auto-assigned) fd 3
+Python version: 3.11.4 (main, Jul  5 2023, 13:45:01) [GCC 11.2.0]
+*** Python threads support is disabled. You can enable it with --enable-threads ***
+Python main interpreter initialized at 0x9fba98
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 145840 bytes (142 KB) for 1 cores
+*** Operational MODE: single process ***
+                                                                     
+  ###################################################################
+  ##  A PYTHON VERSION OF CHEVIE-GAP FOR (FINITE) COXETER GROUPS   ##
+  ##      (by Meinolf Geck,  version 1r6p180, 27 Jan 2014)         ##
+  ##                                                               ##
+  ##  To get started type "help(coxeter)" or "help(allfunctions)"; ##
+  ##  see also http://dx.doi.org/10.1112/S1461157012001064.        ##
+  ##  For notes about this version type  "versioninfo(1.6)".       ##
+  ##  Check www.mathematik.uni-stuttgart.de/~geckmf for updates.   ##
+  ##                                                               ##
+  ##  Import into "sage" (4.7 or higher, www.sagemath.org) works.  ##
+  ##                                                               ##
+  ##       The proposed name for this module is "PyCox".           ##
+  ##                  All comments welcome!                        ##
+  ###################################################################
+                                                                     
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x9fba98 pid: 74073 (default app)
+spawned uWSGI master process (pid: 74073)
+spawned uWSGI worker 1 (pid: 74075, cores: 1)
+spawned uWSGI http 1 (pid: 74076)
+Sun Sep 22 00:46:45 2024 - uWSGI worker 1 screams: UAAAAAAH my master disconnected: i will kill myself !!!

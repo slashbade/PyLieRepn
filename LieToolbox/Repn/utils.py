@@ -172,3 +172,8 @@ def pretty_print_matrix(matrix: NDArray) -> str:
     return '\\begin{pmatrix}' + '\\\\'.join(
         [' & '.join([f"{parse_float(matrix[i, j])}" 
                      for j in range(matrix.shape[1])]) for i in range(matrix.shape[0])]) + '\\end{pmatrix}'
+
+def pretty_print_character(character: str) -> str:
+    def parse_ch(c):
+        return c.replace('phi', '\\phi')
+    return parse_ch(character)
