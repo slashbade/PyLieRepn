@@ -8,6 +8,7 @@ from LieToolbox.Repn.weight import Weight, HighestWeightModule
 from LieToolbox.Repn.GK_dimension import antidominant
 import json
 import numpy as np
+import traceback
 
 bp = Blueprint('lie', __name__, url_prefix='/')
 
@@ -60,6 +61,7 @@ def GKdim_get():
             gkdim, info = GK_dimension(typ, rank, weight)
         except ValueError as e:
             error = 'Invalid input, please check if the weight and rank matches.'
+            print(traceback.format_exc())
             print(e)
         if error is None:
             return render_template('lie/GKdim.html', gkdim=gkdim, info=info)

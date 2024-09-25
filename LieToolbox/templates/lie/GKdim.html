@@ -105,6 +105,7 @@
                     <details>
                     <summary> integral system </summary>
                     <p class=details-content>\[\Phi_{[\lambda]} = {{info['integral_roots']}},\]</p></details> <br>
+                    {% if info['cartan_types'] %}
                     which is isomorphic to \({{info['pretty_cartan_types']}}\), with base \({{info['pretty_simple_roots']}}\). {% if info['complement_basis'] %} To span the ambiant space, the base of complement system is computed as \(\Phi_{[\lambda]}^{\perp} = {{info['complement_basis']}}\) {% endif %}. </p>
                 
                 <p>Suppose the cananical system be \(\Delta={{info['pretty_cananical_simple_roots']}}\), then the isomorphism \(\phi: \Phi_{[\lambda]} \to {{info['pretty_cartan_types']}}\) is written as \[\phi = {{ info['isomap'] }}.\]</p>
@@ -136,6 +137,9 @@
                 </table>
                 </div>
                 </p>
+                {% else %}
+                which is empty. Hence, \(\mathfrak{a}(\omega_{\lambda})=0\).</p>
+                {% endif %}
                 <p> The Gelfand-Kirillov dimension for \(L(\lambda)\) is computed by the formula \(\text{GKdim} = |\Phi^+| - \mathfrak{a}(\omega_{\lambda}) = {{gkdim}}\). </p>
             </details>
             {% endif %}

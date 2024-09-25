@@ -105,22 +105,29 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
     
     # Integral root system decomposition
     rt, _ = integral_root_system(typ, rank, weight)
+    # print(rt)
     cts, sps = get_cartan_type(rt)
     
     # Reorder simple roots to match the cananical order
     sps = [reorder_simple_roots(sp, *ct) for ct, sp in zip(cts, sps)]
-    sp_basis = np.concatenate(sps)
-    cpl_basis = find_complement(np.concatenate(sps), np.eye(dim_ambient))
-    all_basis = np.concatenate([sp_basis, cpl_basis])
-    
-    # Get the isomorphism map from the decomposed system to cananical root system
-    embedded = np.concatenate(
-        [embed_basis(simple_root_data(*ct), dim_ambient) 
-         for ct in cts]
-        )
-    # isomap1 = embedded.T @ np.linalg.inv(all_basis).T
-    embedded = np.concatenate(
-        [embedded, np.zeros((dim_ambient - embedded.shape[0], dim_ambient))])
+    if sps:
+        sp_basis = np.concatenate(sps)
+        cpl_basis = find_complement(sp_basis, np.eye(dim_ambient))
+        all_basis = np.concatenate([sp_basis, cpl_basis])
+            
+        
+        # Get the isomorphism map from the decomposed system to cananical root system
+        embedded = np.concatenate(
+            [embed_basis(simple_root_data(*ct), dim_ambient) 
+            for ct in cts]
+            )
+        # isomap1 = embedded.T @ np.linalg.inv(all_basis).T
+        embedded = np.concatenate(
+            [embedded, np.zeros((dim_ambient - embedded.shape[0], dim_ambient))])
+    else:
+        embedded = np.eye(dim_ambient)
+        cpl_basis = np.zeros((dim_ambient, dim_ambient))
+        all_basis = np.eye(dim_ambient)
     isomap = embedded.T @ np.linalg.inv(all_basis).T
     
     weights = []
