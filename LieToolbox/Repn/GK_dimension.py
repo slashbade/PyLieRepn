@@ -99,6 +99,8 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
     Returns:
         int: the Gelfand-Kirillov dimension.
     """
+    simple_root_data0 = simple_root_data(typ, rank)
+    weight0_ = (2 * weight @ simple_root_data0.T / np.sum(simple_root_data0**2, axis=1))
     dim_ambient = weight.shape[0]
     
     # Integral root system decomposition
@@ -156,8 +158,9 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
     
     info = {
         "cartan_type": pretty_print_lietype(typ, rank),
-        "simple_roots_weight": pretty_print_basis(simple_root_data(typ, rank)),
+        "simple_roots_weight": pretty_print_basis(simple_root_data0),
         "weight": pretty_print_weight(weight),
+        "weight_": pretty_print_weight_(weight0_),
         "integral_roots": pretty_print_basis(rt),
         "cartan_types": [pretty_print_lietype(*ct) for ct in cts],
         "pretty_cartan_types": pretty_print_lietypes(cts),
