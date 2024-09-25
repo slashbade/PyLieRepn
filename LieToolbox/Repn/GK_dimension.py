@@ -134,7 +134,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         fundamental_weights = compute_fundamental_weights(sp)
         transformed_fundamental_weights = isomap @ fundamental_weights.T
         weight_ = (2 * weight @ sp.T / np.sum(sp**2, axis=1))
-        weight = weight_ @ fundamental_weights
+        weight1 = weight_ @ fundamental_weights
         transformed_weight = weight_ @ transformed_fundamental_weights.T
         transformed_weight = restrict_array(transformed_weight, dim_sp)
         # print(f"transformed weight: {transformed_weight}")
@@ -143,7 +143,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         transformed_weight_ = np.round(transformed_weight_)
         a_value, character = a_value_integral(*ct, transformed_weight)
         # print(weight, weight_, sp)
-        weights.append(weight)
+        weights.append(weight1)
         weights_.append(weight_)
         transformed_weights.append(transformed_weight)
         transformed_weights_.append(transformed_weight_)
