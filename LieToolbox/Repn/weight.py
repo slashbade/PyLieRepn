@@ -840,20 +840,32 @@ class HighestWeightModule:
     
     def a_value_integral(self):
         obt_info = self.nilpotentOrbitInfo()
-        # print(obt_info)
-        assert 'Integral' in obt_info.keys() or len(obt_info['UnitList'])==1, "Integral part is empty"
         if self.highestWeight.lieType == 'A':
-            integral_partition = Partition(obt_info['UnitList'][0]['Partition'])
+            partitions = [Partition(d['Partition']) for d in obt_info['UnitList']]
+            a = 0
+            for partition in partitions:
+                a += HighestWeightModule.a_fun(partition, 'a')
         else:
             integral_partition = Partition(obt_info['Integral']['Partition2'])
-        if self.highestWeight.lieType == 'A':
-            return HighestWeightModule.a_fun(integral_partition, 'a')
-        elif self.highestWeight.lieType == 'B' or self.highestWeight.lieType == 'C':
-            return HighestWeightModule.a_fun(integral_partition, 'b')
-        elif self.highestWeight.lieType == 'D':
-            return HighestWeightModule.a_fun(integral_partition, 'd')
-        else:
-            raise ValueError("Invalid Lie Type")
+            half_integral_partition = Partition(obt_info['HIntegral']['Partition2'])
+            non_integral_partitions = [Partition(d['Partition']) for d in obt_info['NHIntegral']]
+        
+            if self.highestWeight.lieType == 'B':
+                a = HighestWeightModule.a_fun(integral_partition, 'b') + HighestWeightModule.a_fun(half_integral_partition, 'b')
+                for non_integral_partition in non_integral_partitions:
+                    a += HighestWeightModule.a_fun(non_integral_partition, 'a')
+            elif self.highestWeight.lieType == 'C':
+                a = HighestWeightModule.a_fun(integral_partition, 'b') + HighestWeightModule.a_fun(half_integral_partition, 'd')
+                for non_integral_partition in non_integral_partitions:
+                    a += HighestWeightModule.a_fun(non_integral_partition, 'a')
+            elif self.highestWeight.lieType == 'D':
+                a = HighestWeightModule.a_fun(integral_partition, 'd') + HighestWeightModule.a_fun(half_integral_partition, 'd')
+                for non_integral_partition in non_integral_partitions:
+                    a += HighestWeightModule.a_fun(non_integral_partition, 'a')
+            else:
+                raise ValueError("Invalid Lie Type")
+        return int(a)
+            
     
     def GKdim(self):
         lbd = self.highestWeight

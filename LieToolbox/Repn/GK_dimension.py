@@ -60,6 +60,9 @@ def weight_partition(typ: str, rank: int, weight: NDArray):
 
 def a_value_integral(typ, rank, weight):
     if typ in ["A", "B", "C", "D"]:
+    # if False:
+        # cananical_sp = simple_root_data(typ, rank, format="bourbaki")
+        # weight_ = (2 * weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
         lbd = Weight(weight.tolist(), typ)
         L = HighestWeightModule(lbd)
         obtinfo = L.nilpotentOrbitInfo()
