@@ -115,7 +115,7 @@
                         <td width="10%"> Cartan type </td>
                         <td width="10%"> Simple roots </td>
                         <td width="10%"> Cananical simple roots </td>
-                        <td width="10%"> Weight(Fundamental) </td>
+                        <td width="10%"> Weight </td>
                         <td width="10%"> Transformed weight </td>
                         <td width="10%"> \(\mathfrak{a}\) value </td>
                         <td width="10%"> Character </td>
@@ -125,8 +125,10 @@
                         <td>\({{ ct }}\)</td>
                         <td>\({{ info['simple_roots'][loop.index0] }}\)</td>
                         <td>\({{ info['cananical_simple_roots'][loop.index0] }}\)</td>
-                        <td>\({{ info['weights_'][loop.index0] }}\)</td>
-                        <td>\({{ info['transformed_weights_'][loop.index0] }}\)</td>
+                        <td>cananical: \({{ info['weights'][loop.index0] }}\)<br>
+                            fundamental: \({{ info['weights_'][loop.index0] }}\)</td>
+                        <td>cananical: \({{ info['transformed_weights'][loop.index0] }}\)<br> 
+                            fundamental: \({{ info['transformed_weights_'][loop.index0] }}\)</td>
                         <td>\({{ info['a_values'][loop.index0] }}\)</td>
                         <td>\({{ info['characters'][loop.index0] }}\)</td>
                     </tr>
