@@ -64,7 +64,7 @@ def simple_root_data(typ: str, rank: int, format: str = "gap") -> NDArray:
     if format == "bourbaki":
         return mat
     elif format == "gap":
-        if typ in ["A", "B", "C", "D"]:
+        if typ in ["B", "C", "D"]:
             return mat[::-1]
         else:
             return mat
