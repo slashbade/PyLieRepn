@@ -25,6 +25,18 @@ def is_half_integer(x: float, tol: float = TOL) -> bool:
     return is_integer(2 * x, tol)
 
 
+def round2_one(x: float) -> int | float:
+    if is_integer(x):
+        return int(np.round(x))
+    elif is_half_integer(x):
+        return int(np.round(2 * x)) / 2
+    else:
+        return x
+
+def round2(xl: NDArray) -> NDArray:
+    return np.array([round2_one(x) for x in xl])
+
+
 def partition_equivalence(
     l: Iterable[Any], r: Callable[[Any, Any], bool]
 ) -> Tuple[List[List[Any]], List[int]]:

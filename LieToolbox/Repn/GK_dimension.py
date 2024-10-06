@@ -63,6 +63,8 @@ def a_value_integral(typ, rank, weight):
     # if False:
         # cananical_sp = simple_root_data(typ, rank, format="bourbaki")
         # weight_ = (2 * weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
+        weight = round2(weight)
+        print(weight)
         lbd = Weight(weight.tolist(), typ)
         L = HighestWeightModule(lbd)
         obtinfo = L.nilpotentOrbitInfo()
@@ -114,7 +116,6 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         sp_basis = np.concatenate(sps)
         cpl_basis = find_complement(sp_basis, np.eye(dim_ambient))
         all_basis = np.concatenate([sp_basis, cpl_basis])
-            
         
         # Get the isomorphism map from the decomposed system to cananical root system
         embedded = np.concatenate(
