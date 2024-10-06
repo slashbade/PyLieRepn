@@ -6,6 +6,7 @@ from numpy.typing import NDArray
 from LieToolbox.Repn.utils import *
 from LieToolbox.Repn.roots import integral_root_system, simple_root_data, get_cartan_type, reorder_simple_roots, compute_fundamental_weights
 from LieToolbox.Repn.root_system_data import cartan_matrix_pycox, num_positive_roots_data
+from LieToolbox.Repn.orbit_data import find_orbit_from_character
 from LieToolbox.Repn.PyCox import chv1r6180 as pycox
 from LieToolbox.Repn.weight import HighestWeightModule, Weight
 
@@ -72,7 +73,7 @@ def a_value_integral(typ, rank, weight):
             obt = f"{obtinfo['Orbit']}, {obtinfo['veryEvenType']}"
         else:
             obt = f"{obtinfo['Orbit']}"
-        return L.a_value_integral(), obt
+        return L.a_value_integral(), obt, obt
     else:
         cananical_sp = simple_root_data(typ, rank)
         weight_ = (2 * weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
@@ -86,7 +87,8 @@ def a_value_integral(typ, rank, weight):
         # print('repm:', cell_repm)
         # character = cell_repm['character']
         # character = cell_repm['special']
-        return cell_repm['a'], cell_repm['special']
+        orbit = find_orbit_from_character(typ, rank, cell_repm['special'])
+        return cell_repm['a'], cell_repm['special'], orbit
 
 
 def GK_dimension(typ, rank, weight: NDArray) -> int:
@@ -137,6 +139,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
     transformed_weights_ = []
     a_values = []
     characters = []
+    orbits = []
     for ct, sp in zip(cts, sps):
         # Compute the weight in each cananical simple root basis
         cananical_sp = simple_root_data(*ct)
@@ -151,7 +154,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         transformed_weight_ = (2 * transformed_weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
         # Compute the Gelfand-Kirillov dimension
         transformed_weight_ = np.round(transformed_weight_)
-        a_value, character = a_value_integral(*ct, transformed_weight)
+        a_value, character, orbit = a_value_integral(*ct, transformed_weight)
         # print(weight, weight_, sp)
         weights.append(weight1)
         weights_.append(weight_)
@@ -159,6 +162,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         transformed_weights_.append(transformed_weight_)
         a_values.append(a_value)
         characters.append(character)
+        orbits.append(orbit)
     
     total_a_value = sum(a_values)
     num_postive_roots = num_positive_roots_data(typ, rank)
@@ -184,6 +188,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         "transformed_weights_": [pretty_print_weight_(transformed_weight_) for transformed_weight_ in transformed_weights_],
         "a_values": a_values,
         "characters": [pretty_print_character(character) for character in characters],
+        "orbits": orbits,
         "num_positive_roots": num_postive_roots,
         "total_a_value": total_a_value,
         "GK_dimension": gk_dim
