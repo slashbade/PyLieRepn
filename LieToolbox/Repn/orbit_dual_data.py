@@ -79,15 +79,15 @@ def data_to_dict(data: str) -> dict:
         d.update({s[0]: s[1]})
     return d
 
-def get_dual(typ: str, rank: int, orbit: str) -> str:
+def get_dual_orbit_exceptional(typ: str, rank: int, orbit: str) -> str:
     if typ == 'E' and rank == 6:
         data = E6_data
     elif typ == 'E' and rank == 7:
-        data == E7_data
+        data = E7_data
     else:
         raise ValueError(f"Incorrect Lie type {typ}{rank}.")
     d = data_to_dict(data)
     return d.get(orbit, None)
 
 if __name__ == "__main__":
-    print(get_dual('E', 6, 'A_3+A_1'))
+    print(get_dual_orbit_exceptional('E', 6, 'A_3+A_1'))

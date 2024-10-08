@@ -121,6 +121,7 @@
                         <td width="10%"> \(\mathfrak{a}\) value </td>
                         <td width="10%"> Character </td>
                         <td width="10%"> Orbit </td>
+                        <td width="10%"> Dual orbit </td>
                     </tr>
                     {% for ct in info['cartan_types']%}
                     <tr>    
@@ -134,6 +135,7 @@
                         <td>\({{ info['a_values'][loop.index0] }}\)</td>
                         <td>\({{ info['characters'][loop.index0] }}\)</td>
                         <td>\({{ info['orbits'][loop.index0] }}\)</td>
+                        <td>\({{ info['orbit_duals'][loop.index0] }}\)</td>
                     </tr>
                     {% endfor %}
                 </table>

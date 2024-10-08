@@ -7,9 +7,9 @@ TODO
 from copy import deepcopy
 from re import split
 from math import ceil
-
+from typing import Optional
 import sys
-sys.path.append('..')
+sys.path.append('../..')
 sys.path.append('.')
 # For flask
 from LieToolbox.Repn.algorithm import RSAlgorithm as rsa
@@ -1030,6 +1030,8 @@ class WeylGroupElement:
 
 
 class Partition:
+    entry : list
+    lieType: str
     """This class stores either the infomation of a Young Tableau or the
     representation of nilpotent orbit.
     """
@@ -1074,6 +1076,9 @@ class Partition:
         while p_2[-1] == 0:
             p_2.pop()
         return p_1 == p_2
+
+    def __repr__(self) -> str:
+        return str(self.entry) + ' ' + self.lieType
 
     def show(pt):
         """This function shows partition itself, which also checks whether
@@ -1343,25 +1348,37 @@ class Partition:
                 label = ha.getLabel(pt.entry, 5)
         return label
 
-    def convert2Symbol(pt):
+    def convert2Symbol(self) -> 'Symbol':
         """This function constructs a Lusztig Symbol through partition.
 
         Returns:
             Symbol: a B-Symbol or D-Symbol
         """
-        p = deepcopy(pt.entry)
+        p = deepcopy(self.entry)
         if len(p) % 2 == 0:
             p += [0]
         s = [p[len(p) - i - 1] + i for i in range(len(p))]
         bs_even = [int(i / 2) for i in s if i % 2 == 0]
         bs_odd = [int((i - 1) / 2) for i in s if i % 2 != 0]
-        if pt.lieType == 'B' or pt.lieType == 'C':
-            return Symbol(bs_even, bs_odd, pt.lieType)
-        elif pt.lieType == 'D':
+        if self.lieType == 'B' or self.lieType == 'C':
+            return Symbol(bs_even, bs_odd, self.lieType)
+        elif self.lieType == 'D':
             ds_even = bs_even
             ds_odd = [0] + [i + 1 for i in bs_odd]
             return Symbol(ds_even, ds_odd, 'D')
+        elif self.lieType == 'A':
+            return Symbol(p, [], 'A')
 
+    def transpose(self) -> 'Partition':
+        transposed = []
+        for i in range(max(self.entry)):
+            count = 0
+            for e in self.entry:
+                if e > i:
+                    count = count + 1
+            transposed.append(count)
+        
+        return Partition(transposed, self.lieType)
 
 class Symbol:
     """This class handles structure and operation of Lusztig Symbol.
@@ -1382,6 +1399,9 @@ class Symbol:
         print(ls.lieType, 'Symbol')
         print('Top row:', ls.topEntry)
         print('Bottom row', ls.bottomEntry)
+
+    def __repr__(self) -> str:
+        return str([self.topEntry, self.bottomEntry])
 
     def makeSpecial(ls):
         """This function sorts the top and bottom row to make a special
@@ -1427,10 +1447,15 @@ class Symbol:
 
 
 class NilpotentOrbit(Partition):
-    def __init__(self, entry: list = ..., lieType: str = 'B'):
+    def __init__(
+            self, 
+            entry: list = ..., 
+            lieType: str = 'B', 
+            veryEven: bool = False, 
+            veryEvenType: Optional[str] = None):
         super().__init__(entry, lieType)
-        self.veryEven = False
-        self.veryEvenType = None
+        self.veryEven = veryEven
+        self.veryEvenType = veryEvenType
         self.entry.sort(reverse=True)
     
     def show(self) -> None:
@@ -1440,7 +1465,12 @@ class NilpotentOrbit(Partition):
             print(self.entry, self.veryEvenType, 'Nilpotent orbit of type D')
         else:
             print(self.entry, 'Nilpotent orbit of type', self.lieType)
-        
+
+    def __repr__(self) -> str:
+        if self.veryEven == True:
+            return str(self.entry) + " " + self.veryEvenType
+        else:
+            return str(self.entry)
     
     def toStr(self):
         """This function returns a string for quick identification of 
@@ -1513,6 +1543,20 @@ class NilpotentOrbit(Partition):
             p_2 += (len(p_1) - len(p_2)) * [0]
         return all([p_1[i] >= p_2[i] for i in range(len(p_1))])
 
+    def dual(self) -> 'NilpotentOrbit':
+        new_pt = deepcopy(self)
+        if new_pt.lieType == 'B':
+            new_pt.hollowBoxAlgorithm('C')
+        elif new_pt.lieType == 'C':
+            new_pt.hollowBoxAlgorithm('B')
+        transposed = new_pt.transpose()
+        transposed.collapse()
+
+        return NilpotentOrbit(entry=transposed.entry, 
+                              lieType=self.lieType, 
+                              veryEven=self.veryEven, 
+                              veryEvenType=self.veryEvenType)
+            
 
 if __name__ == '__main__':
     lbd1 = Weight([1.1, 2, 0.1, 1.5, 4, 2.5,-1, 7,-3, 6,-8, 5], 'D')
@@ -1540,6 +1584,8 @@ if __name__ == '__main__':
     wts.show()
     obt2 = HighestWeightModule(lbd7).nilpotentOrbit()
     obt2.show()
+    print(obt2)
+    print(str(obt2))
     
     lbd = Weight([1,7,4,2,5,6], 'B')
     L_lbd = HighestWeightModule(lbd)
@@ -1547,4 +1593,6 @@ if __name__ == '__main__':
     gkdim = L_lbd.GKdim()
     print(gkdim)
     
-    
+    pt = Partition([4,2,2,2,1], 'B')
+    # ptt = transpose(pt)
+    print(pt.transpose())
