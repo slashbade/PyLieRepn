@@ -1367,7 +1367,7 @@ class Partition:
             ds_odd = [0] + [i + 1 for i in bs_odd]
             return Symbol(ds_even, ds_odd, 'D')
         elif self.lieType == 'A':
-            return Symbol(p, [], 'A')
+            return Symbol(self.entry, [], 'A')
 
     def transpose(self) -> 'Partition':
         transposed = []
@@ -1401,7 +1401,10 @@ class Symbol:
         print('Bottom row', ls.bottomEntry)
 
     def __repr__(self) -> str:
-        return str([self.topEntry, self.bottomEntry])
+        if self.lieType == 'A':
+            return str(self.topEntry)
+        else:
+            return str([self.topEntry, self.bottomEntry])
 
     def makeSpecial(ls):
         """This function sorts the top and bottom row to make a special
@@ -1547,13 +1550,15 @@ class NilpotentOrbit(Partition):
         new_pt = deepcopy(self)
         if new_pt.lieType == 'B':
             new_pt.hollowBoxAlgorithm('C')
+            new_pt.lieType = 'C'
         elif new_pt.lieType == 'C':
             new_pt.hollowBoxAlgorithm('B')
+            new_pt.lieType = 'B'
         transposed = new_pt.transpose()
         transposed.collapse()
 
         return NilpotentOrbit(entry=transposed.entry, 
-                              lieType=self.lieType, 
+                              lieType=transposed.lieType, 
                               veryEven=self.veryEven, 
                               veryEvenType=self.veryEvenType)
             
