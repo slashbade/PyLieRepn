@@ -109,7 +109,11 @@ def a_value_integral(typ, rank, weight):
         # character = cell_repm['character']
         # character = cell_repm['special']
         orbit = find_orbit_from_character(typ, rank, cell_repm['special'])
-        orbit_dual = get_dual_orbit_exceptional(typ, rank, orbit)
+        try:
+            orbit_dual = get_dual_orbit_exceptional(typ, rank, orbit)
+        except ValueError as e:
+            print(e)
+            orbit_dual = 'N/A'
         return cell_repm['a'], cell_repm['special'], orbit, orbit_dual
 
 
@@ -125,6 +129,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
     Returns:
         int: the Gelfand-Kirillov dimension.
     """
+    is_integral_weight = is_integer_array(weight)
     simple_root_data0 = simple_root_data(typ, rank)
     weight0_ = (2 * weight @ simple_root_data0.T / np.sum(simple_root_data0**2, axis=1))
     dim_ambient = weight.shape[0]
@@ -186,7 +191,10 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         a_values.append(a_value)
         characters.append(character)
         orbits.append(orbit)
-        orbit_duals.append(orbit_dual)
+        if is_integral_weight:
+            orbit_duals.append('N/A')
+        else:
+            orbit_duals.append(orbit_dual)
     
     total_a_value = sum(a_values)
     num_postive_roots = num_positive_roots_data(typ, rank)

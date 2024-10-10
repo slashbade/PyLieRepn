@@ -14,6 +14,9 @@ def is_integer(x: float, tol: float = TOL) -> bool:
     """
     return np.abs(x - np.round(x)) < tol
 
+def is_integer_array(xl: NDArray, tol: float = TOL) -> bool:
+    return np.all(np.abs(xl - np.round(xl)) < tol)
+
 def is_zero(x: float, tol: float = TOL) -> bool:
     return np.abs(x) < tol
 
