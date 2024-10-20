@@ -79,6 +79,7 @@ def data_to_dict(data: str) -> dict:
         d.update({s[0]: s[1]})
     return d
 
+
 def get_dual_orbit_exceptional(typ: str, rank: int, orbit: str) -> str:
     if typ == 'E' and rank == 6:
         data = E6_data
@@ -88,6 +89,62 @@ def get_dual_orbit_exceptional(typ: str, rank: int, orbit: str) -> str:
         raise ValueError(f"Incorrect Lie type {typ}{rank}.")
     d = data_to_dict(data)
     return d.get(orbit, None)
+
+
+def get_bala_carter_label_from_dual(typ: str, orbit: list[int]):
+    if typ == 'A':
+        assert len(orbit) == 1
+        return f"A_{orbit[0]-1}"
+    elif typ == 'B':
+        if len(orbit) == 1:
+            assert (orbit[0]-1) % 2 == 0
+            return f"B_{(orbit[0]-1)//2}"
+        elif orbit == [5, 3, 1]:
+            return "B_4(a_2)"
+        elif len(orbit) == 2:
+            assert orbit[0] == orbit[1]
+            return f"A_{orbit[0]-1}"
+        else:
+            raise ValueError(f"Invalid orbit {orbit}.")
+    elif typ == 'C':
+        if len(orbit) == 1:
+            assert (orbit[0]) % 2 == 0
+            return f"C_{orbit[0]//2}"
+        elif len(orbit) == 2:
+            assert orbit[0] == orbit[1]
+            return rf"\tilde{{A}}_{orbit[0]-1}"
+        elif orbit == [2, 2, 2]:
+            return r"A_1+\tilde{A}_1"
+        else:
+            raise ValueError(f"Invalid orbit {orbit}.")
+    elif typ == 'D':
+        if orbit == [7, 5, 3, 1]:
+            return "D_8(a_5)"
+        elif orbit == [9, 3]:
+            return "D_6(a_1)"
+        elif orbit == [7, 5]:
+            return "D_6(a_2)"
+        elif orbit == [7, 3]:
+            return "D_5(a_1)"
+        elif orbit == [5, 3]:
+            return "D_4(a_1)"
+        elif orbit == [5, 1]:
+            return "A_3"
+        elif orbit == [5, 3, 3, 1]:
+            return "A_3+A_2"
+        elif orbit == [3, 1]:
+            return "2A_1"
+        elif len(orbit) == 2 and orbit[0] == orbit[1]:
+            return f"A_{orbit[0]-1}"
+        elif len(orbit) == 2 and orbit[1] == 1 and (orbit[0]+1) % 2 == 0:
+            return f"D_{(orbit[0]+1)//2}"
+        elif len(orbit) == 2 and (orbit[0]+orbit[1]) % 2 == 0 and orbit[1] % 2 == 1:
+            return f"D_{(orbit[0]+orbit[1])//2}(a_{(orbit[1]-1)//2})"
+        else:
+            raise ValueError(f"Invalid orbit {orbit}.")
+    else:
+        raise ValueError(f"Invalid Lie type {typ}.") 
+
 
 if __name__ == "__main__":
     print(get_dual_orbit_exceptional('E', 6, 'A_3+A_1'))
