@@ -199,7 +199,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
     total_a_value = sum(a_values)
     num_postive_roots = num_positive_roots_data(typ, rank)
     gk_dim = num_postive_roots - total_a_value
-    
+
     info = {
         "cartan_type": pretty_print_lietype(typ, rank),
         "simple_roots_weight": pretty_print_basis(simple_root_data0),
@@ -228,7 +228,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         "total_a_value": total_a_value,
         "GK_dimension": gk_dim
     }
-    return gk_dim, info
+    return str(gk_dim), info
     
     
     
