@@ -139,7 +139,8 @@ def find_orbit_from_character(typ, rank, char):
     elif typ == "F" and rank == 4:
         data = F4_data
     elif typ == "G" and rank == 2:
-        data == G2_data
+        data = G2_data
+    else:
         raise ValueError(f"Orbit data for {typ}_{rank} not found.")
     char_to_orbit = data_to_dict(data)
     return char_to_orbit.get(char, None)
