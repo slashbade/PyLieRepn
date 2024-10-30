@@ -139,10 +139,16 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
     # print(rt)
     cts, sps = get_cartan_type(rt)
     
+    # Find a sufficiently large ambiant space
+    dim_spaces = [simple_root_data0.shape[1]]
+    for ct in cts:
+        dim_spaces.append(simple_root_data(*ct).shape[1])
+    dim_ambient = max(dim_spaces)
+
     # Reorder simple roots to match the cananical order
     sps = [reorder_simple_roots(sp, *ct) for ct, sp in zip(cts, sps)]
     if sps:
-        sp_basis = np.concatenate(sps)
+        sp_basis = embed_basis(np.concatenate(sps), dim_ambient)
         cpl_basis = find_complement(sp_basis, np.eye(dim_ambient))
         all_basis = np.concatenate([sp_basis, cpl_basis])
         
@@ -173,7 +179,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> int:
         cananical_sp = simple_root_data(*ct)
         dim_sp = cananical_sp.shape[1]
         fundamental_weights = compute_fundamental_weights(sp)
-        transformed_fundamental_weights = isomap @ fundamental_weights.T
+        transformed_fundamental_weights = isomap @ embed_basis(fundamental_weights, dim_ambient).T
         weight_ = (2 * weight @ sp.T / np.sum(sp**2, axis=1))
         weight1 = weight_ @ fundamental_weights
         transformed_weight = weight_ @ transformed_fundamental_weights.T
@@ -265,7 +271,7 @@ if __name__ == "__main__":
             ([('E', 7), ('A', 1)], 3, 117)
         ), (
             ('E', 7, np.array([1, 3, 5, -7, -9, -11, -1/2, 1/2])), 
-            ([('D', 6), ('A', 1)], None, None)
+            ([('D', 6), ('A', 1)], 7, 56)
         ), (
             ('E', 8, np.array([1, 1, 1, 1, 1, 1, 1/2, 5/2])), 
             ([('E', 7), ('A', 1)], 7, 113)
@@ -278,7 +284,7 @@ if __name__ == "__main__":
         typ, rank, weight = test_case[0]
         gk_dim, info = GK_dimension(typ, rank, weight)
         if test_case[1][2] is not None:
-            assert gk_dim == test_case[1][2]
+            assert eval(gk_dim) == test_case[1][2], f"{gk_dim}"
         print(f"finish test case {weight}")
     print("All test cases passed.")
     test_case = test_cases[8]
