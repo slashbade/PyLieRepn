@@ -1,3 +1,70 @@
+import typing
+import re
+
+class Orbit:
+    def __init__(self):
+        self.orbits = {}
+
+    def add_orbit(self, lie_type, rank, parameter=None, multiplicity=1):
+        # Key uniquely identifies an orbit by its type, rank, and optional parameter
+        key = (lie_type, rank, parameter)
+        if key in self.orbits:
+            self.orbits[key] += multiplicity
+        else:
+            self.orbits[key] = multiplicity
+
+    def __add__(self, other):
+        if not isinstance(other, Orbit):
+            raise TypeError("Can only add NilpotentOrbit objects")
+        result = Orbit()
+        result.orbits = self.orbits.copy()
+        for key, mult in other.orbits.items():
+            result.orbits[key] = result.orbits.get(key, 0) + mult
+        return result
+
+    def __str__(self):
+        orbit_strs = []
+        for (lie_type, rank, parameter), multiplicity in self.orbits.items():
+            param_str = f"({parameter})" if parameter else ""
+            orbit_strs.append(f"{multiplicity}{lie_type}_{rank}{param_str}")
+        return " + ".join(orbit_strs)
+    
+    def dual(self):
+        return
+
+
+def parse_orbit_string(orbit_string) -> Orbit:
+    # Define the pattern for matching each orbit component
+    orbit_pattern = re.compile(
+        r"(?:(\d+)?([A-Z])_(\d+)(?:\((a_\d+)\))?)"
+    )
+    
+    # Initialize an empty Orbit object
+    result_orbit = Orbit()
+    
+    # Split by '+' to handle cases like "A_2+2A_1"
+    components = orbit_string.split('+')
+    
+    for component in components:
+        # Use regex to parse multiplicity, type, rank, and optional parameter
+        match = orbit_pattern.match(component.strip())
+        if match:
+            multiplicity = int(match.group(1)) if match.group(1) else 1
+            lie_type = match.group(2)
+            rank = int(match.group(3))
+            parameter = match.group(4) if match.group(4) else None
+            
+            # Add the parsed orbit to the result
+            result_orbit.add_orbit(lie_type, rank, parameter, multiplicity)
+        else:
+            raise ValueError(f"Invalid orbit component: {component}")
+    
+    return result_orbit
+
+
+def from_alvis_notation(alvis) -> Orbit:
+    pass
+
 E6_data = r"""
 $1_p$& $E_6$& $72$\\\hline
 $6_p$& $E_6(a_1)$& $70$\\\hline
@@ -113,7 +180,7 @@ $8_1$& $B_3$& $42$\\
 $8_3$& $C_3$& $42$\\\hline
 $12$& $F_4(a_3)$& $40$\\\hline
 $8_2$& $\tilde{A}_2$& $30$\\
-$8_4$& ${A}_2$& $30$\\\hline
+$8_4$& $A_2$& $30$\\\hline
 $9_4$& $A_1+\tilde{A}_1$& $28$\\\hline
 $4_5$& $\tilde{A}_1$& $22$\\\hline
 $1_4$& $1$& $0$\\\hline
