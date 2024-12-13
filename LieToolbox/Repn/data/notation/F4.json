@@ -1,0 +1,57 @@
+[
+    {
+        "alvis": "1_1",
+        "sommers": "F_4",
+        "dim": "48"
+    },
+    {
+        "alvis": "4_2",
+        "sommers": "F_4(a_1)",
+        "dim": "46"
+    },
+    {
+        "alvis": "9_1",
+        "sommers": "F_4(a_2)",
+        "dim": "44"
+    },
+    {
+        "alvis": "8_1",
+        "sommers": "B_3",
+        "dim": "42"
+    },
+    {
+        "alvis": "8_3",
+        "sommers": "C_3",
+        "dim": "42"
+    },
+    {
+        "alvis": "12",
+        "sommers": "F_4(a_3)",
+        "dim": "40"
+    },
+    {
+        "alvis": "8_2",
+        "sommers": "tilde{A}_2",
+        "dim": "30"
+    },
+    {
+        "alvis": "8_4",
+        "sommers": "A_2",
+        "dim": "30"
+    },
+    {
+        "alvis": "9_4",
+        "sommers": "A_1+tilde{A}_1",
+        "dim": "28"
+    },
+    {
+        "alvis": "4_5",
+        "sommers": "tilde{A}_1",
+        "dim": "22"
+    },
+    {
+        "alvis": "1_4",
+        "sommers": "1",
+        "dim": "0"
+    }
+]

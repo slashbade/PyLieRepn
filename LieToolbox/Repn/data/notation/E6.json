@@ -1,0 +1,87 @@
+[
+    {
+        "alvis": "1_p",
+        "sommers": "E_6",
+        "dim": "72"
+    },
+    {
+        "alvis": "6_p",
+        "sommers": "E_6(a_1)",
+        "dim": "70"
+    },
+    {
+        "alvis": "20_p",
+        "sommers": "D_5",
+        "dim": "68"
+    },
+    {
+        "alvis": "30_p",
+        "sommers": "E_6(a_3)",
+        "dim": "66"
+    },
+    {
+        "alvis": "64_p",
+        "sommers": "D_5(a_1)",
+        "dim": "64 "
+    },
+    {
+        "alvis": "60_p",
+        "sommers": "A_4+A_1",
+        "dim": "62"
+    },
+    {
+        "alvis": "81_p",
+        "sommers": "A_4",
+        "dim": "60"
+    },
+    {
+        "alvis": "24_p",
+        "sommers": "D_4",
+        "dim": "60"
+    },
+    {
+        "alvis": "80_s",
+        "sommers": "D_4(a_1)",
+        "dim": "58"
+    },
+    {
+        "alvis": "81_p'",
+        "sommers": "A_3",
+        "dim": "52"
+    },
+    {
+        "alvis": "60_p'",
+        "sommers": "A_2+2A_1",
+        "dim": "50"
+    },
+    {
+        "alvis": "24_p'",
+        "sommers": "2A_2",
+        "dim": "48"
+    },
+    {
+        "alvis": "64_p'",
+        "sommers": "A_2+A_1",
+        "dim": "46"
+    },
+    {
+        "alvis": "30_p'",
+        "sommers": "A_2",
+        "dim": "42"
+    },
+    {
+        "alvis": "20_p'",
+        "sommers": "2A_1",
+        "dim": "32"
+    },
+    {
+        "alvis": "6_p'",
+        "sommers": "A_1",
+        "dim": "22"
+    },
+    {
+        "alvis": "1_p'",
+        "sommers": "1",
+        "dim": "0"
+    }
+]

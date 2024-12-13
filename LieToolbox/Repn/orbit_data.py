@@ -4,6 +4,7 @@ import re
 class Orbit:
     def __init__(self):
         self.orbits = {}
+        self.type = 'I'
 
     def add_orbit(self, lie_type, rank, parameter=None, multiplicity=1):
         # Key uniquely identifies an orbit by its type, rank, and optional parameter
