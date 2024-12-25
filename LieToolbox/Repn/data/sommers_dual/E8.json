@@ -1,0 +1,302 @@
+[
+    {
+        "orbit": "A_2",
+        "dual": "E_8(a_3)"
+    },
+    {
+        "orbit": "(4A_1)\"",
+        "dual": "E_7"
+    },
+    {
+        "orbit": "A_2+A_1",
+        "dual": "E_8(a_4)"
+    },
+    {
+        "orbit": "5A_1",
+        "dual": "E_8(b_4)"
+    },
+    {
+        "orbit": "2A_2",
+        "dual": "E_8(a_5)"
+    },
+    {
+        "orbit": "A_2+4A_1",
+        "dual": "D_7"
+    },
+    {
+        "orbit": "D_4(a_1)",
+        "dual": "E_8(b_5)"
+    },
+    {
+        "orbit": "3A_2",
+        "dual": "E_6+A_1"
+    },
+    {
+        "orbit": "(A_3+2A_1)\"",
+        "dual": "E_7(a_2)"
+    },
+    {
+        "orbit": "D_4(a_1)+A_1",
+        "dual": "E_8(a_6)"
+    },
+    {
+        "orbit": "3A_2+A_1",
+        "dual": "E_8(b_6)"
+    },
+    {
+        "orbit": "A_3+3A_1",
+        "dual": "D_7(a_1)"
+    },
+    {
+        "orbit": "A_3+A_2",
+        "dual": "D_7(a_1)"
+    },
+    {
+        "orbit": "D_4(a_1)+2A_1",
+        "dual": "D_7(a_1)"
+    },
+    {
+        "orbit": "D_4(a_1)+A_2",
+        "dual": "E_8(b_6)"
+    },
+    {
+        "orbit": "A_3+A_2+2A_1",
+        "dual": "A_7"
+    },
+    {
+        "orbit": "A_4",
+        "dual": "E_7(a_3)"
+    },
+    {
+        "orbit": "(2A_3)\"",
+        "dual": "D_6"
+    },
+    {
+        "orbit": "A_4+A_1",
+        "dual": "E_6(a_1)+A_1"
+    },
+    {
+        "orbit": "A_1+2A_3",
+        "dual": "D_5+A_2"
+    },
+    {
+        "orbit": "A_4+2A_1",
+        "dual": "D_7(a_2)"
+    },
+    {
+        "orbit": "D_4(a_1)+A_3",
+        "dual": "D_5+A_2"
+    },
+    {
+        "orbit": "D_5(a_1)",
+        "dual": "E_6(a_1)"
+    },
+    {
+        "orbit": "D_4+2A_1",
+        "dual": "E_7(a_4)"
+    },
+    {
+        "orbit": "D_4+A_2",
+        "dual": "A_6"
+    },
+    {
+        "orbit": "D_5(a_1)+2A_1",
+        "dual": "A_6"
+    },
+    {
+        "orbit": "E_6(a_3)",
+        "dual": "D_6(a_1)"
+    },
+    {
+        "orbit": "(A_5+A_1)\"",
+        "dual": "D_5+A_1"
+    },
+    {
+        "orbit": "D_6(a_2)",
+        "dual": "E_8(a_7)"
+    },
+    {
+        "orbit": "D_4+A_3",
+        "dual": "D_6(a_2)"
+    },
+    {
+        "orbit": "E_6(a_3)+A_1",
+        "dual": "E_8(a_7)"
+    },
+    {
+        "orbit": "A_5+2A_1",
+        "dual": "E_7(a_5)"
+    },
+    {
+        "orbit": "E_7(a_5)",
+        "dual": "E_8(a_7)"
+    },
+    {
+        "orbit": "A_5+A_2",
+        "dual": "E_6(a_3)+A_1"
+    },
+    {
+        "orbit": "A_1+D_6(a_2)",
+        "dual": "E_7(a_5)"
+    },
+    {
+        "orbit": "E_8(a_7)",
+        "dual": "E_8(a_7)"
+    },
+    {
+        "orbit": "A_5+A_2+A_1",
+        "dual": "A_5+A_1"
+    },
+    {
+        "orbit": "2A_4",
+        "dual": "A_4+A_3"
+    },
+    {
+        "orbit": "D_5(a_1)+A_3",
+        "dual": "D_5(a_1)+A_2"
+    },
+    {
+        "orbit": "D_8(a_5)",
+        "dual": "D_6(a_2)"
+    },
+    {
+        "orbit": "E_7(a_5)+A_1",
+        "dual": "E_7(a_5)"
+    },
+    {
+        "orbit": "E_6(a_3)+A_2",
+        "dual": "E_6(a_3)+A_1"
+    },
+    {
+        "orbit": "D_6(a_1)",
+        "dual": "E_6(a_3)"
+    },
+    {
+        "orbit": "D_5+2A_1",
+        "dual": "A_5"
+    },
+    {
+        "orbit": "E_7(a_4)",
+        "dual": "D_5(a_1)+A_1"
+    },
+    {
+        "orbit": "A_1+D_6(a_1)",
+        "dual": "D_5(a_1)+A_1"
+    },
+    {
+        "orbit": "D_5+A_2",
+        "dual": "A_4+A_2"
+    },
+    {
+        "orbit": "E_7(a_4)+A_1",
+        "dual": "A_4+A_2"
+    },
+    {
+        "orbit": "D_7(a_2)",
+        "dual": "A_4+2A_1"
+    },
+    {
+        "orbit": "D_5+A_3",
+        "dual": "2A_3"
+    },
+    {
+        "orbit": "E_6(a_1)",
+        "dual": "D_5(a_1)"
+    },
+    {
+        "orbit": "(A_7)\"",
+        "dual": "D_4+A_1"
+    },
+    {
+        "orbit": "E_6(a_1)+A_1",
+        "dual": "A_4+A_1"
+    },
+    {
+        "orbit": "A_7+A_1",
+        "dual": "A_3+A_2+A_1"
+    },
+    {
+        "orbit": "E_8(b_6)",
+        "dual": "D_4(a_1)+A_2"
+    },
+    {
+        "orbit": "E_6(a_1)+A_2",
+        "dual": "D_4(a_1)+A_2"
+    },
+    {
+        "orbit": "D_8(a_3)",
+        "dual": "A_3+A_2+A_1"
+    },
+    {
+        "orbit": "E_7(a_3)",
+        "dual": "A_4"
+    },
+    {
+        "orbit": "A_1+D_6",
+        "dual": "A_3+A_2"
+    },
+    {
+        "orbit": "D_7(a_1)",
+        "dual": "A_3+A_2"
+    },
+    {
+        "orbit": "E_7(a_3)+A_1",
+        "dual": "A_3+A_2"
+    },
+    {
+        "orbit": "E_8(a_6)",
+        "dual": "D_4(a_1)+A_1"
+    },
+    {
+        "orbit": "A_8",
+        "dual": "2A_2+2A_1"
+    },
+    {
+        "orbit": "D_8(a_2)",
+        "dual": "A_3+2A_1"
+    },
+    {
+        "orbit": "E_8(b_5)",
+        "dual": "D_4(a_1)"
+    },
+    {
+        "orbit": "E_6+A_2",
+        "dual": "2A_2+A_1"
+    },
+    {
+        "orbit": "E_7(a_2)+A_1",
+        "dual": "A_3+A_1"
+    },
+    {
+        "orbit": "E_8(a_5)",
+        "dual": "2A_2"
+    },
+    {
+        "orbit": "D_8(a_1)",
+        "dual": "A_2+3A_1"
+    },
+    {
+        "orbit": "E_8(b_4)",
+        "dual": "A_2+2A_1"
+    },
+    {
+        "orbit": "E_7(a_1)+A_1",
+        "dual": "A_2+2A_1"
+    },
+    {
+        "orbit": "E_8(a_4)",
+        "dual": "A_2+A_1"
+    },
+    {
+        "orbit": "D_8",
+        "dual": "4A_1"
+    },
+    {
+        "orbit": "E_8(a_3)",
+        "dual": "A_2"
+    },
+    {
+        "orbit": "E_7+A_1",
+        "dual": "3A_1"
+    }
+]

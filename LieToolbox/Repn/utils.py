@@ -14,7 +14,7 @@ def is_integer(x: float, tol: float = TOL) -> bool:
     """
     return np.abs(x - np.round(x)) < tol
 
-def is_integer_array(xl: NDArray, tol: float = TOL) -> bool:
+def is_integer_array(xl: NDArray, tol: float = TOL) -> np.bool_:
     return np.all(np.abs(xl - np.round(xl)) < tol)
 
 def is_zero(x: float, tol: float = TOL) -> bool:
@@ -151,7 +151,7 @@ def pretty_print_basis(basis: NDArray) -> str:
         return '\emptyset'
     return '\{' + ', '.join([pretty_print_array(basis[i]) for i in range(basis.shape[0])]) + '\}'
 
-def pretty_print_basises(basis: NDArray) -> str:
+def pretty_print_basises(basis: list[NDArray]) -> str:
     return ' \\times '.join([pretty_print_basis(b) for b in basis])
 
 def pretty_print_weight(weight: NDArray) -> str:

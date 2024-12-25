@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 E6_data = r"""
 0 E_6
 A_1 E_6(a_1)
@@ -79,6 +82,18 @@ def data_to_dict(data: str) -> dict:
         d.update({s[0]: s[1]})
     return d
 
+def save_parsed_data(data: str, name: str, root: Path = Path("LieToolbox/Repn/data")) -> None:
+    import json
+    d = []
+    for s in data.split("\n"):
+        if not s:
+            continue
+        s = s.replace("$", "").replace("\\", "").replace("hline", "").split(" ")
+        d.append({"orbit": s[0], "dual": s[1]})
+    data_path = root / "ls_dual"
+    with open(data_path / f"{name}.json", "w") as f:
+        json.dump(d, f, indent=4)
+    
 
 def get_dual_orbit_exceptional(typ: str, rank: int, orbit: str) -> str:
     if typ == 'E' and rank == 6:
@@ -147,4 +162,6 @@ def get_bala_carter_label_from_dual(typ: str, orbit: list[int]):
 
 
 if __name__ == "__main__":
-    print(get_dual_orbit_exceptional('E', 6, 'A_3+A_1'))
+    # print(get_dual_orbit_exceptional('E', 6, 'A_3+A_1'))
+    save_parsed_data(E6_data, "E6")
+    save_parsed_data(E7_data, "E7")

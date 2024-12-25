@@ -329,6 +329,9 @@ E8_sommers_dual_data = r"""
 """
 
 
+
+
+
 root = Path(__file__).parent.parent / "data"
 
 def notation_data_to_list(data: str, name: str, root: Path) -> None:
@@ -344,9 +347,29 @@ def notation_data_to_list(data: str, name: str, root: Path) -> None:
         json.dump(l, f, indent=4)
 
 def sommers_dual_data_to_list(data: str, name: str, root: Path) -> None:
-    for wtb in data.split("\hline"):
-        if not wtb:
-            continue
-        obts = wtb.strip().split("\n").split("\\")
+    # for wtb in data.split("\hline"):
+    #     if not wtb:
+    #         continue
+    #     obts = wtb.strip().split("\\")
+    l = []
+    for s in data.strip().replace("\hline", "").split("\\"):
+        s = s.replace("{", "").replace("}", "").replace("$", "").replace("*", "")
+        s = s.split("&")
+        s = [si.strip().replace(' ', '').replace("''", "\"") for si in s]
+        if len(s) == 5:
+            print(s)
+            l.append({"orbit": s[1], "dual": s[4]})
+        
+    data_path = root / "sommers_dual"
+    data_path.mkdir(exist_ok=True)
+    with open(data_path / f"{name}.json", "w") as f:
+        json.dump(l, f, indent=4)
 
-notation_data_to_list(G2_data, "G2", root)
+
+
+# notation_data_to_list(G2_data, "G2", root)
+sommers_dual_data_to_list(G2_sommers_dual_data, "G2", root)
+sommers_dual_data_to_list(F4_sommers_dual_data, "F4", root)
+sommers_dual_data_to_list(E6_sommers_dual_data, "E6", root)
+sommers_dual_data_to_list(E7_sommers_dual_data, "E7", root)
+sommers_dual_data_to_list(E8_sommers_dual_data, "E8", root)

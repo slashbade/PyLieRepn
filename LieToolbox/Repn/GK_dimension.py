@@ -13,7 +13,7 @@ from LieToolbox.Repn.orbit_dual_data import get_dual_orbit_exceptional
 from LieToolbox.Repn.PyCox import chv1r6180 as pycox
 from LieToolbox.Repn.weight import HighestWeightModule, Weight
 
-def antidominant(typ: str, rank: int, weight_: NDArray, weyl: list = []) -> NDArray:
+def antidominant(typ: str, rank: int, weight_: NDArray, weyl: list = []) -> tuple[list, NDArray]:
     """A fast recursive algorithm to compute the antidominant weight of a given weight.
 
     Args:
@@ -62,7 +62,7 @@ def weight_partition(typ: str, rank: int, weight: NDArray):
     return weights
 
 
-def get_dual_orbit(typ: str, rank: int, orbit: str = None, orbit_info: dict = None) -> str:
+def get_dual_orbit(typ: str, rank: int, orbit: str, orbit_info: dict):
     match typ:
         case 'A':
             pass
@@ -117,7 +117,7 @@ def a_value_integral(typ, rank, weight):
         return cell_repm['a'], cell_repm['special'], orbit, orbit_dual
 
 
-def GK_dimension(typ, rank, weight: NDArray) -> int:
+def GK_dimension(typ, rank, weight: NDArray) -> tuple[str, dict]:
     """Compute the dimension of the Gelfand-Kirillov dimension of a weight.
 
     Args:

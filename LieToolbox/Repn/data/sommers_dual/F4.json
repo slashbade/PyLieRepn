@@ -1,0 +1,54 @@
+[
+    {
+        "orbit": "2A_1",
+        "dual": "F_4(a_2)"
+    },
+    {
+        "orbit": "A_2",
+        "dual": "B_3"
+    },
+    {
+        "orbit": "B_2",
+        "dual": "F_4(a_3)"
+    },
+    {
+        "orbit": "A_3",
+        "dual": "B_2"
+    },
+    {
+        "orbit": "C_3(a_1)",
+        "dual": "F_4(a_3)"
+    },
+    {
+        "orbit": "A_1+B_2",
+        "dual": "C_3(a_1)"
+    },
+    {
+        "orbit": "F_4(a_3)",
+        "dual": "F_4(a_3)"
+    },
+    {
+        "orbit": "A_1+C_3(a_1)",
+        "dual": "C_3(a_1)"
+    },
+    {
+        "orbit": "B_4(a_2)",
+        "dual": "B_2"
+    },
+    {
+        "orbit": "F_4(a_2)",
+        "dual": "A_1+"
+    },
+    {
+        "orbit": "A_1+C_3",
+        "dual": "A_1+"
+    },
+    {
+        "orbit": "F_4(a_1)",
+        "dual": ""
+    },
+    {
+        "orbit": "B_4",
+        "dual": "A_1"
+    }
+]
