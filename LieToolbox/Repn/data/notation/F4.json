@@ -1,57 +1,46 @@
 [
     {
         "alvis": "1_1",
-        "sommers": "F_4",
-        "dim": "48"
+        "sommers": "F_4"
     },
     {
         "alvis": "4_2",
-        "sommers": "F_4(a_1)",
-        "dim": "46"
+        "sommers": "F_4(a_1)"
     },
     {
         "alvis": "9_1",
-        "sommers": "F_4(a_2)",
-        "dim": "44"
+        "sommers": "F_4(a_2)"
     },
     {
         "alvis": "8_1",
-        "sommers": "B_3",
-        "dim": "42"
+        "sommers": "B_3"
     },
     {
         "alvis": "8_3",
-        "sommers": "C_3",
-        "dim": "42"
+        "sommers": "C_3"
     },
     {
         "alvis": "12",
-        "sommers": "F_4(a_3)",
-        "dim": "40"
+        "sommers": "F_4(a_3)"
     },
     {
         "alvis": "8_2",
-        "sommers": "tilde{A}_2",
-        "dim": "30"
+        "sommers": "\\tilde{A}_2"
     },
     {
         "alvis": "8_4",
-        "sommers": "A_2",
-        "dim": "30"
+        "sommers": "A_2"
     },
     {
         "alvis": "9_4",
-        "sommers": "A_1+tilde{A}_1",
-        "dim": "28"
+        "sommers": "A_1 + \\tilde{A}_1"
     },
     {
         "alvis": "4_5",
-        "sommers": "tilde{A}_1",
-        "dim": "22"
+        "sommers": "\\tilde{A}_1"
     },
     {
         "alvis": "1_4",
-        "sommers": "1",
-        "dim": "0"
+        "sommers": "1_0"
     }
 ]

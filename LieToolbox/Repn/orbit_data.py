@@ -1,12 +1,16 @@
 from typing import Literal, Optional
 import re
 
-OrbitType = Optional[Literal["I", "II"]]
+
+def get_orbit_dual_string(orbit: str):
+    pass
+
+OrbitType = Optional[Literal["\'", "\""]]
 
 class Orbit:
     def __init__(self):
         self.orbits = {}
-        self.type: OrbitType = None
+        self.mark: OrbitType = None
 
     def add_orbit(self, lie_type, rank, parameter=None, multiplicity=1):
         # Key uniquely identifies an orbit by its type, rank, and optional parameter
@@ -26,18 +30,33 @@ class Orbit:
         return result
 
     def __str__(self):
-        orbit_strs = []
-        for (lie_type, rank, parameter), multiplicity in self.orbits.items():
-            param_str = f"({parameter})" if parameter else ""
-            orbit_strs.append(f"{multiplicity}{lie_type}_{rank}{param_str}")
-        return " + ".join(orbit_strs)
+        sorted_keys = sorted(
+            self.orbits.keys(),
+            key=lambda x: (x[0], x[1], x[2] or "")  # Parameter `None` is treated as an empty string
+        )
+        # Build the string representation
+        components = []
+        for lie_type, rank, parameter in sorted_keys:
+            multiplicity = self.orbits[(lie_type, rank, parameter)]
+            part = f"{multiplicity if multiplicity > 1 else ''}{lie_type}_{rank}"
+            if parameter:
+                part += f"({parameter})"
+            components.append(part)
+        inner_orbit = " + ".join(components)
+        if self.mark:
+            return f"({inner_orbit}){self.mark}"
+        else:
+            return inner_orbit
+
     
     def dual(self):
         return
 
 def parse_orbit_singleton(orbit_string):
+    if orbit_string == "1":
+        return ("1", 0, None), 1
     orbit_pattern = re.compile(
-        r"(\d+)?([A-Z])_(\d+)(?:\((a_\d+)\))?"
+        r"(\d+)?(\\tilde{[A-Z]}|[A-Z])_(\d+)(?:\((a_\d+)\))?"
     )
     match = orbit_pattern.match(orbit_string)
     if match:
@@ -49,37 +68,42 @@ def parse_orbit_singleton(orbit_string):
         raise ValueError(f"Invalid orbit string: {orbit_string}")
     return (lie_type, rank, parameter), multiplicity
 
-def parse_orbit_string(orbit_string):
-    import re
-    
-    # Updated regex to capture parentheses and optional type markers
+def parse_orbit_string(orbit_string) -> Orbit:
     mark_pattern = re.compile(
         r"^\((.*?)\)(['\"])?$"
     )
-    
     
     # Initialize an empty Orbit object
     result_orbit = Orbit()
     
     # Check if the entire string is wrapped in parentheses with a type marker
     match = mark_pattern.match(orbit_string.strip())
+    
     if match:
         orbit_string = match.group(1)  # Content inside the parentheses
-        marker = match.group(2)  # Type marker: ' or "
-        print(f"Type-marked orbit: {orbit_string}, Type: {marker}")  # Debug
-    
+        mark = match.group(2)  # Type marker: ' or "
+        # print(f"Type-marked orbit: {orbit_string}, Type: {mark}")  # Debug
+        if mark in ["\'", "\""]:
+            result_orbit.mark = mark
+        else:
+            raise ValueError(f"Invalid type marker: {mark}")
+    else:
+        orbit_string = orbit_string.strip()
+        mark = None
     components = orbit_string.split('+')
     for component in components:
         ((lie_type, rank, parameter), multiplicity) = parse_orbit_singleton(component.strip())
         # print(component)
-        result_orbit.add_orbit(lie_type, rank, parameter, multiplicity)
-    
+        result_orbit.add_orbit(lie_type, rank, parameter, multiplicity)    
     return result_orbit
     
 
-
-def from_alvis_notation(alvis) -> None:
+def from_alvis_notation(alvis: str) -> None:
     pass
+
+def from_partition_notation(partition: list[int]) -> None:
+    pass
+
 
 E6_data = r"""
 $1_p$& $E_6$& $72$\\\hline
@@ -241,4 +265,4 @@ if __name__ == "__main__":
     typ, rank, char = 'E', 8, "1400_x'"
     orb = find_orbit_from_character(typ, rank, char)
     print(orb)
-    print(parse_orbit_string("(D_4+A_1)\"").orbits)
+    print(parse_orbit_string("\\tilde{A}_1+D_4"))

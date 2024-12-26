@@ -1,87 +1,70 @@
 [
     {
         "alvis": "1_p",
-        "sommers": "E_6",
-        "dim": "72"
+        "sommers": "E_6"
     },
     {
         "alvis": "6_p",
-        "sommers": "E_6(a_1)",
-        "dim": "70"
+        "sommers": "E_6(a_1)"
     },
     {
         "alvis": "20_p",
-        "sommers": "D_5",
-        "dim": "68"
+        "sommers": "D_5"
     },
     {
         "alvis": "30_p",
-        "sommers": "E_6(a_3)",
-        "dim": "66"
+        "sommers": "E_6(a_3)"
     },
     {
         "alvis": "64_p",
-        "sommers": "D_5(a_1)",
-        "dim": "64 "
+        "sommers": "D_5(a_1)"
     },
     {
         "alvis": "60_p",
-        "sommers": "A_4+A_1",
-        "dim": "62"
+        "sommers": "A_1 + A_4"
     },
     {
         "alvis": "81_p",
-        "sommers": "A_4",
-        "dim": "60"
+        "sommers": "A_4"
     },
     {
         "alvis": "24_p",
-        "sommers": "D_4",
-        "dim": "60"
+        "sommers": "D_4"
     },
     {
         "alvis": "80_s",
-        "sommers": "D_4(a_1)",
-        "dim": "58"
+        "sommers": "D_4(a_1)"
     },
     {
         "alvis": "81_p'",
-        "sommers": "A_3",
-        "dim": "52"
+        "sommers": "A_3"
     },
     {
         "alvis": "60_p'",
-        "sommers": "A_2+2A_1",
-        "dim": "50"
+        "sommers": "2A_1 + A_2"
     },
     {
         "alvis": "24_p'",
-        "sommers": "2A_2",
-        "dim": "48"
+        "sommers": "2A_2"
     },
     {
         "alvis": "64_p'",
-        "sommers": "A_2+A_1",
-        "dim": "46"
+        "sommers": "A_1 + A_2"
     },
     {
         "alvis": "30_p'",
-        "sommers": "A_2",
-        "dim": "42"
+        "sommers": "A_2"
     },
     {
         "alvis": "20_p'",
-        "sommers": "2A_1",
-        "dim": "32"
+        "sommers": "2A_1"
     },
     {
         "alvis": "6_p'",
-        "sommers": "A_1",
-        "dim": "22"
+        "sommers": "A_1"
     },
     {
         "alvis": "1_p'",
-        "sommers": "1",
-        "dim": "0"
+        "sommers": "1_0"
     }
 ]

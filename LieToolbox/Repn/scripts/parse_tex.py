@@ -1,6 +1,9 @@
 import json
 from pathlib import Path
-
+import re
+import sys
+sys.path.append('.')
+from LieToolbox.Repn.orbit_data import parse_orbit_string
 
 E6_data = r"""
 $1_p$& $E_6$& $72$\\\hline
@@ -339,26 +342,29 @@ def notation_data_to_list(data: str, name: str, root: Path) -> None:
     for s in data.split("\n"):
         if not s:
             continue
-        s = s.replace("$", "").replace("\\", "").replace("hline", "").split("& ")
-        l.append({"alvis": s[0], "sommers": s[1], "dim": s[2]})
+        s = s.replace("$", "").replace("\\\\", "").replace("hline", "").split("& ")
+        sommers = parse_orbit_string(s[1]).__str__()
+        l.append({"alvis": s[0], "sommers": sommers})
     data_path = root / "notation"
     data_path.mkdir(exist_ok=True)
     with open(data_path / f"{name}.json", "w") as f:
         json.dump(l, f, indent=4)
 
 def sommers_dual_data_to_list(data: str, name: str, root: Path) -> None:
-    # for wtb in data.split("\hline"):
-    #     if not wtb:
-    #         continue
-    #     obts = wtb.strip().split("\\")
     l = []
-    for s in data.strip().replace("\hline", "").split("\\"):
+    for s in data.strip().replace("\\hline", "").split("\\\\"):
         s = s.replace("{", "").replace("}", "").replace("$", "").replace("*", "")
+        # Handling tilde things
+        s = s.replace("Tilde", "tilde")
+        s = re.sub(r"\\tilde([A-Z])_(\d+)", r"\\tilde{\1}_\2", s)
         s = s.split("&")
         s = [si.strip().replace(' ', '').replace("''", "\"") for si in s]
+        
         if len(s) == 5:
             print(s)
-            l.append({"orbit": s[1], "dual": s[4]})
+            orbit = parse_orbit_string(s[1]).__str__()
+            dual = parse_orbit_string(s[4]).__str__()
+            l.append({"orbit": orbit, "dual": dual})
         
     data_path = root / "sommers_dual"
     data_path.mkdir(exist_ok=True)
@@ -367,7 +373,13 @@ def sommers_dual_data_to_list(data: str, name: str, root: Path) -> None:
 
 
 
-# notation_data_to_list(G2_data, "G2", root)
+notation_data_to_list(G2_data, "G2", root)
+notation_data_to_list(F4_data, "F4", root)
+notation_data_to_list(E6_data, "E6", root)
+notation_data_to_list(E7_data, "E7", root)
+notation_data_to_list(E8_data, "E8", root)
+
+
 sommers_dual_data_to_list(G2_sommers_dual_data, "G2", root)
 sommers_dual_data_to_list(F4_sommers_dual_data, "F4", root)
 sommers_dual_data_to_list(E6_sommers_dual_data, "E6", root)

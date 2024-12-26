@@ -192,3 +192,4 @@ def pretty_print_character(character: str) -> str:
     def parse_ch(c):
         return c.replace('phi', '\\phi')
     return parse_ch(character)
+

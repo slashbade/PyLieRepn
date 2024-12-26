@@ -1,177 +1,142 @@
 [
     {
         "alvis": "1_a",
-        "sommers": "E_7",
-        "dim": "126"
+        "sommers": "E_7"
     },
     {
         "alvis": "7_a'",
-        "sommers": "E_7(a_1)",
-        "dim": "124"
+        "sommers": "E_7(a_1)"
     },
     {
         "alvis": "27_a",
-        "sommers": "E_7(a_2)",
-        "dim": "122"
+        "sommers": "E_7(a_2)"
     },
     {
         "alvis": "21_b'",
-        "sommers": "E_6",
-        "dim": "120"
+        "sommers": "E_6"
     },
     {
         "alvis": "56_a'",
-        "sommers": "E_7(a_3)",
-        "dim": "120"
+        "sommers": "E_7(a_3)"
     },
     {
         "alvis": "120_a",
-        "sommers": "E_6",
-        "dim": "118"
+        "sommers": "E_6"
     },
     {
         "alvis": "189_b'",
-        "sommers": "E_7(a_4)",
-        "dim": "116"
+        "sommers": "E_7(a_4)"
     },
     {
         "alvis": "168_a",
-        "sommers": "D_5+A_1",
-        "dim": "114"
+        "sommers": "D_5+A_1"
     },
     {
         "alvis": "105_b",
-        "sommers": "A_6",
-        "dim": "114"
+        "sommers": "A_6"
     },
     {
         "alvis": "210_a",
-        "sommers": "D_6(a_1)",
-        "dim": "114"
+        "sommers": "D_6(a_1)"
     },
     {
         "alvis": "189_c'",
-        "sommers": "D_5",
-        "dim": "112"
+        "sommers": "D_5"
     },
     {
         "alvis": "315_a'",
-        "sommers": "E_7(a_5)",
-        "dim": "112"
+        "sommers": "E_7(a_5)"
     },
     {
         "alvis": "405_a",
-        "sommers": "E_6(a_3)",
-        "dim": "110"
+        "sommers": "E_6(a_3)"
     },
     {
         "alvis": "378_a'",
-        "sommers": "D_5(a_1)+A_1",
-        "dim": "108"
+        "sommers": "D_5(a_1)+A_1"
     },
     {
         "alvis": "420_a",
-        "sommers": "D_5(a_1)",
-        "dim": "106"
+        "sommers": "D_5(a_1)"
     },
     {
         "alvis": "210_b",
-        "sommers": "A_4+A_2",
-        "dim": "106"
+        "sommers": "A_4+A_2"
     },
     {
         "alvis": "512_a'",
-        "sommers": "A_4+A_1",
-        "dim": "104"
+        "sommers": "A_4+A_1"
     },
     {
         "alvis": "105_c",
-        "sommers": "(A_5)''",
-        "dim": "102"
+        "sommers": "(A_5)''"
     },
     {
         "alvis": "210_b'",
-        "sommers": "A_3+A_2+A_1",
-        "dim": "100"
+        "sommers": "A_3+A_2+A_1"
     },
     {
         "alvis": "420_a'",
-        "sommers": "A_4",
-        "dim": "100"
+        "sommers": "A_4"
     },
     {
         "alvis": "378_a",
-        "sommers": "A_3+A_2",
-        "dim": "98"
+        "sommers": "A_3+A_2"
     },
     {
         "alvis": "405_a'",
-        "sommers": "D_4(a_1)+A_1",
-        "dim": "96"
+        "sommers": "D_4(a_1)+A_1"
     },
     {
         "alvis": "105_c'",
-        "sommers": "D_4",
-        "dim": "96"
+        "sommers": "D_4"
     },
     {
         "alvis": "315_a",
-        "sommers": "D_4(a_1)",
-        "dim": "94"
+        "sommers": "D_4(a_1)"
     },
     {
         "alvis": "189_c",
-        "sommers": "(A_3+A_1)''",
-        "dim": "86"
+        "sommers": "(A_3+A_1)''"
     },
     {
         "alvis": "168_a'",
-        "sommers": "2A_2",
-        "dim": "84"
+        "sommers": "2A_2"
     },
     {
         "alvis": "210_a'",
-        "sommers": "A_3",
-        "dim": "84"
+        "sommers": "A_3"
     },
     {
         "alvis": "105_b'",
-        "sommers": "A_3+3A_1",
-        "dim": "84"
+        "sommers": "A_3+3A_1"
     },
     {
         "alvis": "189_b",
-        "sommers": "A_2+2A_1",
-        "dim": "82"
+        "sommers": "A_2+2A_1"
     },
     {
         "alvis": "120_a'",
-        "sommers": "A_2+A_1",
-        "dim": "76"
+        "sommers": "A_2+A_1"
     },
     {
         "alvis": "56_a",
-        "sommers": "A_2",
-        "dim": "66"
+        "sommers": "A_2"
     },
     {
         "alvis": "21_b",
-        "sommers": "(3A_1)''",
-        "dim": "54"
+        "sommers": "(3A_1)''"
     },
     {
         "alvis": "21_a'",
-        "sommers": "2A_1",
-        "dim": "52"
+        "sommers": "2A_1"
     },
     {
         "alvis": "7_a",
-        "sommers": "A_1",
-        "dim": "34"
+        "sommers": "A_1"
     },
     {
         "alvis": "1_a'",
-        "sommers": "1",
-        "dim": "0"
+        "sommers": "1"
     }
 ]

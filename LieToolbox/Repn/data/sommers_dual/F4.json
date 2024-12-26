@@ -1,10 +1,18 @@
 [
     {
+        "orbit": "\\tildeA_1",
+        "dual": "F_4(a_1)"
+    },
+    {
         "orbit": "2A_1",
         "dual": "F_4(a_2)"
     },
     {
         "orbit": "A_2",
+        "dual": "B_3"
+    },
+    {
+        "orbit": "2A_1+\\tilde{A}_1",
         "dual": "B_3"
     },
     {
@@ -32,20 +40,28 @@
         "dual": "C_3(a_1)"
     },
     {
+        "orbit": "A_2+\\tilde{A}_2",
+        "dual": "A_1+\\tilde{A}_2"
+    },
+    {
         "orbit": "B_4(a_2)",
         "dual": "B_2"
     },
     {
+        "orbit": "A_3+\\tilde{A}_1",
+        "dual": "A_2+\\tilde{A}_1"
+    },
+    {
         "orbit": "F_4(a_2)",
-        "dual": "A_1+"
+        "dual": "A_1+\\tilde{A}_1"
     },
     {
         "orbit": "A_1+C_3",
-        "dual": "A_1+"
+        "dual": "A_1+\\tilde{A}_1"
     },
     {
         "orbit": "F_4(a_1)",
-        "dual": ""
+        "dual": "\\tilde{A}_1"
     },
     {
         "orbit": "B_4",
