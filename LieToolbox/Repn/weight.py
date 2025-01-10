@@ -7,7 +7,7 @@ TODO
 from copy import deepcopy
 from re import split
 from math import ceil
-from typing import Optional
+from typing import Optional, Literal
 import sys
 sys.path.append('../..')
 sys.path.append('.')
@@ -25,6 +25,9 @@ from LieToolbox.Repn.algorithm import DRS_algorithm as drsa
 """
 Tol = 1e-7
 """
+Typ = Literal["A", "B", "C", "D", "E", "F", "G"]
+LieType = tuple[Typ, int]
+
 
 class Weight:
     """This class combines a weight constructed by an entry along with its Lie type. 
@@ -1031,7 +1034,7 @@ class WeylGroupElement:
 
 class Partition:
     entry : list
-    lieType: str
+    lieType: Typ
     """This class stores either the infomation of a Young Tableau or the
     representation of nilpotent orbit.
     """
@@ -1453,7 +1456,7 @@ class NilpotentOrbit(Partition):
     def __init__(
             self, 
             entry: list = ..., 
-            lieType: str = 'B', 
+            lieType: Typ = 'B', 
             veryEven: bool = False, 
             veryEvenType: Optional[str] = None):
         super().__init__(entry, lieType)
@@ -1556,6 +1559,7 @@ class NilpotentOrbit(Partition):
             new_pt.lieType = 'B'
         transposed = new_pt.transpose()
         transposed.collapse()
+        # print(transposed.lieType, new_pt.lieType)
 
         return NilpotentOrbit(entry=transposed.entry, 
                               lieType=transposed.lieType, 

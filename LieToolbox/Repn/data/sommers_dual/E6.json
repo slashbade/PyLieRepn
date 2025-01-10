@@ -12,19 +12,19 @@
         "dual": "D_4(a_1)"
     },
     {
-        "orbit": "A_3+2A_1",
-        "dual": "A_3+A_1"
+        "orbit": "2A_1 + A_3",
+        "dual": "A_1 + A_3"
     },
     {
         "orbit": "3A_2",
-        "dual": "2A_2+A_1"
+        "dual": "A_1 + 2A_2"
     },
     {
         "orbit": "E_6(a_3)",
         "dual": "A_2"
     },
     {
-        "orbit": "A_5+A_1",
+        "orbit": "A_1 + A_5",
         "dual": "3A_1"
     }
 ]

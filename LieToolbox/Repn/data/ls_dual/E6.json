@@ -20,7 +20,7 @@
         "dual": "E_6(a_3)"
     },
     {
-        "orbit": "A_2+A_1",
+        "orbit": "A_1 + A_2",
         "dual": "D_5(a_1)"
     },
     {
@@ -28,19 +28,19 @@
         "dual": "D_4"
     },
     {
-        "orbit": "A_2+2A_1",
-        "dual": "A_4+A_1"
+        "orbit": "2A_1 + A_2",
+        "dual": "A_1 + A_4"
     },
     {
         "orbit": "A_3",
         "dual": "A_4"
     },
     {
-        "orbit": "2A_2+A_1",
+        "orbit": "A_1 + 2A_2",
         "dual": "D_4(a_1)"
     },
     {
-        "orbit": "A_3+A_1",
+        "orbit": "A_1 + A_3",
         "dual": "D_4(a_1)"
     },
     {
@@ -56,8 +56,8 @@
         "dual": "2A_2"
     },
     {
-        "orbit": "A_4+A_1",
-        "dual": "A_2+2A_1"
+        "orbit": "A_1 + A_4",
+        "dual": "2A_1 + A_2"
     },
     {
         "orbit": "A_5",
@@ -65,7 +65,7 @@
     },
     {
         "orbit": "D_5(a_1)",
-        "dual": "A_2+A_1"
+        "dual": "A_1 + A_2"
     },
     {
         "orbit": "E_6(a_3)",

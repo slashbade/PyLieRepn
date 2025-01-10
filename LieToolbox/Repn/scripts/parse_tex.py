@@ -3,7 +3,7 @@ from pathlib import Path
 import re
 import sys
 sys.path.append('.')
-from LieToolbox.Repn.orbit_data import parse_orbit_string
+from LieToolbox.Repn.orbit import from_orbit_string
 
 E6_data = r"""
 $1_p$& $E_6$& $72$\\\hline
@@ -342,8 +342,8 @@ def notation_data_to_list(data: str, name: str, root: Path) -> None:
     for s in data.split("\n"):
         if not s:
             continue
-        s = s.replace("$", "").replace("\\\\", "").replace("hline", "").split("& ")
-        sommers = parse_orbit_string(s[1]).__str__()
+        s = s.replace("$", "").replace("\\\\", "").replace("hline", "").replace("''", "\"").split("& ")
+        sommers = from_orbit_string(s[1]).__str__()
         l.append({"alvis": s[0], "sommers": sommers})
     data_path = root / "notation"
     data_path.mkdir(exist_ok=True)
@@ -353,17 +353,16 @@ def notation_data_to_list(data: str, name: str, root: Path) -> None:
 def sommers_dual_data_to_list(data: str, name: str, root: Path) -> None:
     l = []
     for s in data.strip().replace("\\hline", "").split("\\\\"):
-        s = s.replace("{", "").replace("}", "").replace("$", "").replace("*", "")
+        s = s.replace("{", "").replace("}", "").replace("$", "").replace("*", "").replace(" ", "").replace("''", "\"")
         # Handling tilde things
         s = s.replace("Tilde", "tilde")
-        s = re.sub(r"\\tilde([A-Z])_(\d+)", r"\\tilde{\1}_\2", s)
+        s = re.sub(r"\\tilde([A-Z])_(\d)", r"\\tilde{\1}_\2", s)
         s = s.split("&")
-        s = [si.strip().replace(' ', '').replace("''", "\"") for si in s]
+        s = [si.strip() for si in s]
         
         if len(s) == 5:
-            print(s)
-            orbit = parse_orbit_string(s[1]).__str__()
-            dual = parse_orbit_string(s[4]).__str__()
+            orbit = from_orbit_string(s[1]).__str__()
+            dual = from_orbit_string(s[4]).__str__()
             l.append({"orbit": orbit, "dual": dual})
         
     data_path = root / "sommers_dual"

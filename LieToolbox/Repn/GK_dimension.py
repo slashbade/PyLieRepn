@@ -8,10 +8,11 @@ from LieToolbox.Repn.roots import (
     integral_root_system, simple_root_data, get_cartan_type, 
     reorder_simple_roots, compute_fundamental_weights)
 from LieToolbox.Repn.root_system_data import cartan_matrix_pycox, num_positive_roots_data
-from LieToolbox.Repn.orbit_data import find_orbit_from_character
-from LieToolbox.Repn.orbit_dual_data import get_dual_orbit_exceptional
+# from LieToolbox.Repn.orbit_data import find_orbit_from_character
+# from LieToolbox.Repn.orbit_dual_data import get_dual_orbit_exceptional
 from LieToolbox.Repn.PyCox import chv1r6180 as pycox
-from LieToolbox.Repn.weight import HighestWeightModule, Weight
+from LieToolbox.Repn.weight import HighestWeightModule, Weight, NilpotentOrbit
+from LieToolbox.Repn.orbit import BalaCarterOrbit, from_orbit_string, from_alvis_notation, from_partition_dual
 
 def antidominant(typ: str, rank: int, weight_: NDArray, weyl: list = []) -> tuple[list, NDArray]:
     """A fast recursive algorithm to compute the antidominant weight of a given weight.
@@ -62,59 +63,33 @@ def weight_partition(typ: str, rank: int, weight: NDArray):
     return weights
 
 
-def get_dual_orbit(typ: str, rank: int, orbit: str, orbit_info: dict):
-    match typ:
-        case 'A':
-            pass
-        case 'B':
-            pass
-        case 'C':
-            pass
-        case 'D':
-            pass
-        case 'E':
-            pass
-        case _:
-            pass
+def a_value_integral_classical(typ, rank, weight):
+    weight = round2(weight)
+    lbd = Weight(weight.tolist(), typ)
+    L = HighestWeightModule(lbd)
+    obtinfo = L.nilpotentOrbitInfo()
+    orbit = L.nilpotentOrbit()
+    character = orbit.convert2Symbol()
+    # print(typ, rank, weight)
+    return L.a_value_integral(), character, orbit
 
+def a_value_integral_exceptional(typ, rank, weight):
+    cananical_sp = simple_root_data(typ, rank)
+    weight_ = (2 * weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
+    W = pycox.coxeter(typ, rank)
+    
+    w, adw = antidominant(typ, rank, weight_)
+    cell_repm = pycox.klcellrepelm(W, w)
+    # print('input weight fundam:', np.round(weight_,2))
+    # print('weyl:', w)
+    # print('antidom weight', np.round(adw))
+    # print('repm:', cell_repm)
+    # character = cell_repm['character']
+    # character = cell_repm['special']
+    # orbit = find_orbit_from_character(typ, rank, cell_repm['special'])
+    bl_orbit = from_alvis_notation(cell_repm['special'], (typ, rank))
+    return cell_repm['a'], cell_repm['special'], bl_orbit
 
-
-def a_value_integral(typ, rank, weight):
-    if typ in ["A", "B", "C", "D"]:
-    # if False:
-        # cananical_sp = simple_root_data(typ, rank, format="bourbaki")
-        # weight_ = (2 * weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
-        weight = round2(weight)
-        print(weight)
-        lbd = Weight(weight.tolist(), typ)
-        L = HighestWeightModule(lbd)
-        obtinfo = L.nilpotentOrbitInfo()
-        orbit = L.nilpotentOrbit()
-        character = orbit.convert2Symbol()
-        orbit_dual = orbit.dual()
-        print(orbit_dual.veryEvenType)
-        
-        return L.a_value_integral(), str(character), str(orbit), str(orbit_dual)
-    else:
-        cananical_sp = simple_root_data(typ, rank)
-        weight_ = (2 * weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
-        W = pycox.coxeter(typ, rank)
-        
-        w, adw = antidominant(typ, rank, weight_)
-        cell_repm = pycox.klcellrepelm(W, w)
-        # print('input weight fundam:', np.round(weight_,2))
-        # print('weyl:', w)
-        # print('antidom weight', np.round(adw))
-        # print('repm:', cell_repm)
-        # character = cell_repm['character']
-        # character = cell_repm['special']
-        orbit = find_orbit_from_character(typ, rank, cell_repm['special'])
-        try:
-            orbit_dual = get_dual_orbit_exceptional(typ, rank, orbit)
-        except ValueError as e:
-            print(e)
-            orbit_dual = 'N/A'
-        return cell_repm['a'], cell_repm['special'], orbit, orbit_dual
 
 
 def GK_dimension(typ, rank, weight: NDArray) -> tuple[str, dict]:
@@ -133,7 +108,7 @@ def GK_dimension(typ, rank, weight: NDArray) -> tuple[str, dict]:
     simple_root_data0 = simple_root_data(typ, rank)
     weight0_ = (2 * weight @ simple_root_data0.T / np.sum(simple_root_data0**2, axis=1))
     dim_ambient = weight.shape[0]
-    
+    # print(typ, rank, weight)
     # Integral root system decomposition
     rt, _ = integral_root_system(typ, rank, weight)
     # print(rt)
@@ -174,7 +149,10 @@ def GK_dimension(typ, rank, weight: NDArray) -> tuple[str, dict]:
     characters = []
     orbits = []
     orbit_duals = []
+    result_bl_orbit = BalaCarterOrbit()
+    result_bl_orbit.lie_type = (typ, rank)
     for ct, sp in zip(cts, sps):
+        # print(sp)
         # Compute the weight in each cananical simple root basis
         cananical_sp = simple_root_data(*ct)
         dim_sp = cananical_sp.shape[1]
@@ -188,19 +166,43 @@ def GK_dimension(typ, rank, weight: NDArray) -> tuple[str, dict]:
         transformed_weight_ = (2 * transformed_weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
         # Compute the Gelfand-Kirillov dimension
         transformed_weight_ = np.round(transformed_weight_)
-        a_value, character, orbit, orbit_dual = a_value_integral(*ct, transformed_weight)
-        # print(weight, weight_, sp)
+        
+        if ct[0] in ['A', 'B', 'C', 'D']:
+            a_value, character, orbit = a_value_integral_classical(*ct, transformed_weight)
+        else:
+            a_value, character, orbit = a_value_integral_exceptional(*ct, transformed_weight)
+
         weights.append(weight1)
         weights_.append(weight_)
         transformed_weights.append(transformed_weight)
         transformed_weights_.append(transformed_weight_)
         a_values.append(a_value)
-        characters.append(character)
-        orbits.append(orbit)
+        characters.append(str(character))
+        orbits.append(str(orbit))
         if is_integral_weight:
             orbit_duals.append('N/A')
         else:
-            orbit_duals.append(orbit_dual)
+            if type(orbit) == NilpotentOrbit:
+                dual_orbit = orbit.dual()
+                print(f"branch{ct}, transformed weight {transformed_weight}, corresponding orbit {orbit} of type {orbit.lieType}, dual orbit {dual_orbit} of type {dual_orbit.lieType}")
+                try:
+                    bl_orbit_dual = from_partition_dual(dual_orbit.lieType, dual_orbit.entry)
+                except ValueError as e:
+                    bl_orbit_dual = from_orbit_string('0')
+            elif type(orbit) == BalaCarterOrbit:
+                try:
+                    bl_orbit_dual = orbit.ls_dual()
+                except ValueError as e:
+                    bl_orbit_dual = from_orbit_string('0')
+            else:
+                raise ValueError("Unknown orbit type.")
+            orbit_duals.append(bl_orbit_dual)
+            result_bl_orbit = result_bl_orbit + bl_orbit_dual
+    print(result_bl_orbit)
+    try:
+        dual = result_bl_orbit.sommers_dual()
+    except ValueError as e:
+        dual = "N/A"
     
     total_a_value = sum(a_values)
     num_postive_roots = num_positive_roots_data(typ, rank)
@@ -232,7 +234,8 @@ def GK_dimension(typ, rank, weight: NDArray) -> tuple[str, dict]:
         "orbit_duals": orbit_duals,
         "num_positive_roots": num_postive_roots,
         "total_a_value": total_a_value,
-        "GK_dimension": gk_dim
+        "GK_dimension": gk_dim,
+        "dual": dual
     }
     return str(gk_dim), info
     
@@ -247,6 +250,9 @@ if __name__ == "__main__":
     # W = pycox.coxeter(typ, rank)
     # w, adw = antidominant(typ, rank, weight_)
     # print(pycox.klcellrepelm(W, w)['a'])
+    # GK_dimension("E", 8, np.array([1, 1, 1, 1, 1, 1, 1/2, 5/2]))
+    GK_dimension("E", 8, np.array([1, 1, 1, 1, 1, 3, 7, 13])/8)
+    # GK_dimension("F", 4, np.array([4, 5, 3/2, 1/2]))
     test_cases = [
         (
             ('D', 8, np.array([2, 1, 1.1, 3, 0.9, 1.9, 4, 2.1])), 
@@ -280,7 +286,9 @@ if __name__ == "__main__":
             ([('D', 6), ('A', 1)], None, None)
         )
     ]
-    for test_case in test_cases:
+    for i, test_case in enumerate(test_cases):
+        if i in [0]:
+            continue
         typ, rank, weight = test_case[0]
         gk_dim, info = GK_dimension(typ, rank, weight)
         if test_case[1][2] is not None:

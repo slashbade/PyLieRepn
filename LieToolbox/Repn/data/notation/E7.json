@@ -29,7 +29,7 @@
     },
     {
         "alvis": "168_a",
-        "sommers": "D_5+A_1"
+        "sommers": "A_1 + D_5"
     },
     {
         "alvis": "105_b",
@@ -53,7 +53,7 @@
     },
     {
         "alvis": "378_a'",
-        "sommers": "D_5(a_1)+A_1"
+        "sommers": "A_1 + D_5(a_1)"
     },
     {
         "alvis": "420_a",
@@ -61,19 +61,19 @@
     },
     {
         "alvis": "210_b",
-        "sommers": "A_4+A_2"
+        "sommers": "A_2 + A_4"
     },
     {
         "alvis": "512_a'",
-        "sommers": "A_4+A_1"
+        "sommers": "A_1 + A_4"
     },
     {
         "alvis": "105_c",
-        "sommers": "(A_5)''"
+        "sommers": "(A_5)\""
     },
     {
         "alvis": "210_b'",
-        "sommers": "A_3+A_2+A_1"
+        "sommers": "A_1 + A_2 + A_3"
     },
     {
         "alvis": "420_a'",
@@ -81,11 +81,11 @@
     },
     {
         "alvis": "378_a",
-        "sommers": "A_3+A_2"
+        "sommers": "A_2 + A_3"
     },
     {
         "alvis": "405_a'",
-        "sommers": "D_4(a_1)+A_1"
+        "sommers": "A_1 + D_4(a_1)"
     },
     {
         "alvis": "105_c'",
@@ -97,7 +97,7 @@
     },
     {
         "alvis": "189_c",
-        "sommers": "(A_3+A_1)''"
+        "sommers": "(A_1 + A_3)\""
     },
     {
         "alvis": "168_a'",
@@ -109,15 +109,15 @@
     },
     {
         "alvis": "105_b'",
-        "sommers": "A_3+3A_1"
+        "sommers": "3A_1 + A_3"
     },
     {
         "alvis": "189_b",
-        "sommers": "A_2+2A_1"
+        "sommers": "2A_1 + A_2"
     },
     {
         "alvis": "120_a'",
-        "sommers": "A_2+A_1"
+        "sommers": "A_1 + A_2"
     },
     {
         "alvis": "56_a",
@@ -125,7 +125,7 @@
     },
     {
         "alvis": "21_b",
-        "sommers": "(3A_1)''"
+        "sommers": "(3A_1)\""
     },
     {
         "alvis": "21_a'",
@@ -137,6 +137,6 @@
     },
     {
         "alvis": "1_a'",
-        "sommers": "1"
+        "sommers": "1_0"
     }
 ]

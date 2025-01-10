@@ -21,7 +21,7 @@
     },
     {
         "alvis": "560_z",
-        "sommers": "E_8(b_4)"
+        "sommers": "E_8"
     },
     {
         "alvis": "567_x",
@@ -33,7 +33,7 @@
     },
     {
         "alvis": "1400_z",
-        "sommers": "E_8(b_5)"
+        "sommers": "E_8"
     },
     {
         "alvis": "1400_x",
@@ -49,11 +49,11 @@
     },
     {
         "alvis": "2240_x",
-        "sommers": "E_8(b_6)"
+        "sommers": "E_8"
     },
     {
         "alvis": "4096_z",
-        "sommers": "E_6(a_1)+A_1"
+        "sommers": "A_1 + E_6(a_1)"
     },
     {
         "alvis": "525_x",
@@ -65,7 +65,7 @@
     },
     {
         "alvis": "4536_z",
-        "sommers": "D_5+A_2"
+        "sommers": "A_2 + D_5"
     },
     {
         "alvis": "2800_z",
@@ -73,7 +73,7 @@
     },
     {
         "alvis": "2835_x",
-        "sommers": "A_6+A_1"
+        "sommers": "A_1 + A_6"
     },
     {
         "alvis": "6075_x",
@@ -97,7 +97,7 @@
     },
     {
         "alvis": "4200_z'",
-        "sommers": "D_6+A_2"
+        "sommers": "A_2 + D_6"
     },
     {
         "alvis": "5600_z'",
@@ -105,19 +105,19 @@
     },
     {
         "alvis": "6075_x'",
-        "sommers": "D_5(a_1)+A_1"
+        "sommers": "A_1 + D_5(a_1)"
     },
     {
         "alvis": "2835_x'",
-        "sommers": "A_4+A_2+A_1"
+        "sommers": "A_1 + A_2 + A_4"
     },
     {
         "alvis": "4536_z'",
-        "sommers": "A_4+A_2"
+        "sommers": "A_2 + A_4"
     },
     {
         "alvis": "4200_x'",
-        "sommers": "A_4+2A_1"
+        "sommers": "2A_1 + A_4"
     },
     {
         "alvis": "2800_z'",
@@ -125,11 +125,11 @@
     },
     {
         "alvis": "4096_x'",
-        "sommers": "A_4+A_1"
+        "sommers": "A_1 + A_4"
     },
     {
         "alvis": "2240_x'",
-        "sommers": "D_4(a_1)+A_2"
+        "sommers": "A_2 + D_4(a_1)"
     },
     {
         "alvis": "2268_x'",
@@ -137,11 +137,11 @@
     },
     {
         "alvis": "3240_z'",
-        "sommers": "A_3+A_2"
+        "sommers": "A_2 + A_3"
     },
     {
         "alvis": "1400_x'",
-        "sommers": "D_4(a_1)+A_1"
+        "sommers": "A_1 + D_4(a_1)"
     },
     {
         "alvis": "525_x'",
@@ -161,11 +161,11 @@
     },
     {
         "alvis": "560_z'",
-        "sommers": "A_2+2A_1"
+        "sommers": "2A_1 + A_2"
     },
     {
         "alvis": "210_x'",
-        "sommers": "A_2+A_1"
+        "sommers": "A_1 + A_2"
     },
     {
         "alvis": "112_z'",
@@ -181,6 +181,6 @@
     },
     {
         "alvis": "1_x'",
-        "sommers": "1"
+        "sommers": "1_0"
     }
 ]

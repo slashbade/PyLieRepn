@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from orbit import BalaCarterOrbit, from_orbit_string
 
 E6_data = r"""
 0 E_6
@@ -89,7 +90,7 @@ def save_parsed_data(data: str, name: str, root: Path = Path("LieToolbox/Repn/da
         if not s:
             continue
         s = s.replace("$", "").replace("\\", "").replace("hline", "").split(" ")
-        d.append({"orbit": s[0], "dual": s[1]})
+        d.append({"orbit": from_orbit_string(s[0]).__str__(), "dual": from_orbit_string(s[1]).__str__()})
     data_path = root / "ls_dual"
     with open(data_path / f"{name}.json", "w") as f:
         json.dump(d, f, indent=4)
