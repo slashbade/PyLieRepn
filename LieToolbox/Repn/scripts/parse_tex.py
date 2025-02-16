@@ -332,6 +332,177 @@ E8_sommers_dual_data = r"""
 """
 
 
+G2_ls_dual_data = r"""
+Name   Diagram Dim Spec Dual   A:Abar
+0      00      0   1    G2     1
+A1     01      6   0    G2(a1) 1
+A1s    10      8   0    G2(a1) 1
+G2(a1) 02      10  1    G2(a1) S3
+G2     22      12  1    0      1"""
+
+F4_ls_dual_data = r"""
+Name   Diagram Dim Spec Dual   A:Abar
+0      0000    0   1    F4     1
+A1     1000    16  0    F4(a1) 1
+A1s    0001    22  1    F4(a1) S2
+A1+A1s 0100    28  1    F4(a2) 1
+A2     2000    30  1    B3     S2:1
+A2s    0002    30  1    C3     1
+A2+A1s 0010    34  0    F4(a3) 1
+B2     2001    36  0    F4(a3) S2
+A2s+A1 0101    36  0    F4(a3) 1
+C3(a1) 1010    38  0    F4(a3) S2
+F4(a3) 0200    40  1    F4(a3) S4
+C3     1012    42  1    A2s    1
+B3     2200    42  1    A2     1
+F4(a2) 0202    44  1    A1+A1s S2:1
+F4(a1) 2202    46  1    A1s    S2
+F4     2222    48  1    0      1"""
+
+E6_ls_dual_data = r"""
+Name   Diagram Dim Spec Dual   A:Abar
+0      000000  0   1    E6     1
+A1     010000  22  1    E6(a1) 1
+2A1    100001  32  1    D5     1
+3A1    000100  40  0    E6(a3) 1
+A2     020000  42  1    E6(a3) S2
+A2+A1  110001  46  1    D5(a1) 1
+2A2    200002  48  1    D4     Z3
+A2+2A1 001010  50  1    A4+A1  1
+A3     120001  52  1    A4     1
+2A2+A1 100101  54  0    D4(a1) Z3
+A3+A1  011010  56  0    D4(a1) 1
+D4(a1) 000200  58  1    D4(a1) S3
+A4     220002  60  1    A3     1
+D4     020200  60  1    2A2    1
+A4+A1  111011  62  1    A2+2A1 1
+A5     211012  64  0    A2     Z3
+D5(a1) 121011  64  1    A2+A1  1
+E6(a3) 200202  66  1    A2     S2Z3
+D5     220202  68  1    2A1    1
+E6(a1) 222022  70  1    A1     Z3
+E6     222222  72  1    0      Z3"""
+
+E7_ls_dual_data = r"""
+Name      Diagram Dim Spec Dual      A:Abar
+0         0000000 0   1    E7        1
+A1        1000000 34  1    E7(a1)    1
+2A1       0000010 52  1    E7(a2)    1
+(3A1)"    0000002 54  1    E6        Z2
+(3A1)'    0010000 64  0    E7(a3)    1
+A2        2000000 66  1    E7(a3)    S2
+4A1       0100001 70  0    E6(a1)    1
+A2+A1     1000010 76  1    E6(a1)    S2
+A2+2A1    0001000 82  1    E7(a4)    1
+A3        2000010 84  1    D6(a1)    1
+2A2       0000020 84  1    D5+A1     1
+A2+3A1    0200000 84  1    A6        Z2
+(A3+A1)"  2000002 86  1    D5        Z2
+2A2+A1    0010010 90  0    E7(a5)    1
+(A3+A1)'  1001000 92  0    E7(a5)    1
+D4(a1)    0020000 94  1    E7(a5)    S3
+A3+2A1    1000101 94  0    E6(a3)    Z2
+D4        2020000 96  1    (A5)"     1
+D4(a1)+A1 0110001 96  1    E6(a3)    S2Z2
+A3+A2     0001010 98  1    D5(a1)+A1 S2:1
+A4        2000020 100 1    D5(a1)    S2
+A3+A2+A1  0000200 100 1    A4+A2     Z2
+(A5)"     2000022 102 1    D4        1
+D4+A1     2110001 102 0    A4        Z2
+A4+A1     1001010 104 1    A4+A1     S2
+D5(a1)    2001010 106 1    A4        S2
+A4+A2     0002000 106 1    A3+A2+A1  1
+(A5)'     1001020 108 0    D4(a1)+A1 1
+A5+A1     1001012 108 0    D4(a1)    Z2
+D5(a1)+A1 2000200 108 1    A3+A2     Z2
+D6(a2)    0110102 110 0    D4(a1)    Z2
+E6(a3)    0020020 110 1    D4(a1)+A1 S2
+D5        2020020 112 1    (A3+A1)"  1
+E7(a5)    0002002 112 1    D4(a1)    S3Z2
+A6        0002020 114 1    A2+3A1    1
+D5+A1     2110110 114 1    2A2       Z2
+D6(a1)    2110102 114 1    A3        Z2
+E7(a4)    2002002 116 1    A2+2A1    S2Z2:Z2
+D6        2110122 118 0    A2        Z2
+E6(a1)    2002020 118 1    A2+A1     S2
+E6        2022020 120 1    (3A1)"    1
+E7(a3)    2002022 120 1    A2        S2Z2
+E7(a2)    2220202 122 1    2A1       Z2
+E7(a1)    2220222 124 1    A1        Z2
+E7        2222222 126 1    0         Z2"""
+
+E8_ls_dual_data = r"""
+Name      Diagram  Dim Spec Dual      A:Abar
+0         00000000 0   1    E8        1
+A1        00000001 58  1    E8(a1)    1
+2A1       10000000 92  1    E8(a2)    1
+3A1       00000010 112 0    E8(a3)    1
+A2        00000002 114 1    E8(a3)    S2
+4A1       01000000 128 0    E8(a4)    1
+A2+A1     10000001 136 1    E8(a4)    S2
+A2+2A1    00000100 146 1    E8(b4)    1
+A3        10000002 148 1    E7(a1)    1
+A2+3A1    00100000 154 0    E8(a5)    1
+2A2       20000000 156 1    E8(a5)    S2
+2A2+A1    10000010 162 0    E8(b5)    1
+A3+A1     00000101 164 0    E8(b5)    1
+D4(a1)    00000020 166 1    E8(b5)    S3
+D4        00000022 168 1    E6        1
+2A2+2A1   00001000 168 0    E8(a6)    1
+A3+2A1    00100001 172 0    E8(a6)    1
+D4(a1)+A1 01000010 176 1    E8(a6)    S3
+A3+A2     10000100 178 1    D7(a1)    S2:1
+A4        20000002 180 1    E7(a3)    S2
+A3+A2+A1  00010000 182 0    E8(b6)    1
+D4+A1     01000012 184 0    E6(a1)    1
+D4(a1)+A2 02000000 184 1    E8(b6)    S2
+A4+A1     10000101 188 1    E6(a1)+A1 S2
+2A3       10001000 188 0    D7(a2)    1
+D5(a1)    10000102 190 1    E6(a1)    S2
+A4+2A1    00010001 192 1    D7(a2)    S2
+A4+A2     00000200 194 1    D5+A2     1
+A5        20000101 196 0    D6(a1)    1
+D5(a1)+A1 00010002 196 1    E7(a4)    1
+A4+A2+A1  00100100 196 1    A6+A1     1
+D4+A2     02000002 198 1    A6        S2:1
+E6(a3)    20000020 198 1    D6(a1)    S2
+D5        20000022 200 1    D5        1
+A4+A3     00010010 200 0    E8(a7)    1
+A5+A1     10010001 202 0    E8(a7)    1
+D5(a1)+A2 00100101 202 0    E8(a7)    1
+D6(a2)    01100010 204 0    E8(a7)    S2
+E6(a3)+A1 10001010 204 0    E8(a7)    S2
+E7(a5)    00010100 206 0    E8(a7)    S3
+D5+A1     10001012 208 0    E6(a3)    1
+E8(a7)    00002000 208 1    E8(a7)    S5
+A6        20000200 210 1    D4+A2     1
+D6(a1)    01100012 210 1    E6(a3)    S2
+A6+A1     10010100 212 1    A4+A2+A1  1
+E7(a4)    00010102 212 1    D5(a1)+A1 S2:1
+E6(a1)    20000202 214 1    D5(a1)    S2
+D5+A2     00002002 214 1    A4+A2     S2:1
+D6        21100012 216 0    A4        1
+E6        20000222 216 1    D4        1
+D7(a2)    10010101 216 1    A4+2A1    S2
+A7        10010110 218 0    D4(a1)+A2 1
+E6(a1)+A1 10010102 218 1    A4+A1     S2
+E7(a3)    20010102 220 1    A4        S2
+E8(b6)    00020002 220 1    D4(a1)+A2 S3:S2
+D7(a1)    20002002 222 1    A3+A2     S2:1
+E6+A1     10010122 222 0    D4(a1)    1
+E7(a2)    01101022 224 0    D4(a1)    1
+E8(a6)    00020020 224 1    D4(a1)+A1 S3
+D7        21101101 226 0    2A2       1
+E8(b5)    00020022 226 1    D4(a1)    S3
+E7(a1)    21101022 228 1    A3        1
+E8(a5)    20020020 228 1    2A2       S2
+E8(b4)    20020022 230 1    A2+2A1    S2:1
+E7        21101222 232 0    A2        1
+E8(a4)    20020202 232 1    A2+A1     S2
+E8(a3)    20020222 234 1    A2        S2
+E8(a2)    22202022 236 1    2A1       1
+E8(a1)    22202222 238 1    A1        1
+E8        22222222 240 1    0         1"""
 
 
 
@@ -351,8 +522,17 @@ def notation_data_to_list(data: str, name: str, root: Path) -> None:
         json.dump(l, f, indent=4)
 
 def sommers_dual_data_to_list(data: str, name: str, root: Path) -> None:
+    # def process_diagram(s: str) -> str:
+    #     print(s)
+        
+    #     s.replace("{", "").replace("}", "")
+    #     return s
+    
     l = []
+    count = 0
+    current_diagram = None
     for s in data.strip().replace("\\hline", "").split("\\\\"):
+        s = re.sub(r"\\weightDynkin\w+\{\.\d+\}", "", s)
         s = s.replace("{", "").replace("}", "").replace("$", "").replace("*", "").replace(" ", "").replace("''", "\"")
         # Handling tilde things
         s = s.replace("Tilde", "tilde")
@@ -361,22 +541,65 @@ def sommers_dual_data_to_list(data: str, name: str, root: Path) -> None:
         s = [si.strip() for si in s]
         
         if len(s) == 5:
+            count += 1
+            if s[0].strip() != "":
+                current_diagram = s[0].strip()
+            assert current_diagram is not None
+            diagram = current_diagram
+            print(diagram)
             orbit = from_orbit_string(s[1]).__str__()
+            AAbar = s[3].strip()
+            tildeb = s[2].strip()
             dual = from_orbit_string(s[4]).__str__()
-            l.append({"orbit": orbit, "dual": dual})
-        
+            l.append({
+                "orbit": orbit,
+                "diagram": diagram,
+                "tildeb": tildeb,
+                "dual": dual,
+                "A:Abar": AAbar
+                })
+    assert count == len(data.strip().split("\\\\"))-1, len(data.strip().split("\\\\"))
     data_path = root / "sommers_dual"
     data_path.mkdir(exist_ok=True)
     with open(data_path / f"{name}.json", "w") as f:
         json.dump(l, f, indent=4)
 
+def ls_dual_data_to_list(data: str, name: str, root: Path) -> None:
+    def preprocess_orbit_string(s: str) -> str:
+        s = re.sub(r"([A-Z,a-z])(\d)", r"\1_\2", s)
+        s = re.sub(r"([A-Z,a-z])_(\d)s", r"\\tilde{\1}_\2", s)
+        return s
+    l = []
+    count = 0
+    for s in data.strip().split("\n"):
+        if not s or s.startswith("Name"):
+            continue
+        s = s.replace("''", "\"").split()
+        if len(s) == 6:
+            count += 1
+            # print(count)
+            # print(preprocess_orbit_string(s[0]), preprocess_orbit_string(s[4]))
+            orbit = from_orbit_string(preprocess_orbit_string(s[0])).__str__()
+            dual = from_orbit_string(preprocess_orbit_string(s[4])).__str__()
+            l.append({
+                "orbit": orbit,
+                "diagram": s[1],
+                "dim": s[2],
+                "spec": s[3],
+                "dual": dual,
+                "A:Abar": s[5]})
+    assert count == len(data.strip().split("\n"))-1, len(data.strip().split("\n"))
+        
+    data_path = root / "ls_dual"
+    data_path.mkdir(exist_ok=True)
+    with open(data_path / f"{name}.json", "w") as f:
+        json.dump(l, f, indent=4)
 
-
-notation_data_to_list(G2_data, "G2", root)
-notation_data_to_list(F4_data, "F4", root)
-notation_data_to_list(E6_data, "E6", root)
-notation_data_to_list(E7_data, "E7", root)
-notation_data_to_list(E8_data, "E8", root)
+# notation_data_to_list(G2_data, "G2", root)
+# notation_data_to_list(F4_data, "F4", root)
+# notation_data_to_list(E6_data, "E6", root)
+# notation_data_to_list(E7_data, "E7", root)
+# notation_data_to_list(E8_data, "E8", root)
 
 
 sommers_dual_data_to_list(G2_sommers_dual_data, "G2", root)
@@ -384,3 +607,9 @@ sommers_dual_data_to_list(F4_sommers_dual_data, "F4", root)
 sommers_dual_data_to_list(E6_sommers_dual_data, "E6", root)
 sommers_dual_data_to_list(E7_sommers_dual_data, "E7", root)
 sommers_dual_data_to_list(E8_sommers_dual_data, "E8", root)
+
+# ls_dual_data_to_list(G2_ls_dual_data, "G2", root)
+# ls_dual_data_to_list(F4_ls_dual_data, "F4", root)
+# ls_dual_data_to_list(E6_ls_dual_data, "E6", root)
+# ls_dual_data_to_list(E7_ls_dual_data, "E7", root)
+# ls_dual_data_to_list(E8_ls_dual_data, "E8", root)

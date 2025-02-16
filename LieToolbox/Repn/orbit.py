@@ -1,6 +1,7 @@
 from typing import Literal, Optional
 import re
 import json
+import copy
 from pathlib import Path
 
 OrbitType = Optional[Literal["\'", "\""]]
@@ -58,7 +59,7 @@ class BalaCarterOrbit:
             return f"({inner_orbit}){self.mark}"
         else:
             return inner_orbit
-    
+
     def ls_dual(self) -> "BalaCarterOrbit":
         orbit_string = str(self)
         root = Path(__file__).parent
@@ -81,6 +82,23 @@ class BalaCarterOrbit:
                 return from_orbit_string(d["orbit"], self.lie_type)
         raise ValueError(f"Orbit {orbit_string} not found in sommers_dual/{self.lie_type[0]}{self.lie_type[1]}.json")
 
+def set_mark(bl: BalaCarterOrbit, mark: OrbitType):
+    bl.mark = mark
+    return copy.copy(bl)
+
+def get_mark_from_diagram(bl: BalaCarterOrbit, diagram: str) -> BalaCarterOrbit:
+    assert bl.mark is None
+    root = Path(__file__).parent
+    with open(root / "data" / "sommers_dual" / f"{bl.lie_type[0]}{bl.lie_type[1]}.json", "r") as f:
+        data = json.load(f)
+    candidates = [d for d in data if d['diagram'] == diagram]
+    for cand in candidates:
+        if str(set_mark(bl, '\'')) == cand['orbit']:
+            return set_mark(bl, '\'')
+        if str(set_mark(bl, '\"')) == cand['orbit']:
+            return set_mark(bl, '\"')
+    raise ValueError(f'Orbit {bl} with diagram {diagram} not found \
+                      in sommers_dual/{bl.lie_type[0]}{bl.lie_type[1]}.json')
 
 def parse_orbit_singleton(orbit_string):
     if orbit_string == "":
@@ -168,6 +186,8 @@ def from_partition_dual_singleton(typ: str, orbit: list[int]) -> BalaCarterOrbit
             orbit_string = r"A_1+\tilde{A}_1"
         elif orbit == [1, 1]:
             orbit_string = ""
+        elif orbit == [4, 2]:
+            orbit_string = "C_3(a_1)"
         elif len(orbit) == 2 and orbit[0] == orbit[1]:
             orbit_string = rf"\tilde{{A}}_{orbit[0]-1}"
         elif len(orbit) == 1:
@@ -214,7 +234,9 @@ def from_partition_dual(typ: Typ, orbit: list[int]) -> BalaCarterOrbit:
             continue
     raise ValueError(f"Invalid orbit {orbit}.")
 
-    
+
+
+
 if __name__ == "__main__":
     # typ, rank, char = 'E', 8, "1400_x'"
     # orb = find_orbit_from_character(typ, rank, char)
@@ -224,3 +246,7 @@ if __name__ == "__main__":
     print(from_partition_dual_singleton('D', [5, 3, 3, 1]))
     print(from_partition_dual('D', [7, 5, 2, 2, 1, 1]))
     print(from_partition_dual('B', [7, 1, 1]))
+    bl = from_orbit_string('4A_1', ('E', 8))
+    bl_marked = get_mark_from_diagram(bl, "00000020")
+    print(bl_marked)
+    print(bl_marked.sommers_dual())

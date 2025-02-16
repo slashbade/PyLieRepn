@@ -1,114 +1,198 @@
 [
     {
         "orbit": "A_2",
-        "dual": "E_7(a_3)"
+        "diagram": "2000000",
+        "tildeb": "3",
+        "dual": "E_7(a_3)",
+        "A:Abar": "S_2"
     },
     {
         "orbit": "(4A_1)'",
-        "dual": "D_6"
+        "diagram": "2000000",
+        "tildeb": "4",
+        "dual": "D_6",
+        "A:Abar": ""
     },
     {
         "orbit": "A_1 + A_2",
-        "dual": "E_6(a_1)"
+        "diagram": "1000100",
+        "tildeb": "4",
+        "dual": "E_6(a_1)",
+        "A:Abar": "S_2"
     },
     {
         "orbit": "5A_1",
-        "dual": "E_7(a_4)"
+        "diagram": "1000100",
+        "tildeb": "5",
+        "dual": "E_7(a_4)",
+        "A:Abar": ""
     },
     {
         "orbit": "D_4(a_1)",
-        "dual": "E_7(a_5)"
+        "diagram": "0200000",
+        "tildeb": "7",
+        "dual": "E_7(a_5)",
+        "A:Abar": "S_3"
     },
     {
         "orbit": "3A_2",
-        "dual": "A_1 + A_5"
+        "diagram": "0200000",
+        "tildeb": "9",
+        "dual": "A_1 + A_5",
+        "A:Abar": ""
     },
     {
         "orbit": "(2A_1 + A_3)'",
-        "dual": "D_6(a_2)"
+        "diagram": "0200000",
+        "tildeb": "8",
+        "dual": "D_6(a_2)",
+        "A:Abar": ""
     },
     {
         "orbit": "A_1 + D_4(a_1)",
-        "dual": "E_6(a_3)"
+        "diagram": "0100011",
+        "tildeb": "8",
+        "dual": "E_6(a_3)",
+        "A:Abar": "S_2"
     },
     {
         "orbit": "3A_1 + A_3",
-        "dual": "(A_5)'"
+        "diagram": "0100011",
+        "tildeb": "9",
+        "dual": "(A_5)'",
+        "A:Abar": ""
     },
     {
         "orbit": "A_2 + A_3",
-        "dual": "A_1 + D_5(a_1)"
+        "diagram": "0010100",
+        "tildeb": "9",
+        "dual": "A_1 + D_5(a_1)",
+        "A:Abar": "1"
     },
     {
         "orbit": "2A_1 + D_4(a_1)",
-        "dual": "A_1 + D_5(a_1)"
+        "diagram": "0010100",
+        "tildeb": "9",
+        "dual": "A_1 + D_5(a_1)",
+        "A:Abar": ""
     },
     {
         "orbit": "A_4",
-        "dual": "D_5(a_1)"
+        "diagram": "2000200",
+        "tildeb": "10",
+        "dual": "D_5(a_1)",
+        "A:Abar": "S_2"
     },
     {
         "orbit": "2A_3",
-        "dual": "A_1 + D_4"
+        "diagram": "2000200",
+        "tildeb": "12",
+        "dual": "A_1 + D_4",
+        "A:Abar": ""
     },
     {
         "orbit": "A_1 + A_4",
-        "dual": "A_1 + A_4"
+        "diagram": "1010100",
+        "tildeb": "11",
+        "dual": "A_1 + A_4",
+        "A:Abar": "S_2"
     },
     {
         "orbit": "A_1 + 2A_3",
-        "dual": "A_1 + A_2 + A_3"
+        "diagram": "1010100",
+        "tildeb": "13",
+        "dual": "A_1 + A_2 + A_3",
+        "A:Abar": ""
     },
     {
         "orbit": "D_5(a_1)",
-        "dual": "A_4"
+        "diagram": "2010100",
+        "tildeb": "13",
+        "dual": "A_4",
+        "A:Abar": "S_2"
     },
     {
         "orbit": "2A_1 + D_4",
-        "dual": "A_2 + A_3"
+        "diagram": "2010100",
+        "tildeb": "14",
+        "dual": "A_2 + A_3",
+        "A:Abar": ""
     },
     {
         "orbit": "E_6(a_3)",
-        "dual": "A_1 + D_4(a_1)"
+        "diagram": "0200200",
+        "tildeb": "15",
+        "dual": "A_1 + D_4(a_1)",
+        "A:Abar": "S_2"
     },
     {
         "orbit": "(A_1 + A_5)'",
-        "dual": "2A_1 + A_3"
+        "diagram": "0200200",
+        "tildeb": "16",
+        "dual": "2A_1 + A_3",
+        "A:Abar": ""
     },
     {
         "orbit": "E_7(a_5)",
-        "dual": "D_4(a_1)"
+        "diagram": "0020020",
+        "tildeb": "16",
+        "dual": "D_4(a_1)",
+        "A:Abar": "S_3"
     },
     {
         "orbit": "A_2 + A_5",
-        "dual": "A_1 + 2A_2"
+        "diagram": "0020020",
+        "tildeb": "18",
+        "dual": "A_1 + 2A_2",
+        "A:Abar": ""
     },
     {
         "orbit": "A_1 + D_6(a_2)",
-        "dual": "(A_1 + A_3)'"
+        "diagram": "0020020",
+        "tildeb": "17",
+        "dual": "(A_1 + A_3)'",
+        "A:Abar": ""
     },
     {
         "orbit": "E_7(a_4)",
-        "dual": "2A_1 + A_2"
+        "diagram": "2020020",
+        "tildeb": "22",
+        "dual": "2A_1 + A_2",
+        "A:Abar": "1"
     },
     {
         "orbit": "A_1 + D_6(a_1)",
-        "dual": "2A_1 + A_2"
+        "diagram": "2020020",
+        "tildeb": "22",
+        "dual": "2A_1 + A_2",
+        "A:Abar": ""
     },
     {
         "orbit": "E_6(a_1)",
-        "dual": "A_1 + A_2"
+        "diagram": "2020200",
+        "tildeb": "25",
+        "dual": "A_1 + A_2",
+        "A:Abar": "S_2"
     },
     {
         "orbit": "A_7",
-        "dual": "4A_1"
+        "diagram": "2020200",
+        "tildeb": "28",
+        "dual": "4A_1",
+        "A:Abar": ""
     },
     {
         "orbit": "E_7(a_3)",
-        "dual": "A_2"
+        "diagram": "2020220",
+        "tildeb": "30",
+        "dual": "A_2",
+        "A:Abar": "S_2"
     },
     {
         "orbit": "A_1 + D_6",
-        "dual": "(3A_1)'"
+        "diagram": "2020220",
+        "tildeb": "31",
+        "dual": "(3A_1)'",
+        "A:Abar": ""
     }
 ]

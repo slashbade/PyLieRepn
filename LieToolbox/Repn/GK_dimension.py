@@ -2,30 +2,27 @@ import sys
 sys.path.append("..")
 sys.path.append(".")
 import numpy as np
-from numpy.typing import NDArray
 from LieToolbox.Repn.utils import *
 from LieToolbox.Repn.roots import (
     integral_root_system, simple_root_data, get_cartan_type, 
     reorder_simple_roots, compute_fundamental_weights)
 from LieToolbox.Repn.root_system_data import cartan_matrix_pycox, num_positive_roots_data
-# from LieToolbox.Repn.orbit_data import find_orbit_from_character
-# from LieToolbox.Repn.orbit_dual_data import get_dual_orbit_exceptional
 from LieToolbox.Repn.PyCox import chv1r6180 as pycox
 from LieToolbox.Repn.weight import HighestWeightModule, Weight, NilpotentOrbit
 from LieToolbox.Repn.orbit import BalaCarterOrbit, from_orbit_string, from_alvis_notation, from_partition_dual
 
-def antidominant(typ: str, rank: int, weight_: NDArray, weyl: list = []) -> tuple[list, NDArray]:
+def antidominant(typ: str, rank: int, weight_: np.ndarray, weyl: list = []) -> tuple[list, np.ndarray]:
     """A fast recursive algorithm to compute the antidominant weight of a given weight.
 
     Args:
         typ (str): type of the Lie algebra.
         rank (int): rank of the Lie algebra.
-        weight (NDArray): weight to compute the antidominant weight,
+        weight (np.ndarray): weight to compute the antidominant weight,
         represented in the fundamental weight basis.
         weyl (list, optional): weyl group element. Defaults to [].
 
     Returns:
-        NDArray: the antidominant weight, represented in the fundamental weight basis.
+        np.ndarray: the antidominant weight, represented in the fundamental weight basis.
     """
     for i in range(weight_.shape[0]):
         if is_zero(weight_[i]):
@@ -41,23 +38,23 @@ def antidominant(typ: str, rank: int, weight_: NDArray, weyl: list = []) -> tupl
         return antidominant(typ, rank, new_weight, new_weyl)
 
 
-def act_on_weight(typ: str, rank: int, root_index: NDArray, weight: NDArray) -> NDArray:
+def act_on_weight(typ: str, rank: int, root_index: np.ndarray, weight: np.ndarray) -> np.ndarray:
     """Compute the result of the action of the simple root indexed by root_index on the weight.
 
     Args:
         typ (str): type of the Lie algebra.
         rank (int): rank of the Lie algebra.
-        root_index (NDArray): index of the simple root.
-        weight (NDArray): weight to act on, represented in the fundamental weight basis.
+        root_index (np.ndarray): index of the simple root.
+        weight (np.ndarray): weight to act on, represented in the fundamental weight basis.
 
     Returns:
-        NDArray: the new weight, represented in the fundamental weight basis.
+        np.ndarray: the new weight, represented in the fundamental weight basis.
     """
     cmat = cartan_matrix_pycox(typ, rank)
     return weight - weight[root_index] * cmat[root_index]
 
 
-def weight_partition(typ: str, rank: int, weight: NDArray):
+def weight_partition(typ: str, rank: int, weight: np.ndarray):
     congruence = lambda a, b: is_integer(a - b) or is_integer(a + b)
     weights, _ = partition_equivalence(weight, congruence)
     return weights
@@ -90,15 +87,21 @@ def a_value_integral_exceptional(typ, rank, weight):
     bl_orbit = from_alvis_notation(cell_repm['special'], (typ, rank))
     return cell_repm['a'], cell_repm['special'], bl_orbit
 
+def get_neutral_element(typ, rank, simple_roots: np.ndarray) -> np.ndarray:
+    return simple_roots[2]
 
+def get_diagram(typ, rank, neutral: np.ndarray) -> str:
+    weight_ = neutral @ simple_root_data(typ, rank).T
+    antidom, _ = antidominant(typ, rank, weight_)
+    return "".join(antidom)
 
-def GK_dimension(typ, rank, weight: NDArray) -> tuple[str, dict]:
+def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
     """Compute the dimension of the Gelfand-Kirillov dimension of a weight.
 
     Args:
         typ (str): type of the Lie algebra.
         rank (int): rank of the Lie algebra.
-        weight (NDArray): weight to compute the Gelfand-Kirillov dimension,
+        weight (np.ndarray): weight to compute the Gelfand-Kirillov dimension,
         represented in the orthonormal basis.
 
     Returns:
@@ -180,22 +183,22 @@ def GK_dimension(typ, rank, weight: NDArray) -> tuple[str, dict]:
         characters.append(str(character))
         orbits.append(str(orbit))
         if is_integral_weight:
-            orbit_duals.append('N/A')
+            orbit_duals.append(orbit)
         else:
-            if type(orbit) == NilpotentOrbit:
+            if isinstance(orbit, NilpotentOrbit):
                 dual_orbit = orbit.dual()
                 print(f"branch{ct}, transformed weight {transformed_weight}, corresponding orbit {orbit} of type {orbit.lieType}, dual orbit {dual_orbit} of type {dual_orbit.lieType}")
                 try:
                     bl_orbit_dual = from_partition_dual(dual_orbit.lieType, dual_orbit.entry)
                 except ValueError as e:
                     bl_orbit_dual = from_orbit_string('0')
-            elif type(orbit) == BalaCarterOrbit:
+            elif isinstance(orbit, BalaCarterOrbit):
                 try:
                     bl_orbit_dual = orbit.ls_dual()
                 except ValueError as e:
                     bl_orbit_dual = from_orbit_string('0')
             else:
-                raise ValueError("Unknown orbit type.")
+                raise TypeError(f"Unknown orbit type {type(orbit)}.")
             orbit_duals.append(bl_orbit_dual)
             result_bl_orbit = result_bl_orbit + bl_orbit_dual
     print(result_bl_orbit)
@@ -284,6 +287,9 @@ if __name__ == "__main__":
         ), (
             ('E', 7, np.array([2.1, 1.1, -0.1, 2.1, 2, 4, 2, 0.9])),
             ([('D', 6), ('A', 1)], None, None)
+        ), (
+            ('E', 7, np.array([-1/4, 1/4, 1/4, 1/4, 1/4, 1/4, -5/4, 5/4])),
+            
         )
     ]
     for i, test_case in enumerate(test_cases):

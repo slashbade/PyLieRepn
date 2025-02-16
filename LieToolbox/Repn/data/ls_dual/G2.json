@@ -1,0 +1,42 @@
+[
+    {
+        "orbit": "0",
+        "diagram": "00",
+        "dim": "0",
+        "spec": "1",
+        "dual": "G_2",
+        "A:Abar": "1"
+    },
+    {
+        "orbit": "A_1",
+        "diagram": "01",
+        "dim": "6",
+        "spec": "0",
+        "dual": "G_2(a_1)",
+        "A:Abar": "1"
+    },
+    {
+        "orbit": "\\tilde{A}_1",
+        "diagram": "10",
+        "dim": "8",
+        "spec": "0",
+        "dual": "G_2(a_1)",
+        "A:Abar": "1"
+    },
+    {
+        "orbit": "G_2(a_1)",
+        "diagram": "02",
+        "dim": "10",
+        "spec": "1",
+        "dual": "G_2(a_1)",
+        "A:Abar": "S3"
+    },
+    {
+        "orbit": "G_2",
+        "diagram": "22",
+        "dim": "12",
+        "spec": "1",
+        "dual": "0",
+        "A:Abar": "1"
+    }
+]

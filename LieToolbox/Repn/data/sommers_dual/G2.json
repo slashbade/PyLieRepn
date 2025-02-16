@@ -1,14 +1,23 @@
 [
     {
         "orbit": "G_2(a_1)",
-        "dual": "G_2(a_1)"
+        "diagram": "20",
+        "tildeb": "1",
+        "dual": "G_2(a_1)",
+        "A:Abar": "S_3"
     },
     {
         "orbit": "A_1 + \\tilde{A}_1",
-        "dual": "\\tilde{A}_1"
+        "diagram": "20",
+        "tildeb": "2",
+        "dual": "\\tilde{A}_1",
+        "A:Abar": ""
     },
     {
         "orbit": "A_2",
-        "dual": "A_1"
+        "diagram": "20",
+        "tildeb": "3",
+        "dual": "A_1",
+        "A:Abar": ""
     }
 ]
