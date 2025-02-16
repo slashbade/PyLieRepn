@@ -1,0 +1,3 @@
+[submodule "LieToolbox/PyCox"]
+	path = LieToolbox/PyCox
+	url = https://github.com/slashbade/PyCox.git

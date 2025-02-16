@@ -12,9 +12,9 @@ import sys
 sys.path.append('../..')
 sys.path.append('.')
 # For flask
-from LieToolbox.Repn.algorithm import RSAlgorithm as rsa
-from LieToolbox.Repn.algorithm import HAlgorithm as ha
-from LieToolbox.Repn.algorithm import DRS_algorithm as drsa
+from .algorithm import RSAlgorithm as rsa
+from .algorithm import HAlgorithm as ha
+from .algorithm import DRS_algorithm as drsa
 
 # # For test
 # import RSAlgorithm as rsa

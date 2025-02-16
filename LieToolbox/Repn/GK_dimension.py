@@ -1,15 +1,12 @@
-import sys
-sys.path.append("..")
-sys.path.append(".")
 import numpy as np
-from LieToolbox.Repn.utils import *
-from LieToolbox.Repn.roots import (
+from .utils import *
+from .roots import (
     integral_root_system, simple_root_data, get_cartan_type, 
     reorder_simple_roots, compute_fundamental_weights)
-from LieToolbox.Repn.root_system_data import cartan_matrix_pycox, num_positive_roots_data
-from LieToolbox.Repn.PyCox import chv1r6180 as pycox
-from LieToolbox.Repn.weight import HighestWeightModule, Weight, NilpotentOrbit
-from LieToolbox.Repn.orbit import BalaCarterOrbit, from_orbit_string, from_alvis_notation, from_partition_dual
+from .root_system_data import cartan_matrix_pycox, num_positive_roots_data
+from ..PyCox import chv1r6180 as pycox
+from .weight import HighestWeightModule, Weight, NilpotentOrbit
+from .orbit import BalaCarterOrbit, from_orbit_string, from_alvis_notation, from_partition_dual
 
 def antidominant(typ: str, rank: int, weight_: np.ndarray, weyl: list = []) -> tuple[list, np.ndarray]:
     """A fast recursive algorithm to compute the antidominant weight of a given weight.

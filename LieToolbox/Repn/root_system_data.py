@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.typing import NDArray
-from LieToolbox.Repn.PyCox import chv1r6180 as pycox
+from ..PyCox import chv1r6180 as pycox
 
 def simple_root_data(typ: str, rank: int, format: str = "gap") -> NDArray:
     if typ == "A":

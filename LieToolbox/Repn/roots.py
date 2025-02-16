@@ -11,8 +11,8 @@ it will have a suffix "_".
 """
 import sys
 sys.path.append("..")
-from LieToolbox.Repn.root_system_data import simple_root_data, roots_pycox
-from LieToolbox.Repn.utils import *
+from .root_system_data import simple_root_data, roots_pycox
+from .utils import *
 import numpy as np
 from numpy.typing import NDArray
 import networkx as nx
