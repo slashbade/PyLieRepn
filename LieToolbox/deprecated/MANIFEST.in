@@ -1,3 +1,0 @@
-graft lieToolbox/static
-graft lieToolbox/templates
-global-exclude *.pyc
