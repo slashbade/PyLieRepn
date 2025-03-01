@@ -82,9 +82,12 @@ class BalaCarterOrbit:
                 return from_orbit_string(d["orbit"], self.lie_type)
         raise ValueError(f"Orbit {orbit_string} not found in sommers_dual/{self.lie_type[0]}{self.lie_type[1]}.json")
 
+
+
 def set_mark(bl: BalaCarterOrbit, mark: OrbitType):
     bl.mark = mark
     return copy.copy(bl)
+
 
 def get_mark_from_diagram(bl: BalaCarterOrbit, diagram: str) -> BalaCarterOrbit:
     assert bl.mark is None

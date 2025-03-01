@@ -6,7 +6,8 @@ from .roots import (
 from .root_system_data import cartan_matrix_pycox, num_positive_roots_data
 from ..PyCox import chv1r6180 as pycox
 from .weight import HighestWeightModule, Weight, NilpotentOrbit
-from .orbit import BalaCarterOrbit, from_orbit_string, from_alvis_notation, from_partition_dual
+from .orbit import (BalaCarterOrbit, from_orbit_string, from_alvis_notation, 
+                    from_partition_dual, get_mark_from_diagram, set_mark)
 
 def antidominant(typ: str, rank: int, weight_: np.ndarray, weyl: list = []) -> tuple[list, np.ndarray]:
     """A fast recursive algorithm to compute the antidominant weight of a given weight.
@@ -84,13 +85,26 @@ def a_value_integral_exceptional(typ, rank, weight):
     bl_orbit = from_alvis_notation(cell_repm['special'], (typ, rank))
     return cell_repm['a'], cell_repm['special'], bl_orbit
 
-def get_neutral_element(typ, rank, simple_roots: np.ndarray) -> np.ndarray:
-    return simple_roots[2]
+def get_neutral_element(typ, rank, simple_roots: np.ndarray, bl_orbit: BalaCarterOrbit) -> np.ndarray:
+    """ Get neutral element (Only implemented for summation of type A)
+    """
+    ranks = []
+    for (_, rank, _), mult in bl_orbit.orbits.items():
+        ranks.extend([rank] * mult)
+    new_simple_roots = simple_roots.copy()
+    elements = []
+    for rank in ranks:
+        elements.extend([new_simple_roots[i] for i in range(rank)])
+        new_simple_roots = new_simple_roots[rank+1:] 
+    return np.sum(np.concatenate(elements))
 
 def get_diagram(typ, rank, neutral: np.ndarray) -> str:
     weight_ = neutral @ simple_root_data(typ, rank).T
     antidom, _ = antidominant(typ, rank, weight_)
     return "".join(antidom)
+
+def get_bl_orbit_mark(typ, rank, bl_orbit: BalaCarterOrbit):
+    pass
 
 def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
     """Compute the dimension of the Gelfand-Kirillov dimension of a weight.
@@ -179,12 +193,13 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
         a_values.append(a_value)
         characters.append(str(character))
         orbits.append(str(orbit))
+        
         if is_integral_weight:
             orbit_duals.append(orbit)
         else:
             if isinstance(orbit, NilpotentOrbit):
                 dual_orbit = orbit.dual()
-                print(f"branch{ct}, transformed weight {transformed_weight}, corresponding orbit {orbit} of type {orbit.lieType}, dual orbit {dual_orbit} of type {dual_orbit.lieType}")
+                # print(f"branch{ct}, transformed weight {transformed_weight}, corresponding orbit {orbit} of type {orbit.lieType}, dual orbit {dual_orbit} of type {dual_orbit.lieType}")
                 try:
                     bl_orbit_dual = from_partition_dual(dual_orbit.lieType, dual_orbit.entry)
                 except ValueError as e:
@@ -199,6 +214,15 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
             orbit_duals.append(bl_orbit_dual)
             result_bl_orbit = result_bl_orbit + bl_orbit_dual
     print(result_bl_orbit)
+    
+    # Compute mark ' or " for the orbit
+    if all([typ=='A' for (typ, _, _) in result_bl_orbit.orbits.keys()]):
+        neutral_element_all = np.zeros((rank, 1))
+        for _, sp, od in zip(cts, sps, orbit_duals):
+            neutral_element_all += get_neutral_element(typ, rank, sp, od)
+        diagram = get_diagram(typ, rank, neutral_element_all)
+        result_bl_orbit = get_mark_from_diagram(result_bl_orbit, diagram)
+    
     try:
         dual = result_bl_orbit.sommers_dual()
     except ValueError as e:
@@ -286,7 +310,7 @@ if __name__ == "__main__":
             ([('D', 6), ('A', 1)], None, None)
         ), (
             ('E', 7, np.array([-1/4, 1/4, 1/4, 1/4, 1/4, 1/4, -5/4, 5/4])),
-            
+            ([('D', 6), ('A', 1)], None, 59) 
         )
     ]
     for i, test_case in enumerate(test_cases):
