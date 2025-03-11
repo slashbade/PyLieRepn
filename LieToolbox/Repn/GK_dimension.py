@@ -1,4 +1,5 @@
 import numpy as np
+import traceback
 from .utils import *
 from .roots import (
     integral_root_system, simple_root_data, get_cartan_type, 
@@ -91,20 +92,27 @@ def get_neutral_element(typ, rank, simple_roots: np.ndarray, bl_orbit: BalaCarte
     ranks = []
     for (_, rank, _), mult in bl_orbit.orbits.items():
         ranks.extend([rank] * mult)
-    new_simple_roots = simple_roots.copy()
+    new_simple_roots = simple_roots.copy()[::-1]
     elements = []
     for rank in ranks:
-        elements.extend([new_simple_roots[i] for i in range(rank)])
+        print(rank, new_simple_roots)
+        elements.extend([new_simple_roots[i].reshape((1,-1)) for i in range(rank)])
         new_simple_roots = new_simple_roots[rank+1:] 
-    return np.sum(np.concatenate(elements))
+    print(typ, rank, bl_orbit, 'chosen elements: ', elements)
+    if not elements:
+        return np.zeros(simple_roots.shape[1])
+    sumn = np.sum(np.concatenate(elements, axis=0), axis=0)
+    return sumn
 
-def get_diagram(typ, rank, neutral: np.ndarray) -> str:
+def get_diagram(typ, rank, neutral: np.ndarray) -> list[int]:
+    print(neutral)
     weight_ = neutral @ simple_root_data(typ, rank).T
-    antidom, _ = antidominant(typ, rank, weight_)
-    return "".join(antidom)
-
-def get_bl_orbit_mark(typ, rank, bl_orbit: BalaCarterOrbit):
-    pass
+    antidom, w = antidominant(typ, rank, weight_)
+    w = (-1) * w
+    sps = simple_root_data(typ, rank)
+    # print(sps @ w)
+    print('diagram:', round2(w).tolist())
+    return round2(w).tolist() # type: ignore
 
 def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
     """Compute the dimension of the Gelfand-Kirillov dimension of a weight.
@@ -118,6 +126,7 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
     Returns:
         int: the Gelfand-Kirillov dimension.
     """
+    print(weight)
     is_integral_weight = is_integer_array(weight)
     simple_root_data0 = simple_root_data(typ, rank)
     weight0_ = (2 * weight @ simple_root_data0.T / np.sum(simple_root_data0**2, axis=1))
@@ -146,7 +155,6 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
             [embed_basis(simple_root_data(*ct), dim_ambient) 
             for ct in cts]
             )
-        # isomap1 = embedded.T @ np.linalg.inv(all_basis).T
         embedded = np.concatenate(
             [embedded, np.zeros((dim_ambient - embedded.shape[0], dim_ambient))])
     else:
@@ -166,7 +174,6 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
     result_bl_orbit = BalaCarterOrbit()
     result_bl_orbit.lie_type = (typ, rank)
     for ct, sp in zip(cts, sps):
-        # print(sp)
         # Compute the weight in each cananical simple root basis
         cananical_sp = simple_root_data(*ct)
         dim_sp = cananical_sp.shape[1]
@@ -176,9 +183,7 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
         weight1 = weight_ @ fundamental_weights
         transformed_weight = weight_ @ transformed_fundamental_weights.T
         transformed_weight = restrict_array(transformed_weight, dim_sp)
-        # print(f"transformed weight: {transformed_weight}")
         transformed_weight_ = (2 * transformed_weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
-        # Compute the Gelfand-Kirillov dimension
         transformed_weight_ = np.round(transformed_weight_)
         
         if ct[0] in ['A', 'B', 'C', 'D']:
@@ -199,33 +204,37 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
         else:
             if isinstance(orbit, NilpotentOrbit):
                 dual_orbit = orbit.dual()
-                # print(f"branch{ct}, transformed weight {transformed_weight}, corresponding orbit {orbit} of type {orbit.lieType}, dual orbit {dual_orbit} of type {dual_orbit.lieType}")
                 try:
                     bl_orbit_dual = from_partition_dual(dual_orbit.lieType, dual_orbit.entry)
                 except ValueError as e:
+                    print("err:", e)
                     bl_orbit_dual = from_orbit_string('0')
             elif isinstance(orbit, BalaCarterOrbit):
                 try:
                     bl_orbit_dual = orbit.ls_dual()
                 except ValueError as e:
+                    print("err:", e)
                     bl_orbit_dual = from_orbit_string('0')
             else:
                 raise TypeError(f"Unknown orbit type {type(orbit)}.")
             orbit_duals.append(bl_orbit_dual)
             result_bl_orbit = result_bl_orbit + bl_orbit_dual
+    print(cts)
     print(result_bl_orbit)
     
-    # Compute mark ' or " for the orbit
-    if all([typ=='A' for (typ, _, _) in result_bl_orbit.orbits.keys()]):
-        neutral_element_all = np.zeros((rank, 1))
-        for _, sp, od in zip(cts, sps, orbit_duals):
-            neutral_element_all += get_neutral_element(typ, rank, sp, od)
-        diagram = get_diagram(typ, rank, neutral_element_all)
-        result_bl_orbit = get_mark_from_diagram(result_bl_orbit, diagram)
-    
     try:
-        dual = result_bl_orbit.sommers_dual()
-    except ValueError as e:
+    # Compute mark ' or " for the orbit
+        if all([typ=='A' for (typ, _, _) in result_bl_orbit.orbits.keys()]):
+            neutral_element_all = np.zeros(dim_ambient)
+            for _, sp, od in zip(cts, sps, orbit_duals):
+                print(neutral_element_all, get_neutral_element(typ, rank, sp, od))
+                neutral_element_all += get_neutral_element(typ, rank, sp, od)
+            diagram = get_diagram(typ, rank, neutral_element_all)
+            result_bl_orbit = get_mark_from_diagram(result_bl_orbit, diagram) 
+        # dual = result_bl_orbit.sommers_dual()
+        dual = result_bl_orbit.dual()
+    except Exception as e:
+        print(traceback.format_exc())
         dual = "N/A"
     
     total_a_value = sum(a_values)
@@ -310,19 +319,21 @@ if __name__ == "__main__":
             ([('D', 6), ('A', 1)], None, None)
         ), (
             ('E', 7, np.array([-1/4, 1/4, 1/4, 1/4, 1/4, 1/4, -5/4, 5/4])),
-            ([('D', 6), ('A', 1)], None, 59) 
+            ([('D', 6), ('A', 1)], None, 59)
+        ), (
+            ('E', 8, np.array([1/8, 1/8, 1/8, 1/8, 1/8, 3/8, 7/8, 13/8])),
+            ([('D', 6), ('A', 1)], None, None)
         )
     ]
     for i, test_case in enumerate(test_cases):
+        print(f"start test case {i}", test_case[0])
         if i in [0]:
             continue
         typ, rank, weight = test_case[0]
         gk_dim, info = GK_dimension(typ, rank, weight)
+        print(gk_dim)
         if test_case[1][2] is not None:
             assert eval(gk_dim) == test_case[1][2], f"{gk_dim}"
         print(f"finish test case {weight}")
     print("All test cases passed.")
-    test_case = test_cases[8]
-    # print(test_case)
-    typ, rank, weight = test_case[0]
-    # print(GK_dimension(typ, rank, weight))
+

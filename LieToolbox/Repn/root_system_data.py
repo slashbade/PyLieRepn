@@ -1,8 +1,7 @@
 import numpy as np
-from numpy.typing import NDArray
 from ..PyCox import chv1r6180 as pycox
 
-def simple_root_data(typ: str, rank: int, format: str = "gap") -> NDArray:
+def simple_root_data(typ: str, rank: int, format: str = "gap") -> np.ndarray:
     if typ == "A":
         mat = np.zeros((rank, rank + 1))
         for i in range(rank):
@@ -50,6 +49,8 @@ def simple_root_data(typ: str, rank: int, format: str = "gap") -> NDArray:
             mat[5, 3:5] = [-1, 1]
             mat[6, 4:6] = [-1, 1]
             mat[7, 5:7] = [-1, 1]
+        else:
+            raise ValueError('Wrong rank!')
     elif typ == "F" and rank == 4:
         mat = np.zeros((rank, rank))
         mat[0, 1:3] = [1, -1]
@@ -60,6 +61,8 @@ def simple_root_data(typ: str, rank: int, format: str = "gap") -> NDArray:
         mat = np.zeros((rank, 3))
         mat[1, :] = [1, -1, 0]
         mat[0, :] = [-2, 1, 1]
+    else:
+        raise ValueError('Wrong typ!')
 
     if format == "bourbaki":
         return mat
@@ -68,9 +71,11 @@ def simple_root_data(typ: str, rank: int, format: str = "gap") -> NDArray:
             return mat[::-1]
         else:
             return mat
+    else:
+        raise ValueError("Wrong format!")
 
 
-def fundamental_weight_data(typ: str, rank: int, format: str = "bourbaki") -> NDArray:
+def fundamental_weight_data(typ: str, rank: int, format: str = "bourbaki") -> np.ndarray:
     """Fundamental weights of the Lie algebra in terms of the simple roots.
 
     Returns:
@@ -152,6 +157,8 @@ def fundamental_weight_data(typ: str, rank: int, format: str = "bourbaki") -> ND
         mat = np.zeros((rank, rank))
         mat[0, :] = np.array([2, 1])
         mat[1, :] = np.array([3, 2])
+    else:
+        raise ValueError('Wrong typ!')
 
     if format == "bourbaki":
         return mat
@@ -160,6 +167,8 @@ def fundamental_weight_data(typ: str, rank: int, format: str = "bourbaki") -> ND
             return mat[::-1, ::-1]
         else:
             return mat
+    else:
+        raise ValueError('Wrong format!')
 
 def num_positive_roots_data(typ: str, rank: int) -> int:
     if typ == "A":
@@ -177,14 +186,40 @@ def num_positive_roots_data(typ: str, rank: int) -> int:
             return 63
         elif rank == 8:
             return 120
+        else:
+            raise ValueError('Wrong rank!')
     elif typ == "F":
         return 24
     elif typ == "G":
         return 6
+    else:
+        raise ValueError('Wrong typ!')
 
+def get_permutation_from_sommers(typ, rank) -> list[int]:
+    match (typ, rank):
+        case ('E', 6):
+            return [0, 5, 1, 2, 3, 4]
+        case ('E', 7):
+            return [0, 6, 1, 2, 3, 4, 5]
+        case ('E', 8):
+            return [0, 7, 1, 2, 3, 4, 5, 6]
+        case _:
+            return list(range(rank))
+
+def permute_index(arr: np.ndarray, perm: list[int]) -> np.ndarray:
+    new_arr = np.zeros_like(arr)
+    for i, j in enumerate(perm):
+        new_arr[i] = arr[j]
+    return new_arr
 
 def roots_pycox(typ, rank):
     return np.array(pycox.roots(pycox.cartanmat(typ, rank))[0])
 
 def cartan_matrix_pycox(typ, rank):
     return np.array(pycox.cartanmat(typ, rank))
+
+if __name__ == "__main__":
+    sommers_diagram = np.array([0, 0, 0, 0, 0, 0, 2, 0])
+    typ, rank = 'E', 8
+    gap_diagram = permute_index(sommers_diagram, get_permutation_from_sommers(typ, rank))
+    print(gap_diagram)

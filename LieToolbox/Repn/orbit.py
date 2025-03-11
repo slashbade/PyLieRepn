@@ -81,6 +81,16 @@ class BalaCarterOrbit:
             if d["dual"] == orbit_string:
                 return from_orbit_string(d["orbit"], self.lie_type)
         raise ValueError(f"Orbit {orbit_string} not found in sommers_dual/{self.lie_type[0]}{self.lie_type[1]}.json")
+    
+    def dual(self) -> "BalaCarterOrbit":
+        orbit_string = str(self)
+        root = Path(__file__).parent
+        with open(root / "data" / "dual" / f"{self.lie_type[0]}{self.lie_type[1]}.json", "r") as f:
+            data = json.load(f)
+        for d in data:
+            if d["orbit"] == orbit_string:
+                return from_orbit_string(d["dual"], self.lie_type)
+        raise ValueError(f"Orbit {orbit_string} not found in ls_dual/{self.lie_type[0]}{self.lie_type[1]}.json")
 
 
 
@@ -89,10 +99,12 @@ def set_mark(bl: BalaCarterOrbit, mark: OrbitType):
     return copy.copy(bl)
 
 
-def get_mark_from_diagram(bl: BalaCarterOrbit, diagram: str) -> BalaCarterOrbit:
+def get_mark_from_diagram(bl: BalaCarterOrbit, diagram: list) -> BalaCarterOrbit:
     assert bl.mark is None
     root = Path(__file__).parent
-    with open(root / "data" / "sommers_dual" / f"{bl.lie_type[0]}{bl.lie_type[1]}.json", "r") as f:
+
+    with open(root / "data" / "dual" / f"{bl.lie_type[0]}{bl.lie_type[1]}.json", "r") as f:
+    # with open(root / "data" / "sommers_dual" / f"{bl.lie_type[0]}{bl.lie_type[1]}.json", "r") as f:
         data = json.load(f)
     candidates = [d for d in data if d['diagram'] == diagram]
     for cand in candidates:
@@ -100,8 +112,12 @@ def get_mark_from_diagram(bl: BalaCarterOrbit, diagram: str) -> BalaCarterOrbit:
             return set_mark(bl, '\'')
         if str(set_mark(bl, '\"')) == cand['orbit']:
             return set_mark(bl, '\"')
-    raise ValueError(f'Orbit {bl} with diagram {diagram} not found \
+        if str(set_mark(bl, None)) == cand['orbit']:
+            return set_mark(bl, None)
+    
+    print(f'Orbit {bl} with diagram {diagram} not found \
                       in sommers_dual/{bl.lie_type[0]}{bl.lie_type[1]}.json')
+    return bl
 
 def parse_orbit_singleton(orbit_string):
     if orbit_string == "":

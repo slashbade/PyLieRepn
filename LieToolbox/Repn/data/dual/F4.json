@@ -1,206 +1,262 @@
 [
     {
         "orbit": "\\tilde{A}_1",
+        "dual": "F_4(a_1)",
         "diagram": [
             0,
             0,
             0,
             1
-        ],
-        "tildeb": "1",
-        "dual": "F_4(a_1)",
-        "A:Abar": "S_2"
+        ]
     },
     {
         "orbit": "2A_1",
+        "dual": "F_4(a_2)",
         "diagram": [
             0,
             0,
             0,
             1
-        ],
-        "tildeb": "2",
-        "dual": "F_4(a_2)",
-        "A:Abar": ""
+        ]
     },
     {
         "orbit": "A_2",
+        "dual": "B_3",
         "diagram": [
             2,
             0,
             0,
             0
-        ],
-        "tildeb": "3",
-        "dual": "B_3",
-        "A:Abar": "1"
+        ]
     },
     {
         "orbit": "2A_1 + \\tilde{A}_1",
+        "dual": "B_3",
         "diagram": [
             2,
             0,
             0,
             0
-        ],
-        "tildeb": "3",
-        "dual": "B_3",
-        "A:Abar": ""
+        ]
     },
     {
         "orbit": "B_2",
+        "dual": "F_4(a_3)",
         "diagram": [
             2,
             0,
             0,
             1
-        ],
-        "tildeb": "4",
-        "dual": "F_4(a_3)",
-        "A:Abar": "S_2"
+        ]
     },
     {
         "orbit": "A_3",
+        "dual": "B_2",
         "diagram": [
             2,
             0,
             0,
             1
-        ],
-        "tildeb": "6",
-        "dual": "B_2",
-        "A:Abar": ""
+        ]
     },
     {
         "orbit": "C_3(a_1)",
+        "dual": "F_4(a_3)",
         "diagram": [
             1,
             0,
             1,
             0
-        ],
-        "tildeb": "4",
-        "dual": "F_4(a_3)",
-        "A:Abar": "S_2"
+        ]
     },
     {
         "orbit": "A_1 + B_2",
+        "dual": "C_3(a_1)",
         "diagram": [
             1,
             0,
             1,
             0
-        ],
-        "tildeb": "5",
-        "dual": "C_3(a_1)",
-        "A:Abar": ""
+        ]
     },
     {
         "orbit": "F_4(a_3)",
+        "dual": "F_4(a_3)",
         "diagram": [
             0,
             2,
             0,
             0
-        ],
-        "tildeb": "4",
-        "dual": "F_4(a_3)",
-        "A:Abar": "S_4"
+        ]
     },
     {
         "orbit": "A_1 + C_3(a_1)",
+        "dual": "C_3(a_1)",
         "diagram": [
             0,
             2,
             0,
             0
-        ],
-        "tildeb": "5",
-        "dual": "C_3(a_1)",
-        "A:Abar": ""
+        ]
     },
     {
         "orbit": "A_2 + \\tilde{A}_2",
+        "dual": "A_1 + \\tilde{A}_2",
         "diagram": [
             0,
             2,
             0,
             0
-        ],
-        "tildeb": "6",
-        "dual": "A_1 + \\tilde{A}_2",
-        "A:Abar": ""
+        ]
     },
     {
         "orbit": "B_4(a_2)",
+        "dual": "B_2",
         "diagram": [
             0,
             2,
             0,
             0
-        ],
-        "tildeb": "6",
-        "dual": "B_2",
-        "A:Abar": ""
+        ]
     },
     {
         "orbit": "A_3 + \\tilde{A}_1",
+        "dual": "A_2 + \\tilde{A}_1",
         "diagram": [
             0,
             2,
             0,
             0
-        ],
-        "tildeb": "7",
-        "dual": "A_2 + \\tilde{A}_1",
-        "A:Abar": ""
+        ]
     },
     {
         "orbit": "F_4(a_2)",
+        "dual": "A_1 + \\tilde{A}_1",
         "diagram": [
             0,
             2,
             0,
             2
-        ],
-        "tildeb": "10",
-        "dual": "A_1 + \\tilde{A}_1",
-        "A:Abar": "1"
+        ]
     },
     {
         "orbit": "A_1 + C_3",
+        "dual": "A_1 + \\tilde{A}_1",
         "diagram": [
             0,
             2,
             0,
             2
-        ],
-        "tildeb": "10",
-        "dual": "A_1 + \\tilde{A}_1",
-        "A:Abar": ""
+        ]
     },
     {
         "orbit": "F_4(a_1)",
+        "dual": "\\tilde{A}_1",
         "diagram": [
             2,
             2,
             0,
             2
-        ],
-        "tildeb": "13",
-        "dual": "\\tilde{A}_1",
-        "A:Abar": "S_2"
+        ]
     },
     {
         "orbit": "B_4",
+        "dual": "A_1",
         "diagram": [
             2,
             2,
             0,
             2
-        ],
-        "tildeb": "16",
-        "dual": "A_1",
-        "A:Abar": ""
+        ]
+    },
+    {
+        "orbit": "0",
+        "dual": "F_4",
+        "diagram": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    {
+        "orbit": "A_1",
+        "dual": "F_4(a_1)",
+        "diagram": [
+            1,
+            0,
+            0,
+            0
+        ]
+    },
+    {
+        "orbit": "A_1 + \\tilde{A}_1",
+        "dual": "F_4(a_2)",
+        "diagram": [
+            0,
+            1,
+            0,
+            0
+        ]
+    },
+    {
+        "orbit": "\\tilde{A}_2",
+        "dual": "C_3",
+        "diagram": [
+            0,
+            0,
+            0,
+            2
+        ]
+    },
+    {
+        "orbit": "A_2 + \\tilde{A}_1",
+        "dual": "F_4(a_3)",
+        "diagram": [
+            0,
+            0,
+            1,
+            0
+        ]
+    },
+    {
+        "orbit": "A_1 + \\tilde{A}_2",
+        "dual": "F_4(a_3)",
+        "diagram": [
+            0,
+            1,
+            0,
+            1
+        ]
+    },
+    {
+        "orbit": "C_3",
+        "dual": "\\tilde{A}_2",
+        "diagram": [
+            1,
+            0,
+            1,
+            2
+        ]
+    },
+    {
+        "orbit": "B_3",
+        "dual": "A_2",
+        "diagram": [
+            2,
+            2,
+            0,
+            0
+        ]
+    },
+    {
+        "orbit": "F_4",
+        "dual": "0",
+        "diagram": [
+            2,
+            2,
+            2,
+            2
+        ]
     }
 ]

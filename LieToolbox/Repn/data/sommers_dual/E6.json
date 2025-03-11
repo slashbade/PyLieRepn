@@ -1,49 +1,98 @@
 [
     {
         "orbit": "A_2",
-        "diagram": "000002",
+        "diagram": [
+            0,
+            2,
+            0,
+            0,
+            0,
+            0
+        ],
         "tildeb": "3",
         "dual": "E_6(a_3)",
         "A:Abar": "S_2"
     },
     {
         "orbit": "4A_1",
-        "diagram": "000002",
+        "diagram": [
+            0,
+            2,
+            0,
+            0,
+            0,
+            0
+        ],
         "tildeb": "4",
         "dual": "A_5",
         "A:Abar": ""
     },
     {
         "orbit": "D_4(a_1)",
-        "diagram": "002000",
+        "diagram": [
+            0,
+            0,
+            0,
+            2,
+            0,
+            0
+        ],
         "tildeb": "7",
         "dual": "D_4(a_1)",
         "A:Abar": "S_3"
     },
     {
         "orbit": "2A_1 + A_3",
-        "diagram": "002000",
+        "diagram": [
+            0,
+            0,
+            0,
+            2,
+            0,
+            0
+        ],
         "tildeb": "8",
         "dual": "A_1 + A_3",
         "A:Abar": ""
     },
     {
         "orbit": "3A_2",
-        "diagram": "002000",
+        "diagram": [
+            0,
+            0,
+            0,
+            2,
+            0,
+            0
+        ],
         "tildeb": "9",
         "dual": "A_1 + 2A_2",
         "A:Abar": ""
     },
     {
         "orbit": "E_6(a_3)",
-        "diagram": "202020",
+        "diagram": [
+            2,
+            0,
+            0,
+            2,
+            0,
+            2
+        ],
         "tildeb": "15",
         "dual": "A_2",
         "A:Abar": "S_2"
     },
     {
         "orbit": "A_1 + A_5",
-        "diagram": "202020",
+        "diagram": [
+            2,
+            0,
+            0,
+            2,
+            0,
+            2
+        ],
         "tildeb": "16",
         "dual": "3A_1",
         "A:Abar": ""

@@ -1,0 +1,58 @@
+[
+    {
+        "orbit": "G_2(a_1)",
+        "dual": "G_2(a_1)",
+        "diagram": [
+            2,
+            0
+        ]
+    },
+    {
+        "orbit": "A_1 + \\tilde{A}_1",
+        "dual": "\\tilde{A}_1",
+        "diagram": [
+            2,
+            0
+        ]
+    },
+    {
+        "orbit": "A_2",
+        "dual": "A_1",
+        "diagram": [
+            2,
+            0
+        ]
+    },
+    {
+        "orbit": "0",
+        "dual": "G_2",
+        "diagram": [
+            0,
+            0
+        ]
+    },
+    {
+        "orbit": "A_1",
+        "dual": "G_2(a_1)",
+        "diagram": [
+            0,
+            1
+        ]
+    },
+    {
+        "orbit": "\\tilde{A}_1",
+        "dual": "G_2(a_1)",
+        "diagram": [
+            1,
+            0
+        ]
+    },
+    {
+        "orbit": "G_2",
+        "dual": "0",
+        "diagram": [
+            2,
+            2
+        ]
+    }
+]
