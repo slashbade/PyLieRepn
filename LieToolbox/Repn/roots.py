@@ -244,8 +244,8 @@ def get_dynkin_diagram(simple_roots: NDArray) -> nx.Graph:
         nx.Graph: Dynkin diagram of the Lie algebra.
     """
     G = nx.Graph()
-    for i in range(simple_roots.shape[0]):
-        G.add_node(i)
+    for i, simple_root in enumerate(simple_roots):
+        G.add_node(i, simple_root=simple_root)
     
     cmat = cartan_matrix_(simple_roots)
     graph_mat = np.zeros_like(cmat)
@@ -253,7 +253,7 @@ def get_dynkin_diagram(simple_roots: NDArray) -> nx.Graph:
         for j in range(i+1, cmat.shape[1]):
             num_edges = np.round(cmat[i, j] * cmat[j, i])
             if num_edges > 0:
-                G.add_edge(i, j, weight=num_edges)
+                G.add_edge(i, j, weight=num_edges, cij=cmat[i, j], cji=cmat[j, i])
     return G
     
 
