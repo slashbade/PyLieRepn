@@ -68,7 +68,7 @@ def place_ranks_for_type_D(diagram: nx.Graph, ranks: list[int], chosen_id: int, 
     # find a rank 1 and pop it
     ranks = sorted(ranks)
     placement = get_first_feasible_placements_at(diagram, ranks[0], chosen_id)
-    chosen += placement
+    placement += chosen
     adjoints = reduce(set.union, map(lambda x : set(diagram.neighbors(x)), placement))
     covered = set(placement) | adjoints | {drop_id}
     new_diagram = diagram.copy()
@@ -77,41 +77,63 @@ def place_ranks_for_type_D(diagram: nx.Graph, ranks: list[int], chosen_id: int, 
     left_chosen = place_ranks(new_diagram, ranks)
     return chosen + left_chosen
 
-def get_neutral_elements(simple_roots, ranks, chosen_id, drop_id):
+def get_chosen_neutral_elements(simple_roots, ranks, chosen_id, drop_id):
     diagram = get_dynkin_diagram(simple_roots)
     if chosen_id is not None and drop_id is not None:
         chosen = place_ranks_for_type_D(diagram, ranks, chosen_id, drop_id)
     else:
         chosen = place_ranks(diagram, ranks)
+    # visualize_chosen_ids(diagram, chosen)
     return chosen
 
 def chose_neutral_elements_test(typ: str, rank: int, ranks: list[int], chosen_id: Optional[int]=None, drop_id: Optional[int]=None) -> list[int]:
-    chosen = get_neutral_elements(simple_root_data(typ, rank), ranks, chosen_id, drop_id)
+    chosen = get_chosen_neutral_elements(simple_root_data(typ, rank), ranks, chosen_id, drop_id)
     return chosen
 
+def visualize_chosen_ids(diagram: nx.Graph, chosen: list[int]) -> None:
+    node_colors = ['lightcoral' if node in chosen else 'skyblue' for node in diagram.nodes]
+
+    pos = nx.spring_layout(diagram, seed=42)
+
+    # Get edge weights as labels
+    edge_labels = nx.get_edge_attributes(diagram, 'weight')
+    node_labels = nx.get_node_attributes(diagram, 'simple_root')
+    pp_node_labels = {k: f'${pretty_print_array(v)}$' for k, v in node_labels.items()}
+
+    node_label_pos = {k: (v[0], v[1] - 0.1) for k, v in pos.items()}
+    edge_label_pos = {k: (v[0], v[1] - 0.1) for k, v in pos.items()}
+    # Draw edge labels
+    nx.draw_networkx_edge_labels(diagram, edge_label_pos, edge_labels=edge_labels)
+
+    nx.draw_networkx_labels(diagram, node_label_pos, labels=pp_node_labels, font_size=10, font_weight='bold')
+
+    nx.draw(diagram, pos, node_color=node_colors, with_labels=True, node_size=3000, font_size=10, font_weight='bold')
+    plt.show()
 
 
-typ, rank = 'D', 6
-ranks = [1, 1, 1]
-chosen_id, drop_id = 1, 0
-diagram = get_dynkin_diagram(simple_root_data(typ, rank))
-chosen = chose_neutral_elements_test(typ, rank, ranks, chosen_id, drop_id)
+if __name__ == '__main__':
 
-node_colors = ['lightcoral' if node in chosen else 'skyblue' for node in diagram.nodes]
+    typ, rank = 'D', 6
+    ranks = [1, 1, 1]
+    chosen_id, drop_id = 1, 0
+    diagram = get_dynkin_diagram(simple_root_data(typ, rank))
+    chosen = chose_neutral_elements_test(typ, rank, ranks, chosen_id, drop_id)
 
-pos = nx.spring_layout(diagram, seed=42)
+    node_colors = ['lightcoral' if node in chosen else 'skyblue' for node in diagram.nodes]
 
-# Get edge weights as labels
-edge_labels = nx.get_edge_attributes(diagram, 'weight')
-node_labels = nx.get_node_attributes(diagram, 'simple_root')
-pp_node_labels = {k: f'${pretty_print_array(v)}$' for k, v in node_labels.items()}
+    pos = nx.spring_layout(diagram, seed=42)
 
-node_label_pos = {k: (v[0], v[1] - 0.1) for k, v in pos.items()}
-edge_label_pos = {k: (v[0], v[1] - 0.1) for k, v in pos.items()}
-# Draw edge labels
-nx.draw_networkx_edge_labels(diagram, edge_label_pos, edge_labels=edge_labels)
+    # Get edge weights as labels
+    edge_labels = nx.get_edge_attributes(diagram, 'weight')
+    node_labels = nx.get_node_attributes(diagram, 'simple_root')
+    pp_node_labels = {k: f'${pretty_print_array(v)}$' for k, v in node_labels.items()}
 
-nx.draw_networkx_labels(diagram, node_label_pos, labels=pp_node_labels, font_size=10, font_weight='bold')
+    node_label_pos = {k: (v[0], v[1] - 0.1) for k, v in pos.items()}
+    edge_label_pos = {k: (v[0], v[1] - 0.1) for k, v in pos.items()}
+    # Draw edge labels
+    nx.draw_networkx_edge_labels(diagram, edge_label_pos, edge_labels=edge_labels)
 
-nx.draw(diagram, pos, node_color=node_colors, with_labels=True, node_size=3000, font_size=10, font_weight='bold')
-plt.show()
+    nx.draw_networkx_labels(diagram, node_label_pos, labels=pp_node_labels, font_size=10, font_weight='bold')
+
+    nx.draw(diagram, pos, node_color=node_colors, with_labels=True, node_size=3000, font_size=10, font_weight='bold')
+    plt.show()

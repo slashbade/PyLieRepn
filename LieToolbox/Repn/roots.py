@@ -9,12 +9,9 @@ suffix "_". If weights are represented in the fundamental weight basis,
 it will have a suffix "_".
 
 """
-import sys
-sys.path.append("..")
 from .root_system_data import simple_root_data, roots_pycox
 from .utils import *
 import numpy as np
-from numpy.typing import NDArray
 import networkx as nx
 from dataclasses import dataclass
 
@@ -22,40 +19,40 @@ from dataclasses import dataclass
 LieType = tuple[str, int]
 
 
-def as_fundamental_weight_basis(v: NDArray, simple_roots: NDArray) -> NDArray:
+def as_fundamental_weight_basis(v: np.ndarray, simple_roots: np.ndarray) -> np.ndarray:
     """Converts a vector in the root basis to the fundamental weight basis."""
     return change_basis(v, np.linalg.inv(cartan_matrix_(simple_roots)))
 
 
-def compute_fundamental_weights_(typ: str, rank: int, simple_roots: NDArray) -> NDArray:
+def compute_fundamental_weights_(typ: str, rank: int, simple_roots: np.ndarray) -> np.ndarray:
     """Compute the fundamental weights of the Lie algebra.
 
     Args:
         typ (str): type of the Lie algebra.
         rank (int): rank of the Lie algebra.
-        simple_root (NDArray): simple roots of the Lie algebra.
+        simple_root (np.ndarray): simple roots of the Lie algebra.
 
     Returns:
-        NDArray: fundamental weights of the Lie algebra.
+        np.ndarray: fundamental weights of the Lie algebra.
     """
     cmat = cartan_matrix_(simple_roots)
     return np.linalg.inv(cmat)
 
-def compute_fundamental_weights(simple_roots: NDArray) -> NDArray:
+def compute_fundamental_weights(simple_roots: np.ndarray) -> np.ndarray:
     return np.linalg.inv(cartan_matrix_(simple_roots)) @ simple_roots
 
 @dataclass
 class RootSystem:
-    roots: NDArray
-    positive_roots: NDArray
-    simple_roots: NDArray
+    roots: np.ndarray
+    positive_roots: np.ndarray
+    simple_roots: np.ndarray
     
 
-def is_root_system(vectors: NDArray) -> bool:
+def is_root_system(vectors: np.ndarray) -> bool:
     pass
 
 
-def half_positive_sum(typ: str, rank: int) -> NDArray:
+def half_positive_sum(typ: str, rank: int) -> np.ndarray:
     simple_roots = simple_root_data(typ, rank, "gap")
     roots_ = roots_pycox(typ, rank)
     positive_roots_ = roots_[: roots_.shape[0] // 2]
@@ -64,19 +61,19 @@ def half_positive_sum(typ: str, rank: int) -> NDArray:
     return half_positive_sum_[np.newaxis, :] @ simple_roots
 
 
-def as_coord(v: NDArray, typ: str, rank: int) -> NDArray:
+def as_coord(v: np.ndarray, typ: str, rank: int) -> np.ndarray:
     """Converts a vector in the root basis to the coordinate representation."""
     simple_roots = simple_root_data(typ, rank)
     return change_basis(v, simple_roots)
 
 
-def cartan_matrix_(simple_roots: NDArray) -> NDArray:
+def cartan_matrix_(simple_roots: np.ndarray) -> np.ndarray:
     return 2 * simple_roots @ simple_roots.T / np.sum(simple_roots**2, axis=1)
 
 
 
 
-def root_system(typ: str, rank: int) -> tuple[NDArray, NDArray]:
+def root_system(typ: str, rank: int) -> tuple[np.ndarray, np.ndarray]:
     """Silimar to PyCox, representing all roots as absolute coordinates in root space,
     where first rank-th roots are simple roots and first half are positive roots.
 
@@ -85,24 +82,24 @@ def root_system(typ: str, rank: int) -> tuple[NDArray, NDArray]:
         rank (int): rank
 
     Returns:
-        NDArray: root system as required
+        np.ndarray: root system as required
     """
     simple_roots = simple_root_data(typ, rank, "gap")
     roots = roots_pycox(typ, rank) @ simple_roots
     return simple_roots, roots
 
 def integral_root_system(
-    typ: str, rank: int, weight: NDArray
-) -> tuple[NDArray, NDArray[np.intp]]:
+    typ: str, rank: int, weight: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
     """Give a integral root system by a highest weight. Note that this func gives all roots
 
     Args:
         typ (str): type
         rank (int): rank
-        weight (NDArray): Highest weight as np array
+        weight (np.ndarray): Highest weight as np array
 
     Returns:
-        Tuple[NDArray, NDArray[np.intp]]: roots and indices
+        Tuple[np.ndarray, np.ndarray[np.intp]]: roots and indices
     """ 
     simple_roots = simple_root_data(typ, rank, "gap")
     # Trigger PyCox root enumerating, but with a transformation
@@ -115,14 +112,14 @@ def integral_root_system(
     return roots[roots_weight_ind], roots_weight_ind
 
 
-def root_system_decomposition(roots: NDArray) -> tuple[list[NDArray], list[list]]:
+def root_system_decomposition(roots: np.ndarray) -> tuple[list[np.ndarray], list[list]]:
     """Decomposition is carried out on positive roots
 
     Args:
-        roots (NDArray): root
+        roots (np.ndarray): root
 
     Returns:
-        Tuple[list[NDArray], list[list]]: decomposed positive systems with their index
+        Tuple[list[np.ndarray], list[list]]: decomposed positive systems with their index
         in orginal system.
     """
     # This is a bit tricky, but we can use the fact that the positive roots are symmetric
@@ -141,11 +138,11 @@ def root_system_decomposition(roots: NDArray) -> tuple[list[NDArray], list[list]
     return decomposed, decomposed_ind
 
 
-def simple_roots_from_irreducible(positive_roots: NDArray) -> tuple[NDArray, NDArray]:
+def simple_roots_from_irreducible(positive_roots: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Get simple roots from positive roots
 
     Returns:
-        Tuple[NDArray, NDArray]: simple roots and their indices
+        Tuple[np.ndarray, np.ndarray]: simple roots and their indices
     """
     half_positive_sum = np.sum(positive_roots, axis=0) / 2
     aprod = 2 * half_positive_sum @ positive_roots.T / np.sum(positive_roots**2, axis=1)
@@ -154,14 +151,14 @@ def simple_roots_from_irreducible(positive_roots: NDArray) -> tuple[NDArray, NDA
     return simple_roots, simple_roots_ind
 
 
-def simple_roots(roots: NDArray) -> NDArray:
+def simple_roots(roots: np.ndarray) -> list[np.ndarray]:
     """Get simple roots from the root system.
 
     Args:
-        roots (NDArray): root system.
+        roots (np.ndarray): root system.
 
     Returns:
-        NDArray: simple roots.
+        np.ndarray: simple roots.
     """
     decomposed, _ = root_system_decomposition(roots)
     simple_roots = []
@@ -171,7 +168,7 @@ def simple_roots(roots: NDArray) -> NDArray:
     return simple_roots
 
 
-def cartan_type_from_irreducible(positive_roots: NDArray, simple_roots: NDArray) -> tuple[str, int]:
+def cartan_type_from_irreducible(positive_roots: np.ndarray, simple_roots: np.ndarray) -> tuple[str, int]:
     rank = len(simple_roots)
     # Check root lengths
     root_lengths = np.linalg.norm(positive_roots, axis=1)
@@ -214,11 +211,11 @@ def cartan_type_from_irreducible(positive_roots: NDArray, simple_roots: NDArray)
         raise ValueError
 
 
-def get_cartan_type(roots: NDArray) -> tuple[list[LieType], list[NDArray]]:
+def get_cartan_type(roots: np.ndarray) -> tuple[list[LieType], list[np.ndarray]]:
     """Get the Cartan type of the the root system.
 
     Args:
-        roots (NDArray): root system.
+        roots (np.ndarray): root system.
 
     Returns:
         Tuple[str, int]: type and rank of the Lie algebra.
@@ -234,11 +231,11 @@ def get_cartan_type(roots: NDArray) -> tuple[list[LieType], list[NDArray]]:
     return cartan_type, simple_roots
 
 
-def get_dynkin_diagram(simple_roots: NDArray) -> nx.Graph:
+def get_dynkin_diagram(simple_roots: np.ndarray) -> nx.Graph:
     """Generate the Dynkin diagram of the Lie algebra.
 
     Args:
-        simple_roots (NDArray): simple roots of the Lie algebra.
+        simple_roots (np.ndarray): simple roots of the Lie algebra.
 
     Returns:
         nx.Graph: Dynkin diagram of the Lie algebra.
@@ -248,7 +245,6 @@ def get_dynkin_diagram(simple_roots: NDArray) -> nx.Graph:
         G.add_node(i, simple_root=simple_root)
     
     cmat = cartan_matrix_(simple_roots)
-    graph_mat = np.zeros_like(cmat)
     for i in range(cmat.shape[0]):
         for j in range(i+1, cmat.shape[1]):
             num_edges = np.round(cmat[i, j] * cmat[j, i])
@@ -257,16 +253,16 @@ def get_dynkin_diagram(simple_roots: NDArray) -> nx.Graph:
     return G
     
 
-def reorder_simple_roots(simple_roots: NDArray, typ: str, rank: int) -> NDArray:
+def reorder_simple_roots(simple_roots: np.ndarray, typ: str, rank: int) -> np.ndarray:
     """Reorder the simple roots according to the Bourbaki ordering.
 
     Args:
-        simple_roots (NDArray): simple roots.
+        simple_roots (np.ndarray): simple roots.
         typ (str): type of the Lie algebra.
         rank (int): rank of the Lie algebra.
 
     Returns:
-        NDArray: reordered simple roots.
+        np.ndarray: reordered simple roots.
     """
     G = get_dynkin_diagram(simple_roots)
     G_canonical = get_dynkin_diagram(simple_root_data(typ, rank))
