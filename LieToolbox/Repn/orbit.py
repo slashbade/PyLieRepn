@@ -78,8 +78,6 @@ class BalaCarterOrbit:
         for d in data:
             if d["orbit"] == orbit_string:
                 return from_orbit_string(d["dual"], self.lie_type)
-            if d["dual"] == orbit_string:
-                return from_orbit_string(d["orbit"], self.lie_type)
         raise ValueError(f"Orbit {orbit_string} not found in sommers_dual/{self.lie_type[0]}{self.lie_type[1]}.json")
     
     def dual(self) -> "BalaCarterOrbit":
@@ -92,12 +90,9 @@ class BalaCarterOrbit:
                 return from_orbit_string(d["dual"], self.lie_type)
         raise ValueError(f"Orbit {orbit_string} not found in ls_dual/{self.lie_type[0]}{self.lie_type[1]}.json")
 
-
-
 def set_mark(bl: BalaCarterOrbit, mark: OrbitType):
     bl.mark = mark
     return copy.copy(bl)
-
 
 def get_mark_from_diagram(bl: BalaCarterOrbit, diagram: list) -> BalaCarterOrbit:
     assert bl.mark is None
