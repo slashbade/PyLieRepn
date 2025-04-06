@@ -581,6 +581,7 @@ def ls_dual_data_to_list(data: str, name: str, root: Path) -> None:
             # print(preprocess_orbit_string(s[0]), preprocess_orbit_string(s[4]))
             orbit = from_orbit_string(preprocess_orbit_string(s[0])).__str__()
             dual = from_orbit_string(preprocess_orbit_string(s[4])).__str__()
+            # print('Comparison', s[4], dual)
             l.append({
                 "orbit": orbit,
                 "diagram": s[1],
@@ -595,11 +596,11 @@ def ls_dual_data_to_list(data: str, name: str, root: Path) -> None:
     with open(data_path / f"{name}.json", "w") as f:
         json.dump(l, f, indent=4)
 
-# notation_data_to_list(G2_data, "G2", root)
-# notation_data_to_list(F4_data, "F4", root)
-# notation_data_to_list(E6_data, "E6", root)
-# notation_data_to_list(E7_data, "E7", root)
-# notation_data_to_list(E8_data, "E8", root)
+notation_data_to_list(G2_data, "G2", root)
+notation_data_to_list(F4_data, "F4", root)
+notation_data_to_list(E6_data, "E6", root)
+notation_data_to_list(E7_data, "E7", root)
+notation_data_to_list(E8_data, "E8", root)
 
 
 sommers_dual_data_to_list(G2_sommers_dual_data, "G2", root)
@@ -608,8 +609,8 @@ sommers_dual_data_to_list(E6_sommers_dual_data, "E6", root)
 sommers_dual_data_to_list(E7_sommers_dual_data, "E7", root)
 sommers_dual_data_to_list(E8_sommers_dual_data, "E8", root)
 
-# ls_dual_data_to_list(G2_ls_dual_data, "G2", root)
-# ls_dual_data_to_list(F4_ls_dual_data, "F4", root)
-# ls_dual_data_to_list(E6_ls_dual_data, "E6", root)
-# ls_dual_data_to_list(E7_ls_dual_data, "E7", root)
-# ls_dual_data_to_list(E8_ls_dual_data, "E8", root)
+ls_dual_data_to_list(G2_ls_dual_data, "G2", root)
+ls_dual_data_to_list(F4_ls_dual_data, "F4", root)
+ls_dual_data_to_list(E6_ls_dual_data, "E6", root)
+ls_dual_data_to_list(E7_ls_dual_data, "E7", root)
+ls_dual_data_to_list(E8_ls_dual_data, "E8", root)

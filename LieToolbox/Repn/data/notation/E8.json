@@ -21,7 +21,7 @@
     },
     {
         "alvis": "560_z",
-        "sommers": "E_8"
+        "sommers": "E_8(b_4)"
     },
     {
         "alvis": "567_x",
@@ -33,7 +33,7 @@
     },
     {
         "alvis": "1400_z",
-        "sommers": "E_8"
+        "sommers": "E_8(b_5)"
     },
     {
         "alvis": "1400_x",
@@ -49,7 +49,7 @@
     },
     {
         "alvis": "2240_x",
-        "sommers": "E_8"
+        "sommers": "E_8(b_6)"
     },
     {
         "alvis": "4096_z",
@@ -181,6 +181,6 @@
     },
     {
         "alvis": "1_x'",
-        "sommers": "1_0"
+        "sommers": "0"
     }
 ]

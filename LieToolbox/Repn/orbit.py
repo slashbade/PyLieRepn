@@ -127,7 +127,7 @@ def parse_orbit_singleton(orbit_string):
     if orbit_string == "0":
         return ("1", 0, None), 1
     orbit_pattern = re.compile(
-        r"(\d+)?(\\tilde{[A-Z]}|[A-Z])_(\d+)(?:\((a_\d+)\))?"
+        r"(\d+)?(\\tilde{[A-Z]}|[A-Z])_(\d+)(?:\(([a-z]_\d+)\))?"
     )
     match = orbit_pattern.match(orbit_string)
     if match:

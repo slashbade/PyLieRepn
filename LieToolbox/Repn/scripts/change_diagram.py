@@ -1,13 +1,13 @@
 import json
 import numpy as np
 
-def get_permutation_from_sommers(typ, rank) -> list[int]:
-    match (typ, rank):
-        case ('E', 6):
+def get_permutation(typ, rank, dual_type) -> list[int]:
+    match (typ, rank, dual_type):
+        case ('E', 6, 'sommers'):
             return [0, 5, 1, 2, 3, 4]
-        case ('E', 7):
+        case ('E', 7, 'sommers'):
             return [0, 6, 1, 2, 3, 4, 5]
-        case ('E', 8):
+        case ('E', 8, 'sommers'):
             return [0, 7, 1, 2, 3, 4, 5, 6]
         case _:
             return list(range(rank))
@@ -25,11 +25,11 @@ def parse_diagram_string(dstr: str) -> list[int]:
     return list(map(eval, list(dstr)))
 
 def change_sommers_diagram():
-    change_list = [('E', 6), ('E', 7), ('E', 8)]
+    change_list = [('G', 2), ('F', 4), ('E', 6), ('E', 7), ('E', 8)]
     for typ, rank in change_list:
         with open(f'LieToolbox/Repn/data/sommers_dual/{typ}{rank}.json') as fp:
             data = json.load(fp)
-        perm = get_permutation_from_sommers(typ, rank)
+        perm = get_permutation(typ, rank, 'sommers')
         for d in data:
             d['diagram'] = permute_index_list(parse_diagram_string(d['diagram']), perm)
         print(data[:10])
@@ -52,7 +52,7 @@ def change_ls_diagram():
     for typ, rank in change_list:
         with open(f'LieToolbox/Repn/data/ls_dual/{typ}{rank}.json') as fp:
             data = json.load(fp)
-        perm = get_permutation_from_sommers(typ, rank)
+        perm = get_permutation(typ, rank, 'ls')
         for d in data:
             d['diagram'] = permute_index_list(parse_diagram_string(d['diagram']), perm)
         print(data[:10])
@@ -60,6 +60,6 @@ def change_ls_diagram():
             json.dump(data, fp, indent=4)
  
 if __name__ == '__main__':
-    change_sommers_diagram_F4_G2()
+    change_sommers_diagram()
     change_ls_diagram()
     

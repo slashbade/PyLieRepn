@@ -225,9 +225,9 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
                 raise TypeError(f"Unknown orbit type {type(orbit)}.")
             orbit_duals.append(bl_orbit_dual)
             result_bl_orbit = result_bl_orbit + bl_orbit_dual
+            print("orbit", orbit)
     print(cts)
     print(result_bl_orbit)
-    
     try:
     # Compute mark ' or " for the orbit
         if all([typ=='A' for (typ, _, _) in result_bl_orbit.orbits.keys()]):
@@ -316,8 +316,8 @@ if __name__ == "__main__":
             ('E', 8, np.array([1/2, -3/2, -3, -2, -1, -4, -5, -19])),
             ([('E', 7), ('A', 1)], 3, 117)
         ), (
-            ('E', 7, np.array([1, 3, 5, -7, -9, -11, -1/2, 1/2])), 
-            ([('D', 6), ('A', 1)], 7, 56)
+            ('E', 7, np.array([1, 3, -5, -7, -9, -11, -1/2, 1/2])), 
+            ([('D', 6), ('A', 1)], 7, 60)
         ), (
             ('E', 8, np.array([1, 1, 1, 1, 1, 1, 1/2, 5/2])), 
             ([('E', 7), ('A', 1)], 7, 113)
