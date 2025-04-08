@@ -8,7 +8,7 @@ from .root_system_data import cartan_matrix_pycox, num_positive_roots_data
 from ..PyCox import chv1r6180 as pycox
 from .weight import HighestWeightModule, Weight, NilpotentOrbit
 from .orbit import (BalaCarterOrbit, from_orbit_string, from_alvis_notation, 
-                    from_partition_dual, get_mark_from_diagram, set_mark)
+                    from_partition_dual, get_mark_from_diagram)
 
 from .neutral_elements import get_chosen_neutral_elements
 
@@ -92,15 +92,26 @@ def get_neutral_element_sum(simple_roots: np.ndarray, bl_orbit: BalaCarterOrbit,
     """ Get neutral element (Only implemented for summation of type A)
     """
     ranks = []
-    for (_, rank, _), mult in bl_orbit.orbits.items():
-        ranks.extend([rank] * mult)
-    chosen_id, drop_id = None, None
-    if isinstance(orbit, NilpotentOrbit):
+    ranks_D = []
+    for (typ, rank, _), mult in bl_orbit.orbits.items():
+        if typ == 'D':
+            ranks_D.extend([rank] * mult)
+        elif typ == 'A':
+            ranks.extend([rank] * mult)
+        else:
+            raise ValueError(f"Unknown type {typ} in the orbit.")
+    if len(ranks_D) > 1:
+        raise ValueError(f"Only one rank D is allowed in the orbit.")
+    to_cover_id, drop_id = None, None
+    if isinstance(orbit, NilpotentOrbit) and orbit.lieType == 'D':
+        if ranks_D and ranks_D[0] == 2:
+            pass
+
         if orbit.veryEvenType == 'I':
-            chosen_id, drop_id = 1, 0
+            to_cover_id, drop_id = 1, 0
         elif orbit.veryEvenType == 'II':
-            chosen_id, drop_id = 0, 1
-    chosen_ids = get_chosen_neutral_elements(simple_roots, ranks, chosen_id, drop_id)
+            to_cover_id, drop_id = 0, 1
+    chosen_ids = get_chosen_neutral_elements(simple_roots, ranks, to_cover_id, drop_id)
     if not chosen_ids:
         return np.zeros(simple_roots.shape[1])
     chosen_roots = simple_roots[chosen_ids]
@@ -119,6 +130,10 @@ def get_diagram(typ, rank, neutral: np.ndarray) -> list[int]:
     # print(sps @ w)
     print('diagram:', round2(w).tolist())
     return round2(w).tolist() # type: ignore
+
+def need_to_decide_mark(orbit: BalaCarterOrbit) -> bool:
+    return all([typ=='A' or (typ, rank) == ('D', 2) or (typ, rank) == ('D', 3)
+        for (typ, rank, _) in orbit.orbits.keys()])
 
 def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
     """Compute the dimension of the Gelfand-Kirillov dimension of a weight.
@@ -226,11 +241,11 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
             orbit_duals.append(bl_orbit_dual)
             result_bl_orbit = result_bl_orbit + bl_orbit_dual
             print("orbit", orbit)
-    print(cts)
-    print(result_bl_orbit)
+    print('Decomposed root system: ', cts)
+    print('Summed dual orbits: ', result_bl_orbit)
     try:
     # Compute mark ' or " for the orbit
-        if all([typ=='A' for (typ, _, _) in result_bl_orbit.orbits.keys()]):
+        if need_to_decide_mark(result_bl_orbit):
             neutral_element_all = np.zeros(dim_ambient)
             for _, sp, orb, od in zip(cts, sps, orbits, orbit_duals):
                 # print(neutral_element_all, get_neutral_element(typ, rank, sp, od))

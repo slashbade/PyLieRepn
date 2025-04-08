@@ -38,8 +38,24 @@ class BalaCarterOrbit:
                 continue
             result.orbits[key] = result.orbits.get(key, 0) + mult
         return result
+    
+    def _simplify_isom(self):
+        # Remove zero multiplicities
+        self.orbits = {k: v for k, v in self.orbits.items() if v > 0}
+        # Remove empty orbits
+        self.orbits = {k: v for k, v in self.orbits.items() if k[1] != 0}
+        # Combine orbits with the same type and rank
+        combined_orbits = {}
+        for (typ, rank, parameter), multiplicity in self.orbits.items():
+            typ, rank, parameter, isom_multiplicity = get_isomorphism(typ, rank, parameter)
+            if (typ, rank, parameter) in combined_orbits:
+                combined_orbits[(typ, rank, parameter)] += multiplicity * isom_multiplicity
+            else:
+                combined_orbits[(typ, rank, parameter)] = multiplicity * isom_multiplicity
+        self.orbits = combined_orbits
 
     def __str__(self):
+        self._simplify_isom()
         if len(self.orbits.keys()) == 0: #and list(self.orbits.keys())[0][1] == 0:
             return "0"
         sorted_keys = sorted(
@@ -48,9 +64,9 @@ class BalaCarterOrbit:
         )
         # Build the string representation
         components = []
-        for lie_type, rank, parameter in sorted_keys:
-            multiplicity = self.orbits[(lie_type, rank, parameter)]
-            part = f"{multiplicity if multiplicity > 1 else ''}{lie_type}_{rank}"
+        for typ, rank, parameter in sorted_keys:
+            multiplicity = self.orbits[(typ, rank, parameter)]
+            part = f"{multiplicity if multiplicity > 1 else ''}{typ}_{rank}"
             if parameter:
                 part += f"({parameter})"
             components.append(part)
@@ -216,10 +232,10 @@ def from_partition_dual_singleton(typ: str, orbit: list[int]) -> BalaCarterOrbit
             orbit_string = "A_3+A_2"
         elif orbit == [1, 1]:
             orbit_string = ""
-        elif orbit == [5, 1]:
-            orbit_string = "A_3"
-        elif orbit == [3, 1]:
-            orbit_string = "2A_1"
+        # elif orbit == [5, 1]:
+        #     orbit_string = "A_3"
+        # elif orbit == [3, 1]:
+        #     orbit_string = "2A_1"
         elif len(orbit) == 2 and orbit[0] == orbit[1]:
             orbit_string = f"A_{orbit[0]-1}"
         elif len(orbit) == 2 and orbit[1] == 1 and (orbit[0]+1) % 2 == 0:
@@ -231,7 +247,6 @@ def from_partition_dual_singleton(typ: str, orbit: list[int]) -> BalaCarterOrbit
     else:
         raise ValueError(f"Invalid Lie type {typ}.") 
     return from_orbit_string(orbit_string, (typ, len(orbit)))
-
 
 def from_partition_dual(typ: Typ, orbit: list[int]) -> BalaCarterOrbit:
     """ Determine Bala-Carter label for a given nilpotent orbit represented by partition.
@@ -248,7 +263,16 @@ def from_partition_dual(typ: Typ, orbit: list[int]) -> BalaCarterOrbit:
             continue
     raise ValueError(f"Invalid orbit {orbit}.")
 
-
+def get_isomorphism(typ, rank, parameter):
+    if parameter is not None:
+        return (typ, rank, parameter, 1)
+    match (typ, rank):
+        case ('D', 2):
+            return 'A', 1, None, 2
+        case ('D', 3):
+            return 'A', 3, None, 1
+        case _:
+            return typ, rank, parameter, 1
 
 
 if __name__ == "__main__":
