@@ -88,7 +88,7 @@ def a_value_integral_exceptional(typ, rank, weight):
     bl_orbit = from_alvis_notation(cell_repm['special'], (typ, rank))
     return cell_repm['a'], cell_repm['special'], bl_orbit
 
-def get_neutral_element_sum(simple_roots: np.ndarray, bl_orbit: BalaCarterOrbit, orbit: NilpotentOrbit | BalaCarterOrbit) -> np.ndarray:
+def get_neutral_element_sum(ct: tuple[str, int], simple_roots: np.ndarray, bl_orbit: BalaCarterOrbit, orbit: NilpotentOrbit | BalaCarterOrbit) -> np.ndarray:
     """ Get neutral element (Only implemented for summation of type A)
     """
     ranks = []
@@ -104,14 +104,11 @@ def get_neutral_element_sum(simple_roots: np.ndarray, bl_orbit: BalaCarterOrbit,
         raise ValueError(f"Only one rank D is allowed in the orbit.")
     to_cover_id, drop_id = None, None
     if isinstance(orbit, NilpotentOrbit) and orbit.lieType == 'D':
-        if ranks_D and ranks_D[0] == 2:
-            pass
-
         if orbit.veryEvenType == 'I':
             to_cover_id, drop_id = 1, 0
         elif orbit.veryEvenType == 'II':
             to_cover_id, drop_id = 0, 1
-    chosen_ids = get_chosen_neutral_elements(simple_roots, ranks, to_cover_id, drop_id)
+    chosen_ids = get_chosen_neutral_elements(simple_roots, ranks, ranks_D, to_cover_id, drop_id, ct)
     if not chosen_ids:
         return np.zeros(simple_roots.shape[1])
     chosen_roots = simple_roots[chosen_ids]
@@ -122,13 +119,13 @@ def get_neutral_element_sum(simple_roots: np.ndarray, bl_orbit: BalaCarterOrbit,
     return sum_of_chosen_roots
 
 def get_diagram(typ, rank, neutral: np.ndarray) -> list[int]:
-    print(neutral)
+    # print(neutral)
     weight_ = neutral @ simple_root_data(typ, rank).T
     antidom, w = antidominant(typ, rank, weight_)
     w = (-1) * w
-    sps = simple_root_data(typ, rank)
+    # sps = simple_root_data(typ, rank)
     # print(sps @ w)
-    print('diagram:', round2(w).tolist())
+    # print('diagram:', round2(w).tolist())
     return round2(w).tolist() # type: ignore
 
 def need_to_decide_mark(orbit: BalaCarterOrbit) -> bool:
@@ -240,20 +237,18 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
                 raise TypeError(f"Unknown orbit type {type(orbit)}.")
             orbit_duals.append(bl_orbit_dual)
             result_bl_orbit = result_bl_orbit + bl_orbit_dual
-            print("orbit", orbit)
-    print('Decomposed root system: ', cts)
-    print('Summed dual orbits: ', result_bl_orbit)
+    # print('Decomposed root system: ', cts)
+    # print('Summed dual orbits: ', result_bl_orbit)
+    neutral_element_images = []
     try:
     # Compute mark ' or " for the orbit
         if need_to_decide_mark(result_bl_orbit):
             neutral_element_all = np.zeros(dim_ambient)
-            for _, sp, orb, od in zip(cts, sps, orbits, orbit_duals):
-                # print(neutral_element_all, get_neutral_element(typ, rank, sp, od))
-                
-                neutral_element_all += get_neutral_element_sum(sp, od, orb)
+            for ct, sp, orb, od in zip(cts, sps, orbits, orbit_duals):
+                neutral_element_all += get_neutral_element_sum(ct, sp, od, orb)
+                neutral_element_images.append(f'neutral_elements_chosen_ids_{ct[0]}_{ct[1]}.png')
             diagram = get_diagram(typ, rank, neutral_element_all)
-            result_bl_orbit = get_mark_from_diagram(result_bl_orbit, diagram) 
-        # dual = result_bl_orbit.sommers_dual()
+            result_bl_orbit = get_mark_from_diagram(result_bl_orbit, diagram)
         dual = result_bl_orbit.dual()
     except Exception as e:
         print(traceback.format_exc())
@@ -290,7 +285,9 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
         "num_positive_roots": num_postive_roots,
         "total_a_value": total_a_value,
         "GK_dimension": gk_dim,
-        "dual": dual
+        "result_bl_orbit": str(result_bl_orbit),
+        "dual": str(dual),
+        "neutral_element_images": neutral_element_images,
     }
     return str(gk_dim), info
     
@@ -299,52 +296,46 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
 
 
 if __name__ == "__main__":
-    # typ, rank, weight_ = "B", 3, np.array([2, -1, 2])
-    # typ, rank, weight_ = "E", 7, np.array([-1, 1, -3, 1, -5, -1, -2])
-    # typ, rank, weight_ = "A", 1, np.array([-1])
-    # W = pycox.coxeter(typ, rank)
-    # w, adw = antidominant(typ, rank, weight_)
-    # print(pycox.klcellrepelm(W, w)['a'])
-    # GK_dimension("E", 8, np.array([1, 1, 1, 1, 1, 1, 1/2, 5/2]))
-    GK_dimension("E", 8, np.array([1, 1, 1, 1, 1, 3, 7, 13])/8)
-    # GK_dimension("F", 4, np.array([4, 5, 3/2, 1/2]))
     test_cases = [
         (
             ('D', 8, np.array([2, 1, 1.1, 3, 0.9, 1.9, 4, 2.1])), 
-            ([('A', 3), ('D', 4)], 5, 51)
+            ([('A', 3), ('D', 4)], 5, 51, None)
         ), (
             ('F', 4, np.array([4, 5, 3/2, 1/2])),
-            ([('C', 4)], 9, 15)
+            ([('C', 4)], 9, 15, 'A_2')
         ), (
             ('F', 4, np.array([7/4, 1/4, 5/4, -3/4])),
-            ([('B', 3), ('A', 1)], 5, 19)
+            ([('B', 3), ('A', 1)], 5, 19, None)
         ), (
             ('E', 6, np.array([1, 2, 1, 4, 4.5, 0.5, 0.5, -0.5])), 
-            ([('D', 5)], 7, 29)
+            ([('D', 5)], 7, 29, None)
         ), (
             ('E', 7, np.array([1/4, 1/4, 1/4, 1/4, 1/4, -3/4, -1, 1])), 
-            ([('A', 7)], 3, 60)
+            ([('A', 7)], 3, 60, None)
         ), (
             ('E', 8, np.array([1, 5, 9, 13, 9, 1, 5, 9])/4), 
-            ([('D', 8)], 17, 103)
+            ([('D', 8)], 17, 103, None)
         ), (
             ('E', 8, np.array([1/2, -3/2, -3, -2, -1, -4, -5, -19])),
-            ([('E', 7), ('A', 1)], 3, 117)
+            ([('E', 7), ('A', 1)], 3, 117, None)
         ), (
             ('E', 7, np.array([1, 3, -5, -7, -9, -11, -1/2, 1/2])), 
-            ([('D', 6), ('A', 1)], 7, 60)
+            ([('D', 6), ('A', 1)], 7, 60, 'E_6')
         ), (
             ('E', 8, np.array([1, 1, 1, 1, 1, 1, 1/2, 5/2])), 
-            ([('E', 7), ('A', 1)], 7, 113)
+            ([('E', 7), ('A', 1)], 7, 113, 'D_7')
         ), (
             ('E', 7, np.array([2.1, 1.1, -0.1, 2.1, 2, 4, 2, 0.9])),
-            ([('D', 6), ('A', 1)], None, None)
+            ([('D', 6), ('A', 1)], None, None, None)
         ), (
             ('E', 7, np.array([-1/4, 1/4, 1/4, 1/4, 1/4, 1/4, -5/4, 5/4])),
-            ([('D', 6), ('A', 1)], None, 59)
+            ([('D', 6), ('A', 1)], None, 59, None)
         ), (
             ('E', 8, np.array([1/8, 1/8, 1/8, 1/8, 1/8, 3/8, 7/8, 13/8])),
-            ([('D', 6), ('A', 1)], None, None)
+            ([('D', 6), ('A', 1)], None, None, 'E_7')
+        ), (
+            ('E', 8, np.array([1, 3, -5, -7, -9, -11, -1/2, 1/2])),
+            ([('D', 6), ('A', 1)], None, 113, 'E_8(b_5)')
         )
     ]
     for i, test_case in enumerate(test_cases):
@@ -354,6 +345,9 @@ if __name__ == "__main__":
         typ, rank, weight = test_case[0]
         gk_dim, info = GK_dimension(typ, rank, weight)
         print(gk_dim)
+        print(info['dual'])
+        if test_case[1][3] is not None:
+            assert info['dual'] == test_case[1][3], f"{info['dual']} {test_case[1][3]}"
         if test_case[1][2] is not None:
             assert eval(gk_dim) == test_case[1][2], f"{gk_dim}"
         print(f"finish test case {weight}")

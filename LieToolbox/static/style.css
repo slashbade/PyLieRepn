@@ -23,6 +23,18 @@ input[type=submit] { align-self: start; min-width: 10em; }
 .table-container {
   overflow-x: auto;
 }
+.image-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* centers horizontally */
+    gap: 10px; /* spacing between images */
+    margin-top: 20px; /* optional vertical spacing */
+}
+
+.image-container img {
+    width: 400px; /* optional fixed width */
+    height: auto;
+}
 table {
     border-collapse: collapse;
     border: 2px solid #377ba8dd;

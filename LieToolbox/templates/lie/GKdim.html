@@ -144,7 +144,16 @@
                 {% else %}
                 which is empty. Hence, \(\mathfrak{a}(\omega_{\lambda})=0\).</p>
                 {% endif %}
-                <p> The Gelfand-Kirillov dimension for \(L(\lambda)\) is computed by the formula \(\text{GKdim} = |\Phi^+| - \mathfrak{a}(\omega_{\lambda}) = {{gkdim}}\). And the result orbit is \({{info['dual']}}\)</p>
+		<p> The Gelfand-Kirillov dimension for \(L(\lambda)\) is computed by the formula \(\text{GKdim} = |\Phi^+| - \mathfrak{a}(\omega_{\lambda}) = {{gkdim}}\). The summed dual orbit is \(\mathcal{O}({{info['result_bl_orbit']}})\), and thus the result orbit is \(\mathcal{O}({{info['dual']}})\).</p>
+		
+		{% if info['neutral_element_images'] %}
+		<p>The choice of neutral element is illustrated below:</p>
+		<div class="image-container">
+		{% for img in info['neutral_element_images'] %}
+            		<img src="{{ url_for('static', filename='images/' + img) }}" alt="{{ img }}">
+        	{% endfor %}
+		{% endif %}
+    		</div>
             </details>
             {% endif %}
             
