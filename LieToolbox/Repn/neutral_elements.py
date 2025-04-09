@@ -121,7 +121,7 @@ def visualize_chosen_ids(typ, rank, diagram: nx.Graph, chosen: list[int], save: 
     edge_label_pos = {k: (v[0], v[1] - 0.1) for k, v in pos.items()}
     # Draw edge labels
     _, ax = plt.subplots(figsize=(5, 4), facecolor='#CAE6F6')
-    nx.draw_networkx_edge_labels(diagram, edge_label_pos, edge_labels=edge_labels, ax=ax)
+    # nx.draw_networkx_edge_labels(diagram, edge_label_pos, edge_labels=edge_labels, ax=ax)
 
     nx.draw_networkx_labels(diagram, node_label_pos, labels=pp_node_labels, font_size=10, font_weight='bold', ax=ax)
 
@@ -129,7 +129,7 @@ def visualize_chosen_ids(typ, rank, diagram: nx.Graph, chosen: list[int], save: 
     # ax.set_facecolor('#CAE6F6')
     plt.title(f'Chosen Neutral Elements for ${typ}_{rank}$')
     if save:
-        plt.savefig(f'LieToolbox/static/images/neutral_elements_chosen_ids_{typ}_{rank}.png', format='png', facecolor='#f2f6f9')
+        plt.savefig(f'LieToolbox/static/images/neutral_elements_chosen_ids_{typ}_{rank}.png', format='png', facecolor='#dce7f0')
         plt.close()
     else:
         plt.show()
