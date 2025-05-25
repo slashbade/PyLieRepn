@@ -3,11 +3,17 @@ from functools import reduce
 from typing import Optional
 import typing
 
+import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from .root_system_data import simple_root_data
+
+from .root_system_data import simple_root_data, cartan_matrix_pycox
 from .roots import get_dynkin_diagram
-from .utils import pretty_print_array
+from .orbit import BalaCarterOrbit
+from .weight import NilpotentOrbit
+from .algorithm.pir import antidominant
+
+from .utils import PPUtil
 
 def get_feasible_placements(diagram: nx.Graph, rank: int) -> list[list[int]]:
     assert rank > 0
@@ -41,6 +47,10 @@ def get_first_feasible_placements_at(diagram: nx.Graph, rank: int, start_node: i
     return placements
 
 def place_ranks(diagram: nx.Graph, ranks: list[int]) -> list[int]:
+    """
+    This try to place A-x or D-x orbit in the diagram, and return
+    the first feasible choice.
+    """
     chosen = []
     queue = deque([(diagram, ranks, chosen)])
     while queue:
@@ -63,6 +73,9 @@ def place_ranks(diagram: nx.Graph, ranks: list[int]) -> list[int]:
             queue.append((new_diagram, ranks[1:], chosen + placement))
     # print(queue)
     raise ValueError('No feasible placements')
+
+def place_ranks_all_replacement(diagram: nx.Graph, ranks: list[int]) -> list[list[int]]:
+    return [[]]
 
 def place_ranks_for_type_D_very_even(diagram: nx.Graph, ranks: list[int], chosen_id: int, drop_id: int) -> list[int]:
     chosen = [chosen_id]
@@ -103,6 +116,51 @@ def get_chosen_neutral_elements(simple_roots, ranks: list[int], ranks_D: list[in
     visualize_chosen_ids(ct[0], ct[1], diagram, chosen, save=True)
     return chosen
 
+def get_neutral_element_sum(ct: tuple[str, int], simple_roots: np.ndarray, bl_orbit: BalaCarterOrbit, orbit: NilpotentOrbit | BalaCarterOrbit) -> np.ndarray:
+    """ Get neutral element (Only implemented for summation of type A)
+    """
+    ranks = []
+    ranks_D = []
+    for (typ, rank, _), mult in bl_orbit.orbits.items():
+        if typ == 'D':
+            ranks_D.extend([rank] * mult)
+        elif typ == 'A':
+            ranks.extend([rank] * mult)
+        else:
+            raise ValueError(f"Unknown type {typ} in the orbit.")
+    if len(ranks_D) > 1:
+        raise ValueError(f"Only one rank D is allowed in the orbit.")
+    to_cover_id, drop_id = None, None
+    if isinstance(orbit, NilpotentOrbit) and orbit.lieType == 'D':
+        if orbit.veryEvenType == 'I':
+            to_cover_id, drop_id = 1, 0
+        elif orbit.veryEvenType == 'II':
+            to_cover_id, drop_id = 0, 1
+    chosen_ids = get_chosen_neutral_elements(simple_roots, ranks, ranks_D, to_cover_id, drop_id, ct)
+    if not chosen_ids:
+        return np.zeros(simple_roots.shape[1])
+    chosen_roots = simple_roots[chosen_ids]
+    # print("chosen ids: ", chosen_ids)
+    # print("chosen roots: ", chosen_roots)
+    sum_of_chosen_roots = np.sum(chosen_roots, axis=0)
+    # print("sum of chosen roots: ", sum_of_chosen_roots)
+    return sum_of_chosen_roots
+
+def get_diagram(typ, rank, neutral: np.ndarray) -> list[int]:
+    # print(neutral)
+    weight_ = neutral @ simple_root_data(typ, rank).T
+    cmat = cartan_matrix_pycox(typ, rank)
+    antidom, w = antidominant(cmat, weight_)
+    w = (-1) * w
+    # sps = simple_root_data(typ, rank)
+    # print(sps @ w)
+    # print('diagram:', round2(w).tolist())
+    return round2(w).tolist() # type: ignore
+
+def need_to_decide_mark(orbit: BalaCarterOrbit) -> bool:
+    return all([typ=='A' or (typ, rank) == ('D', 2) or (typ, rank) == ('D', 3)
+        for (typ, rank, _) in orbit.orbits.keys()])
+
 def chose_neutral_elements_test(typ: str, rank: int, ranks: list[int], ranks_D: list[int], chosen_id: Optional[int]=None, drop_id: Optional[int]=None) -> list[int]:
     chosen = get_chosen_neutral_elements(simple_root_data(typ, rank), ranks, ranks_D, chosen_id, drop_id, (typ, rank))
     return chosen
@@ -115,7 +173,7 @@ def visualize_chosen_ids(typ, rank, diagram: nx.Graph, chosen: list[int], save: 
     # Get edge weights as labels
     edge_labels = nx.get_edge_attributes(diagram, 'weight')
     node_labels = nx.get_node_attributes(diagram, 'simple_root')
-    pp_node_labels = {k: f'${pretty_print_array(v)}$' for k, v in node_labels.items()}
+    pp_node_labels = {k: f'${PPUtil.pretty_print_array(v)}$' for k, v in node_labels.items()}
 
     node_label_pos = {k: (v[0], v[1] - 0.1) for k, v in pos.items()}
     edge_label_pos = {k: (v[0], v[1] - 0.1) for k, v in pos.items()}
