@@ -1,4 +1,7 @@
 from typing import Iterable, Callable, Any
+import numpy as np
+
+from .number import Number
 
 def partition_equivalence(
     l: Iterable[Any], r: Callable[[Any, Any], bool]
@@ -27,5 +30,10 @@ def partition_equivalence(
             partitions.append([elem])
             ind_partitions.append([index])
     return partitions, ind_partitions
+
+def weight_partition(weight: np.ndarray):
+    congruence = lambda a, b: Number.is_integer(a - b) or Number.is_integer(a + b)
+    weights, _ = partition_equivalence(weight, congruence)
+    return weights
 
 

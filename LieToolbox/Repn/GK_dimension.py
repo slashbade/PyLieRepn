@@ -1,3 +1,5 @@
+from typing import Literal
+
 import numpy as np
 import traceback
 
@@ -6,40 +8,38 @@ from LieToolbox.Repn.utils import PPUtil
 from .roots import (
     integral_root_system, simple_root_data, get_cartan_type, 
     reorder_simple_roots, compute_fundamental_weights)
-from .root_system_data import num_positive_roots_data
+from .root_system_data import cartan_matrix_pycox, num_positive_roots_data
 from ..PyCox import chv1r6180 as pycox
-from .weight import HighestWeightModule, Weight, NilpotentOrbit
+from .weight import HighestWeightModule, Symbol, Weight, NilpotentOrbit
 from .orbit import (BalaCarterOrbit, from_orbit_string, from_alvis_notation, 
                     from_partition_dual, get_mark_from_diagram)
-from algorithm import Number, LinearAlgebra
+from .algorithm import Number, LinearAlgebra
 from .algorithm.pir import antidominant
-from .algorithm.partition_equivalence import partition_equivalence
+# from .algorithm.partition_equivalence import weight_partition
 from .neutral_elements import need_to_decide_mark, get_diagram, get_neutral_element_sum 
 
+Typ = Literal["A", "B", "C", "D", "E", "F", "G"]
+LieType = tuple[Typ, int]
 
 
-def weight_partition(typ: str, rank: int, weight: np.ndarray):
-    congruence = lambda a, b: Number.is_integer(a - b) or Number.is_integer(a + b)
-    weights, _ = partition_equivalence(weight, congruence)
-    return weights
 
-
-def a_value_integral_classical(typ, rank, weight):
+def a_value_integral_classical(typ: Typ, rank: int, weight: np.ndarray) -> tuple[int, Symbol, NilpotentOrbit]:
     weight = Number.round2(weight)
     lbd = Weight(weight.tolist(), typ) # type: ignore
     L = HighestWeightModule(lbd)
-    obtinfo = L.nilpotentOrbitInfo()
+    # obtinfo = L.nilpotentOrbitInfo()
     orbit = L.nilpotentOrbit()
     character = orbit.convert2Symbol()
     # print(typ, rank, weight)
     return L.a_value_integral(), character, orbit
 
-def a_value_integral_exceptional(typ, rank, weight):
+def a_value_integral_exceptional(typ: Typ, rank: int, weight):
     cananical_sp = simple_root_data(typ, rank)
     weight_ = (2 * weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
     W = pycox.coxeter(typ, rank)
     
-    w, adw = antidominant(typ, rank, weight_)
+    cmat = cartan_matrix_pycox(typ, rank)
+    w, adw = antidominant(cmat, weight_)
     cell_repm = pycox.klcellrepelm(W, w)
     # print('input weight fundam:', np.round(weight_,2))
     # print('weyl:', w)
@@ -187,7 +187,7 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
         "pretty_cartan_types": PPUtil.pretty_print_lietypes(cts),
         "simple_roots": [PPUtil.pretty_print_basis(sp) for sp in sps],
         "pretty_simple_roots": PPUtil.pretty_print_basises(sps),
-        "cananical_simple_roots": [pretty_print_basis(simple_root_data(*ct)) for ct in cts],
+        "cananical_simple_roots": [PPUtil.pretty_print_basis(simple_root_data(*ct)) for ct in cts],
         "pretty_cananical_simple_roots": PPUtil.pretty_print_basises([simple_root_data(*ct) for ct in cts]),
         "complement_basis": PPUtil.pretty_print_basis(cpl_basis),
         "isomap": PPUtil.pretty_print_matrix(isomap),

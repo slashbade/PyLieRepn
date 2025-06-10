@@ -31,7 +31,7 @@ class Number:
         return Number.is_integer(2 * x, tol)
 
     @staticmethod
-    def round2_one(x: float) -> int | float:
+    def round_half_float(x: float) -> int | float:
         if Number.is_integer(x):
             return int(np.round(x))
         elif Number.is_half_integer(x):
@@ -40,7 +40,7 @@ class Number:
             return x
 
     @staticmethod
-    def round2(xl: np.ndarray) -> np.ndarray:
-        return np.array([Number.round2_one(x) for x in xl])
+    def round_half(xl: np.ndarray) -> np.ndarray:
+        return np.array([Number.round_half_float(x) for x in xl])
 
 

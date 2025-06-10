@@ -11,6 +11,7 @@ from .root_system_data import simple_root_data, cartan_matrix_pycox
 from .roots import get_dynkin_diagram
 from .orbit import BalaCarterOrbit
 from .weight import NilpotentOrbit
+from .algorithm import Number
 from .algorithm.pir import antidominant
 
 from .utils import PPUtil
@@ -78,6 +79,9 @@ def place_ranks_all_replacement(diagram: nx.Graph, ranks: list[int]) -> list[lis
     return [[]]
 
 def place_ranks_for_type_D_very_even(diagram: nx.Graph, ranks: list[int], chosen_id: int, drop_id: int) -> list[int]:
+    """
+    Place the ranks for type D of very even type.
+    """
     chosen = [chosen_id]
     # find a rank 1 and pop it
     ranks = sorted(ranks)
@@ -117,7 +121,8 @@ def get_chosen_neutral_elements(simple_roots, ranks: list[int], ranks_D: list[in
     return chosen
 
 def get_neutral_element_sum(ct: tuple[str, int], simple_roots: np.ndarray, bl_orbit: BalaCarterOrbit, orbit: NilpotentOrbit | BalaCarterOrbit) -> np.ndarray:
-    """ Get neutral element (Only implemented for summation of type A)
+    """ 
+    Get neutral element (Only implemented for summation of type A)
     """
     ranks = []
     ranks_D = []
@@ -155,7 +160,7 @@ def get_diagram(typ, rank, neutral: np.ndarray) -> list[int]:
     # sps = simple_root_data(typ, rank)
     # print(sps @ w)
     # print('diagram:', round2(w).tolist())
-    return round2(w).tolist() # type: ignore
+    return Number.round_half(w).tolist() # type: ignore
 
 def need_to_decide_mark(orbit: BalaCarterOrbit) -> bool:
     return all([typ=='A' or (typ, rank) == ('D', 2) or (typ, rank) == ('D', 3)

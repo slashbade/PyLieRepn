@@ -105,6 +105,17 @@ class BalaCarterOrbit:
             if d["orbit"] == orbit_string:
                 return from_orbit_string(d["dual"], self.lie_type)
         raise ValueError(f"Orbit {orbit_string} not found in ls_dual/{self.lie_type[0]}{self.lie_type[1]}.json")
+    
+    @property
+    def diagram(self) -> list[int]:
+        # Get the diagram from the orbit
+        root = Path(__file__).parent
+        with open(root / "data" / "diagram" / f"{self.lie_type[0]}{self.lie_type[1]}.json", "r") as f:
+            data = json.load(f)
+        for d in data:
+            if d["orbit"] == str(self):
+                return d["diagram"]
+        raise ValueError(f"Orbit {str(self)} not found in diagram/{self.lie_type[0]}{self.lie_type[1]}.json")
 
 def set_mark(bl: BalaCarterOrbit, mark: OrbitType):
     bl.mark = mark

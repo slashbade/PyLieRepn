@@ -9,22 +9,25 @@ suffix "_". If weights are represented in the fundamental weight basis,
 it will have a suffix "_".
 
 """
+from typing import Literal
 from .root_system_data import simple_root_data, roots_pycox
-from .utils import *
+# from .utils import *
+from .algorithm import Number, LinearAlgebra
 import numpy as np
 import networkx as nx
 from dataclasses import dataclass
 
+Typ = Literal["A", "B", "C", "D", "E", "F", "G"]
+LieType = tuple[Typ, int]
 
-LieType = tuple[str, int]
-
+TOL = 1e-7
 
 def as_fundamental_weight_basis(v: np.ndarray, simple_roots: np.ndarray) -> np.ndarray:
     """Converts a vector in the root basis to the fundamental weight basis."""
-    return change_basis(v, np.linalg.inv(cartan_matrix_(simple_roots)))
+    return LinearAlgebra.change_basis(v, np.linalg.inv(cartan_matrix_(simple_roots)))
 
 
-def compute_fundamental_weights_(typ: str, rank: int, simple_roots: np.ndarray) -> np.ndarray:
+def compute_fundamental_weights_(typ: Typ, rank: int, simple_roots: np.ndarray) -> np.ndarray:
     """Compute the fundamental weights of the Lie algebra.
 
     Args:
@@ -64,7 +67,7 @@ def half_positive_sum(typ: str, rank: int) -> np.ndarray:
 def as_coord(v: np.ndarray, typ: str, rank: int) -> np.ndarray:
     """Converts a vector in the root basis to the coordinate representation."""
     simple_roots = simple_root_data(typ, rank)
-    return change_basis(v, simple_roots)
+    return LinearAlgebra.change_basis(v, simple_roots)
 
 
 def cartan_matrix_(simple_roots: np.ndarray) -> np.ndarray:
@@ -105,7 +108,7 @@ def integral_root_system(
     # Trigger PyCox root enumerating, but with a transformation
     roots = roots_pycox(typ, rank) @ simple_roots
     roots_weight_ind = np.argwhere(
-        is_integer(2 * roots @ weight / np.sum(roots**2, axis=1))
+        Number.is_integer(2 * roots @ weight / np.sum(roots**2, axis=1))
     ).ravel()
     # print(roots)
     # print(2 * roots @ weight / np.sum(roots**2, axis=1))
@@ -168,7 +171,7 @@ def simple_roots(roots: np.ndarray) -> list[np.ndarray]:
     return simple_roots
 
 
-def cartan_type_from_irreducible(positive_roots: np.ndarray, simple_roots: np.ndarray) -> tuple[str, int]:
+def cartan_type_from_irreducible(positive_roots: np.ndarray, simple_roots: np.ndarray) -> LieType:
     rank = len(simple_roots)
     # Check root lengths
     root_lengths = np.linalg.norm(positive_roots, axis=1)
@@ -221,7 +224,7 @@ def get_cartan_type(roots: np.ndarray) -> tuple[list[LieType], list[np.ndarray]]
         Tuple[str, int]: type and rank of the Lie algebra.
     """
     decomposed, _ = root_system_decomposition(roots)
-    cartan_type : list[LieType] = []
+    cartan_type: list[LieType] = []
     simple_roots = []
     for comp_posi_rts in decomposed:
         comp_sp_rts, _ = simple_roots_from_irreducible(comp_posi_rts)
