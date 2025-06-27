@@ -91,8 +91,7 @@ def antidominant_get():
         antidominant_weyl, antidominant_weight = antidominant(typ=typ, rank=rank, weight_=weight)
         
         return render_template('lie/antidominant.html', 
-                               antidominant_weyl=str(antidominant_weyl), 
-                               antidominant_weight=str(np.round(antidominant_weight, 3)))
+                               antidominant_weyl=str([int(a) for a in antidominant_weyl]), 
+                               antidominant_weight=str(np.round(antidominant_weight, 3).tolist()))
     else:
-        return render_template('lie/antidominant.html')
-    
+        return render_template('lie/antidominant.html') 
