@@ -24,7 +24,7 @@ LieType = tuple[Typ, int]
 
 
 def a_value_integral_classical(typ: Typ, rank: int, weight: np.ndarray) -> tuple[int, Symbol, NilpotentOrbit]:
-    weight = Number.round2(weight)
+    weight = Number.round_half(weight)
     lbd = Weight(weight.tolist(), typ) # type: ignore
     L = HighestWeightModule(lbd)
     # obtinfo = L.nilpotentOrbitInfo()
