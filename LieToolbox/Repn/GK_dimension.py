@@ -134,7 +134,7 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
         orbits.append(orbit)
         
         if is_integral_weight:
-            orbit_duals.append(orbit)
+            orbit_duals.append(orbit.dual())
         else:
             if isinstance(orbit, NilpotentOrbit):
                 dual_orbit = orbit.dual()
@@ -158,7 +158,7 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
         # print(cts)
         neutral_element_images = None
         result_bl_orbit = orbit_duals[0]
-        dual = orbit_duals[0]
+        dual = orbits[0]
     else:
         # print('Decomposed root system: ', cts)
         # print('Summed dual orbits: ', result_bl_orbit)
@@ -243,6 +243,9 @@ if __name__ == "__main__":
         ), (
             ('F', 4, np.array([2, 4, 5, 7])),
             ([('B', 3)], 3, 21, 'B_3')
+        ), (
+            ('F', 4, np.array([2, 4, 1, 7])),
+            ([('F', 4)], 10, 14, 'A_1 + \\tilde{A}_1')
         ), (
             ('F', 4, np.array([7/4, 1/4, 5/4, -3/4])),
             ([('B', 3), ('A', 1)], 5, 19, None)
