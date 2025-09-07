@@ -15,6 +15,7 @@ sys.path.append('.')
 from .algorithm import RSAlgorithm as rsa
 from .algorithm import HAlgorithm as ha
 from .algorithm import DRS_algorithm as drsa
+from .structs import LieType, Typ
 
 # # For test
 # import RSAlgorithm as rsa
@@ -25,9 +26,6 @@ from .algorithm import DRS_algorithm as drsa
 """
 Tol = 1e-7
 """
-Typ = Literal["A", "B", "C", "D", "E", "F", "G"]
-LieType = tuple[Typ, int]
-
 
 class Weight:
     """This class combines a weight constructed by an entry along with its Lie type. 

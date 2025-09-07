@@ -4,9 +4,10 @@ import json
 import copy
 from pathlib import Path
 
+from .structs import Typ, LieType
+
 OrbitType = Optional[Literal["\'", "\""]]
-Typ = Literal["A", "B", "C", "D", "E", "F", "G"]
-LieType = tuple[Typ, int]
+
 
 # A class to handle Bala-Carter labels
 class BalaCarterOrbit:
@@ -118,11 +119,12 @@ class BalaCarterOrbit:
         raise ValueError(f"Orbit {str(self)} not found in diagram/{self.lie_type[0]}{self.lie_type[1]}.json")
 
 def set_mark(bl: BalaCarterOrbit, mark: OrbitType):
-    bl.mark = mark
-    return copy.copy(bl)
+    bl_copy = copy.copy(bl)
+    bl_copy.mark = mark
+    return bl_copy
 
 def get_mark_from_diagram(bl: BalaCarterOrbit, diagram: list) -> BalaCarterOrbit:
-    assert bl.mark is None
+    # assert bl.mark is None
     root = Path(__file__).parent
 
     with open(root / "data" / "dual" / f"{bl.lie_type[0]}{bl.lie_type[1]}.json", "r") as f:

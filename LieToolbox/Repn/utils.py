@@ -1,6 +1,9 @@
+from typing import Literal
 import numpy as np
 
 from .algorithm import Number
+from .structs import Typ, LieType
+
 
 class PPUtil:
     @staticmethod
@@ -64,12 +67,12 @@ class PPUtil:
         return PPUtil.pretty_print_array(weight, '\\omega')
     
     @staticmethod
-    def pretty_print_lietype(typ: str, rank: int) -> str:
-        return f"{typ}_{rank}"
+    def pretty_print_lietype(ct: LieType) -> str:
+        return f"{ct[0]}_{ct[1]}"
     
     @staticmethod
-    def pretty_print_lietypes(lietypes: list[tuple[str, int]]) -> str:
-        return ' \\times '.join([PPUtil.pretty_print_lietype(*lt) for lt in lietypes])
+    def pretty_print_lietypes(cts: list[LieType]) -> str:
+        return ' \\times '.join([PPUtil.pretty_print_lietype(ct) for ct in cts])
     
     @staticmethod
     def _parse_float(x):

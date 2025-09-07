@@ -17,8 +17,7 @@ import numpy as np
 import networkx as nx
 from dataclasses import dataclass
 
-Typ = Literal["A", "B", "C", "D", "E", "F", "G"]
-LieType = tuple[Typ, int]
+from .structs import LieType, Typ
 
 TOL = 1e-7
 
@@ -49,11 +48,6 @@ class RootSystem:
     roots: np.ndarray
     positive_roots: np.ndarray
     simple_roots: np.ndarray
-    
-
-def is_root_system(vectors: np.ndarray) -> bool:
-    pass
-
 
 def half_positive_sum(typ: str, rank: int) -> np.ndarray:
     simple_roots = simple_root_data(typ, rank, "gap")
@@ -272,96 +266,11 @@ def reorder_simple_roots(simple_roots: np.ndarray, typ: str, rank: int) -> np.nd
     matcher = nx.algorithms.isomorphism.GraphMatcher(G, G_canonical, edge_match=lambda x, y: x["weight"] == y["weight"])
     if not matcher.is_isomorphic():
         raise ValueError("Two Dynkin diagrams are not isomorphic.")
-    mapping = matcher.mapping
+    mapping = matcher.mapping # type: ignore
     perm = [0] * len(simple_roots)
     for k, v in mapping.items():
         perm[v] = k
     # print(perm)
     return simple_roots[perm]
     # print(mapping)
-    
-
-
-
-if __name__ == "__main__":
-    np.set_printoptions(
-        precision=3,
-        suppress=True,
-    )
-    typ, rank = "E", 7
-    # W = pycox.coxeter(typ=typ, rank=rank)
-    # v = pycox.lpol([1], 1, "v")
-    test_cases = [
-        (('D', 8, np.array([2, 1, 1.1, 3, 0.9, 1.9, 4, 2.1])), 
-        [('A', 3), ('D', 4)]),
-        (('F', 4, np.array([4, 5, 3/2, 1/2])),
-        [('C', 4)]),
-        (('F', 4, np.array([7/4, 1/4, 5/4, -3/4])),
-        [('B', 3), ('A', 1)]),
-        (('E', 6, np.array([1, 2, 1, 4, 4.5, 0.5, 0.5, -0.5])),
-        [('D', 5)]),
-        (('E', 7, np.array([1/4, 1/4, 1/4, 1/4, 1/4, -3/4, -1, 1])),
-        [('A', 7)]),
-        (('E', 8, np.array([1, 5, 9, 13, 9, 1, 5, 9])/4),
-        [('D', 8)]),
-        (('E', 8, np.array([1/2, -3/2, -3, -2, -1, -4, -5, -19])),
-        [('E', 7), ('A', 1)]),
-        (('E', 7, np.array([1, 3, 5, -7, -9, -11, -1/2, 1/2])),
-        [('D', 6), ('A', 1)]),
-        (('E', 8, np.array([1, 1, 1, 1, 1, 1, 1/2, 5/2])),
-        [('E', 7), ('A', 1)])
-    ]
-    test_case = test_cases[3]
-    weight = test_case[0][2]
-    typ = test_case[0][0]
-    rank = test_case[0][1]
-    
-    dim_ambient = weight.shape[0]
-    rt, _ = integral_root_system(typ, rank, weight)
-    cts, sps = get_cartan_type(rt) # [('A', 3), ('D', 4)]
-
-    sps = [reorder_simple_roots(sp, *ct) for ct, sp in zip(cts, sps)]
-    print(sps)
-    # sps[0] = sps[0][[0,1,2,4,3]]
-    print(sps)
-    # print(sps)
-    sp_basis = np.concatenate(sps)
-    cpl_basis = find_complement(np.concatenate(sps), np.eye(dim_ambient))
-    all_basis = np.concatenate([sp_basis, cpl_basis])
-    sps_new = sps + [cpl_basis]
-    
-    embedded = np.concatenate(
-        [embed_basis(simple_root_data(*ct), dim_ambient) 
-         for ct in cts]
-        )
-    embedded = np.concatenate(
-        [embedded, np.zeros((dim_ambient - embedded.shape[0], dim_ambient))])
-    isomap = embedded.T @ np.linalg.inv(all_basis).T
-    
-    transformed_weights = []
-    transformed_weights_ = []
-    for ct, sp in zip(cts, sps):
-        cananical_sp = simple_root_data(*ct)
-        dim_sp = cananical_sp.shape[1]
-        print(cartan_matrix_(sp), cartan_matrix_(cananical_sp))
-        # embeded_canonical_sp = embed_basis(cananical_sp, dim_ambient)
-        
-        fundamental_weights = compute_fundamental_weights(sp)
-        transformed_fundamental_weights = isomap @ fundamental_weights.T
-        weight_ = (2 * weight @ sp.T / np.sum(sp**2, axis=1))
-        transformed_weight = weight_ @ transformed_fundamental_weights.T
-        # print(transformed_weight)
-        transformed_weight = restrict_array(transformed_weight, dim_sp)
-        transformed_weight_ = (2 * transformed_weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
-        
-        transformed_weights.append(transformed_weight)
-        transformed_weights_.append(transformed_weight_)
-        
-    print(transformed_weights)
-    print(transformed_weights_)
-    print(cts)
-    from GK_dimension import a_value_integral
-    print(a_value_integral(*cts[0], np.round(transformed_weights_[0])))
-    
-    # test fundamental weights
     

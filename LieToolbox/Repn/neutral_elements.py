@@ -8,12 +8,12 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 from .root_system_data import simple_root_data, cartan_matrix_pycox
-from .roots import get_dynkin_diagram
+from .roots import get_dynkin_diagram, cartan_matrix_
 from .orbit import BalaCarterOrbit
 from .weight import NilpotentOrbit
 from .algorithm import Number
 from .algorithm.pir import antidominant
-
+from .structs import LieType
 from .utils import PPUtil
 
 def get_feasible_placements(diagram: nx.Graph, rank: int) -> list[list[int]]:
@@ -47,17 +47,19 @@ def get_first_feasible_placements_at(diagram: nx.Graph, rank: int, start_node: i
                 queue.append((neighbor, path + [neighbor], length + 1))
     return placements
 
-def place_ranks(diagram: nx.Graph, ranks: list[int]) -> list[int]:
+def place_ranks(diagram: nx.Graph, ranks: list[int]) -> list[list[tuple[int, list[int]]]]:
     """
     This try to place A-x or D-x orbit in the diagram, and return
-    the first feasible choice.
+    the all feasible choices.
     """
-    chosen = []
-    queue = deque([(diagram, ranks, chosen)])
+    all_chosens: list[list[tuple[int, list[int]]]] = []
+    queue = deque([(diagram, ranks, [])])
     while queue:
         diagram, ranks, chosen = queue.popleft()
         if ranks == []:
-            return chosen
+            all_chosens.append(chosen)
+            continue
+            # return chosen
         placements = get_feasible_placements(diagram, ranks[0])
         if not placements:
             continue
@@ -71,31 +73,42 @@ def place_ranks(diagram: nx.Graph, ranks: list[int]) -> list[int]:
             new_diagram = diagram.copy()
             new_diagram.remove_nodes_from(covered)
             # print("left nodes", new_diagram.nodes, "\n\n")
-            queue.append((new_diagram, ranks[1:], chosen + placement))
+            queue.append((new_diagram, ranks[1:], chosen + [(ranks[0],placement)]))
     # print(queue)
-    raise ValueError('No feasible placements')
+    if all_chosens:
+        return all_chosens
+    else:
+        raise ValueError('No feasible placements')
 
-def place_ranks_all_replacement(diagram: nx.Graph, ranks: list[int]) -> list[list[int]]:
-    return [[]]
-
-def place_ranks_for_type_D_very_even(diagram: nx.Graph, ranks: list[int], chosen_id: int, drop_id: int) -> list[int]:
+def place_ranks_for_type_D_very_even(
+    diagram: nx.Graph, 
+    ranks: list[int], 
+    chosen_id: int, 
+    drop_id: int, 
+    k: int
+) -> list[tuple[int, list[int]]]:
     """
     Place the ranks for type D of very even type.
     """
-    chosen = [chosen_id]
+    chosen = (1, [chosen_id])
     # find a rank 1 and pop it
     ranks = sorted(ranks)
     placement = get_first_feasible_placements_at(diagram, ranks[0], chosen_id)
-    placement += chosen
+    placement += chosen[1] # get chosen id
     adjoints = reduce(set.union, map(lambda x : set(diagram.neighbors(x)), placement))
     covered = set(placement) | adjoints | {drop_id}
     new_diagram = diagram.copy()
     new_diagram.remove_nodes_from(covered)
     ranks = ranks[1:]
-    left_chosen = place_ranks(new_diagram, ranks)
-    return chosen + left_chosen
+    left_chosen = place_ranks(new_diagram, ranks)[k]
+    return [chosen] + left_chosen
 
-def place_ranks_for_type_D_D2_D3(diagram: nx.Graph, ranks: list[int], ranks_D: list[int]) -> list[int]:
+def place_ranks_for_type_D_D2_D3(
+    diagram: nx.Graph, 
+    ranks: list[int], 
+    ranks_D: list[int], 
+    k: int
+) -> list[tuple[int, list[int]]]:
     """
     Place the ranks for type D2 and D3.
     """
@@ -103,24 +116,65 @@ def place_ranks_for_type_D_D2_D3(diagram: nx.Graph, ranks: list[int], ranks_D: l
         raise ValueError('len D ranks not 1, No feasible placements')
     rank_D = ranks_D[0]
     new_diagram = diagram.copy()
-    pre_chosen_ids = list(range(rank_D))
+    pre_chosens = [(1, [r]) for r in range(rank_D)]
+    # pre_chosen_ids = pre_chosen[1]
     new_diagram.remove_nodes_from(list(range(rank_D + 1)))
-    chosen = place_ranks(new_diagram, ranks)
-    chosen = pre_chosen_ids + chosen
+    chosen = place_ranks(new_diagram, ranks)[k]
+    chosen = pre_chosens + chosen
     return chosen
 
-def get_chosen_neutral_elements(simple_roots, ranks: list[int], ranks_D: list[int], chosen_id: typing.Optional[int], drop_id: typing.Optional[int], ct) -> list[int]:
+def flatten_grouped_chosen(chosen: list[tuple[int, list[int]]]) -> list[int]:
+    flatten_chosen_ids = []
+    for _, ids in chosen:
+        flatten_chosen_ids.extend(ids)
+    return flatten_chosen_ids
+
+def get_chosen_neutral_elements(
+    simple_roots, 
+    ranks: list[int], 
+    ranks_D: list[int], 
+    chosen_id: typing.Optional[int], 
+    drop_id: typing.Optional[int], 
+    ct: LieType, 
+    k: int
+) -> list[tuple[int, list[int]]]:
+    # print(f"Getting neutral elements for {ct} with ranks {ranks} and ranks_D {ranks_D}, chosen_id {chosen_id}, drop_id {drop_id}, k {k}")
     diagram = get_dynkin_diagram(simple_roots)
     if not ranks_D == []:
-        chosen = place_ranks_for_type_D_D2_D3(diagram, ranks, ranks_D)
+        chosen = place_ranks_for_type_D_D2_D3(diagram, ranks, ranks_D, k)
     elif chosen_id is not None and drop_id is not None:
-        chosen = place_ranks_for_type_D_very_even(diagram, ranks, chosen_id, drop_id)
+        chosen = place_ranks_for_type_D_very_even(diagram, ranks, chosen_id, drop_id, k)
     else:
-        chosen = place_ranks(diagram, ranks)
-    visualize_chosen_ids(ct[0], ct[1], diagram, chosen, save=True)
+        chosen = place_ranks(diagram, ranks)[k]
+    flattened_chosen_ids = flatten_grouped_chosen(chosen)
+    visualize_chosen_ids(ct[0], ct[1], diagram, flattened_chosen_ids, save=True)
     return chosen
 
-def get_neutral_element_sum(ct: tuple[str, int], simple_roots: np.ndarray, bl_orbit: BalaCarterOrbit, orbit: NilpotentOrbit | BalaCarterOrbit) -> np.ndarray:
+def get_neutral_element_sum_for_rank(
+    rank: int, 
+    chosen_ids: list[int], 
+    simple_roots: np.ndarray
+) -> np.ndarray:
+    """
+    to compute `h` for one A_k rank
+    """
+    assert rank == len(chosen_ids)
+    chosen_roots = simple_roots[chosen_ids]
+    k = rank
+    s = np.zeros(simple_roots.shape[1])
+    for j in range(k):
+        s += sum(k - 2 * i for i in range(j+1)) * chosen_roots[j]
+    return s
+
+
+
+def get_neutral_element_sum(
+    ct: LieType, 
+    simple_roots: np.ndarray, 
+    bl_orbit: BalaCarterOrbit, 
+    orbit: NilpotentOrbit | BalaCarterOrbit, 
+    k: int
+) -> np.ndarray:
     """ 
     Get neutral element (Only implemented for summation of type A)
     """
@@ -141,20 +195,32 @@ def get_neutral_element_sum(ct: tuple[str, int], simple_roots: np.ndarray, bl_or
             to_cover_id, drop_id = 1, 0
         elif orbit.veryEvenType == 'II':
             to_cover_id, drop_id = 0, 1
-    chosen_ids = get_chosen_neutral_elements(simple_roots, ranks, ranks_D, to_cover_id, drop_id, ct)
-    if not chosen_ids:
+    # print(f"ranks: {ranks_D}")
+    chosens = get_chosen_neutral_elements(simple_roots, ranks, ranks_D, to_cover_id, drop_id, ct, k)
+    if not chosens:
         return np.zeros(simple_roots.shape[1])
-    chosen_roots = simple_roots[chosen_ids]
+    
+    # Compute the sum of chosen roots
+    sum_of_chosen_roots = np.zeros(simple_roots.shape[1])
+    # print(chosens)
+    for rank, chosen_ids in chosens:
+        # rank, corresponding_ids
+        sum_of_chosen_roots += get_neutral_element_sum_for_rank(rank, chosen_ids, simple_roots)
+    # chosen_roots = simple_roots[chosen_ids]
     # print("chosen ids: ", chosen_ids)
     # print("chosen roots: ", chosen_roots)
-    sum_of_chosen_roots = np.sum(chosen_roots, axis=0)
+    # sum_of_chosen_roots = np.sum(chosen_roots, axis=0)
     # print("sum of chosen roots: ", sum_of_chosen_roots)
     return sum_of_chosen_roots
 
-def get_diagram(typ, rank, neutral: np.ndarray) -> list[int]:
-    # print(neutral)
-    weight_ = neutral @ simple_root_data(typ, rank).T
-    cmat = cartan_matrix_pycox(typ, rank)
+def get_diagram(typ, rank, neutral: np.ndarray, simple_roots: np.ndarray | None) -> list[int]:
+    if simple_roots is None:
+        weight_ = neutral @ simple_root_data(typ, rank).T
+        cmat = cartan_matrix_pycox(typ, rank)
+    else:
+        weight_ = neutral @ simple_roots.T
+        cmat = cartan_matrix_(simple_roots)
+    
     antidom, w = antidominant(cmat, weight_)
     w = (-1) * w
     # sps = simple_root_data(typ, rank)
@@ -166,8 +232,14 @@ def need_to_decide_mark(orbit: BalaCarterOrbit) -> bool:
     return all([typ=='A' or (typ, rank) == ('D', 2) or (typ, rank) == ('D', 3)
         for (typ, rank, _) in orbit.orbits.keys()])
 
-def chose_neutral_elements_test(typ: str, rank: int, ranks: list[int], ranks_D: list[int], chosen_id: Optional[int]=None, drop_id: Optional[int]=None) -> list[int]:
-    chosen = get_chosen_neutral_elements(simple_root_data(typ, rank), ranks, ranks_D, chosen_id, drop_id, (typ, rank))
+def chose_neutral_elements_test(
+    ct: LieType, 
+    ranks: list[int], 
+    ranks_D: list[int], 
+    chosen_id: Optional[int]=None, 
+    drop_id: Optional[int]=None
+) -> list[tuple[int, list[int]]]:
+    chosen = get_chosen_neutral_elements(simple_root_data(typ, rank), ranks, ranks_D, chosen_id, drop_id, ct, 0)
     return chosen
 
 def visualize_chosen_ids(typ, rank, diagram: nx.Graph, chosen: list[int], save: bool=False) -> None:
@@ -205,14 +277,16 @@ if __name__ == '__main__':
     ranks_D = []
     chosen_id, drop_id = 1, 0
     diagram = get_dynkin_diagram(simple_root_data(typ, rank))
-    chosen = chose_neutral_elements_test(typ, rank, ranks, ranks_D, chosen_id, drop_id)
-    visualize_chosen_ids(typ, rank, diagram, chosen)
+    chosen = chose_neutral_elements_test((typ, rank), ranks, ranks_D, chosen_id, drop_id)
+    flattened_chosen_ids = flatten_grouped_chosen(chosen)
+    visualize_chosen_ids(typ, rank, diagram, flattened_chosen_ids)
 
     typ, rank = 'D', 6
     ranks = [1]
     ranks_D = [3]
     chosen_id, drop_id = None, None
     diagram = get_dynkin_diagram(simple_root_data(typ, rank))
-    chosen = chose_neutral_elements_test(typ, rank, ranks, ranks_D, chosen_id, drop_id)
-    visualize_chosen_ids(typ, rank, diagram, chosen)
+    chosen = chose_neutral_elements_test((typ, rank), ranks, ranks_D, chosen_id, drop_id)
+    flattened_chosen_ids = flatten_grouped_chosen(chosen)
+    visualize_chosen_ids(typ, rank, diagram, flattened_chosen_ids)
     

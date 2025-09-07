@@ -17,10 +17,7 @@ from .algorithm import Number, LinearAlgebra
 from .algorithm.pir import antidominant
 # from .algorithm.partition_equivalence import weight_partition
 from .neutral_elements import need_to_decide_mark, get_diagram, get_neutral_element_sum 
-
-Typ = Literal["A", "B", "C", "D", "E", "F", "G"]
-LieType = tuple[Typ, int]
-
+from .structs import LieType, Typ
 
 
 def a_value_integral_classical(typ: Typ, rank: int, weight: np.ndarray) -> tuple[int, Symbol, NilpotentOrbit]:
@@ -156,34 +153,54 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
                 raise TypeError(f"Unknown orbit type {type(orbit)}.")
             orbit_duals.append(bl_orbit_dual)
             result_bl_orbit = result_bl_orbit + bl_orbit_dual
-    # print('Decomposed root system: ', cts)
-    # print('Summed dual orbits: ', result_bl_orbit)
-    neutral_element_images = []
-    try:
-    # Compute mark ' or " for the orbit
-        if need_to_decide_mark(result_bl_orbit):
-            neutral_element_all = np.zeros(dim_ambient)
-            for ct, sp, orb, od in zip(cts, sps, orbits, orbit_duals):
-                neutral_element_all += get_neutral_element_sum(ct, sp, od, orb)
-                neutral_element_images.append(f'neutral_elements_chosen_ids_{ct[0]}_{ct[1]}.png')
-            diagram = get_diagram(typ, rank, neutral_element_all)
-            result_bl_orbit = get_mark_from_diagram(result_bl_orbit, diagram)
-        dual = result_bl_orbit.dual()
-    except Exception as e:
-        print(traceback.format_exc())
-        dual = "N/A"
+    
+    if is_integral_weight:
+        # print(cts)
+        neutral_element_images = None
+        dual = orbit_duals[0]
+    else:
+        # print('Decomposed root system: ', cts)
+        # print('Summed dual orbits: ', result_bl_orbit)
+        neutral_element_images = []
+        try:
+        # Compute mark ' or " for the orbit
+            if need_to_decide_mark(result_bl_orbit):
+                neutral_element_all = np.zeros(dim_ambient)
+                for ct, sp, orb, od in zip(cts, sps, orbits, orbit_duals):
+                    if od.lie_type[0] not in ['A', 'B', 'C', 'D']:
+                        k = 0
+                        while True:
+                            _neutral_element = get_neutral_element_sum(ct, sp, od, orb, k)
+                            # print("_neutral_element:", _neutral_element)
+                            _diagram = get_diagram(ct[0], ct[1], _neutral_element, sp)
+                            _marked = get_mark_from_diagram(od, _diagram)
+                            print(f"try mark {k}: {_marked} for {od}")
+                            if _marked.mark == od.mark:
+                                break
+                            k += 1
+                    else:
+                        _neutral_element = get_neutral_element_sum(ct, sp, od, orb, 0)
+                    neutral_element_all += _neutral_element
+                    neutral_element_images.append(f'neutral_elements_chosen_ids_{ct[0]}_{ct[1]}.png')
+                diagram = get_diagram(typ, rank, neutral_element_all, None)
+                result_bl_orbit = get_mark_from_diagram(result_bl_orbit, diagram)
+            dual = result_bl_orbit.dual()
+        except Exception as e:
+            print(traceback.format_exc())
+            dual = "N/A"
     
     total_a_value = sum(a_values)
     num_postive_roots = num_positive_roots_data(typ, rank)
     gk_dim = num_postive_roots - total_a_value
-
+    # print(cts)
+    # print([str(od) for od in orbit_duals])
     info = {
-        "cartan_type": PPUtil.pretty_print_lietype(typ, rank),
+        "cartan_type": PPUtil.pretty_print_lietype((typ, rank)),
         "simple_roots_weight": PPUtil.pretty_print_basis(simple_root_data0),
         "weight": PPUtil.pretty_print_weight(weight),
         "weight_": PPUtil.pretty_print_weight_(weight0_),
         "integral_roots": PPUtil.pretty_print_basis(rt),
-        "cartan_types": [PPUtil.pretty_print_lietype(*ct) for ct in cts],
+        "cartan_types": [PPUtil.pretty_print_lietype(ct) for ct in cts],
         "pretty_cartan_types": PPUtil.pretty_print_lietypes(cts),
         "simple_roots": [PPUtil.pretty_print_basis(sp) for sp in sps],
         "pretty_simple_roots": PPUtil.pretty_print_basises(sps),
@@ -223,6 +240,9 @@ if __name__ == "__main__":
             ('F', 4, np.array([4, 5, 3/2, 1/2])),
             ([('C', 4)], 9, 15, 'A_2')
         ), (
+            ('F', 4, np.array([2, 4, 5, 7])),
+            ([('B', 3)], 3, 21, 'B_3')
+        ), (
             ('F', 4, np.array([7/4, 1/4, 5/4, -3/4])),
             ([('B', 3), ('A', 1)], 5, 19, None)
         ), (
@@ -255,6 +275,12 @@ if __name__ == "__main__":
         ), (
             ('E', 8, np.array([1, 3, -5, -7, -9, -11, -1/2, 1/2])),
             ([('D', 6), ('A', 1)], None, 113, 'E_8(b_5)')
+        ), (
+            ('E', 8, np.array([0, 0, 0, 0, 0, 1/2, 1, 3/2])),
+            ([('E', 7), ('A', 1)], None, 116, 'E_7')
+        ), (
+            ('E', 8, np.array([0, 0, 0, 0, 0, 1/2, 1, 5/2])),
+            ([('E', 7), ('A', 1)], None, 112, 'E_7(a_2)')
         )
     ]
     for i, test_case in enumerate(test_cases):
