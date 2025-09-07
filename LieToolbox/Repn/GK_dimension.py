@@ -157,6 +157,7 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
     if is_integral_weight:
         # print(cts)
         neutral_element_images = None
+        result_bl_orbit = orbit_duals[0]
         dual = orbit_duals[0]
     else:
         # print('Decomposed root system: ', cts)
