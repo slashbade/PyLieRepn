@@ -38,12 +38,14 @@ def get_first_feasible_placements_at(diagram: nx.Graph, rank: int, start_node: i
     placements = []
     # print("current nodes left", diagram.nodes)
     queue = deque([(start_node, [start_node], 1)])
+    # rank -= 1
     while queue:
         node, path, length = queue.popleft()
         if length == rank:
             return path
         for neighbor in diagram.neighbors(node):
             if neighbor not in path:
+                print("neighbor", neighbor, "path", path, "length", length)
                 queue.append((neighbor, path + [neighbor], length + 1))
     return placements
 
@@ -90,18 +92,21 @@ def place_ranks_for_type_D_very_even(
     """
     Place the ranks for type D of very even type.
     """
-    chosen = (1, [chosen_id])
+    # chosen = (1, [chosen_id])
     # find a rank 1 and pop it
     ranks = sorted(ranks)
+    print("ranks after sort", ranks, chosen_id, drop_id)
     placement = get_first_feasible_placements_at(diagram, ranks[0], chosen_id)
-    placement += chosen[1] # get chosen id
+    print("placement found", placement)
+    prechosen = (ranks[0], placement)
+    # placement += chosen[1] # get chosen id
     adjoints = reduce(set.union, map(lambda x : set(diagram.neighbors(x)), placement))
     covered = set(placement) | adjoints | {drop_id}
     new_diagram = diagram.copy()
     new_diagram.remove_nodes_from(covered)
     ranks = ranks[1:]
     left_chosen = place_ranks(new_diagram, ranks)[k]
-    return [chosen] + left_chosen
+    return [prechosen] + left_chosen
 
 def place_ranks_for_type_D_D2_D3(
     diagram: nx.Graph, 

@@ -168,6 +168,7 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
             if need_to_decide_mark(result_bl_orbit):
                 neutral_element_all = np.zeros(dim_ambient)
                 for ct, sp, orb, od in zip(cts, sps, orbits, orbit_duals):
+                    sp = LinearAlgebra.embed_basis(sp, dim_ambient)
                     if od.lie_type[0] not in ['A', 'B', 'C', 'D']:
                         k = 0
                         while True:
@@ -183,7 +184,8 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
                         _neutral_element = get_neutral_element_sum(ct, sp, od, orb, 0)
                     neutral_element_all += _neutral_element
                     neutral_element_images.append(f'neutral_elements_chosen_ids_{ct[0]}_{ct[1]}.png')
-                diagram = get_diagram(typ, rank, neutral_element_all, None)
+                # diagram = get_diagram(typ, rank, neutral_element_all, None)
+                diagram = get_diagram(typ, rank, neutral_element_all, LinearAlgebra.embed_basis(simple_root_data0, dim_ambient))
                 result_bl_orbit = get_mark_from_diagram(result_bl_orbit, diagram)
             dual = result_bl_orbit.dual()
         except Exception as e:
@@ -267,6 +269,12 @@ if __name__ == "__main__":
         ), (
             ('E', 8, np.array([1, 1, 1, 1, 1, 1, 1/2, 5/2])), 
             ([('E', 7), ('A', 1)], 7, 113, 'D_7')
+        ), (
+            ('E', 8, np.array([0, 0, 1/3, 1/3, 1/3, 1/3, 2/3, 6/3])), 
+            ([('E', 8)], 7, 113, 'E_8(b_5)')
+        ), (
+            ('E', 8, np.array([0, 0, 1/4, 1/4, 2/4, 4/4, 6/4, 16/4])), 
+            ([('E', 8)], 16, 104, 'A_1 + D_5')
         ), (
             ('E', 7, np.array([2.1, 1.1, -0.1, 2.1, 2, 4, 2, 0.9])),
             ([('D', 6), ('A', 1)], None, None, None)
