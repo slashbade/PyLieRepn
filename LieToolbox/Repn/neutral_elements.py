@@ -95,9 +95,9 @@ def place_ranks_for_type_D_very_even(
     # chosen = (1, [chosen_id])
     # find a rank 1 and pop it
     ranks = sorted(ranks)
-    print("ranks after sort", ranks, chosen_id, drop_id)
+    # print("ranks after sort", ranks, chosen_id, drop_id)
     placement = get_first_feasible_placements_at(diagram, ranks[0], chosen_id)
-    print("placement found", placement)
+    # print("placement found", placement)
     prechosen = (ranks[0], placement)
     # placement += chosen[1] # get chosen id
     adjoints = reduce(set.union, map(lambda x : set(diagram.neighbors(x)), placement))
@@ -121,7 +121,10 @@ def place_ranks_for_type_D_D2_D3(
         raise ValueError('len D ranks not 1, No feasible placements')
     rank_D = ranks_D[0]
     new_diagram = diagram.copy()
-    pre_chosens = [(1, [r]) for r in range(rank_D)]
+    if rank_D == 2:
+        pre_chosens = [(1, [0]), (1, [1])]
+    else: # rank_D == 3
+        pre_chosens = [(3, [0, 2, 1])]
     # pre_chosen_ids = pre_chosen[1]
     new_diagram.remove_nodes_from(list(range(rank_D + 1)))
     chosen = place_ranks(new_diagram, ranks)[k]
@@ -192,6 +195,7 @@ def get_neutral_element_sum(
             ranks.extend([rank] * mult)
         else:
             raise ValueError(f"Unknown type {typ} in the orbit.")
+    # print(f"ranks: {ranks}, ranks_D: {ranks_D}")
     if len(ranks_D) > 1:
         raise ValueError(f"Only one rank D is allowed in the orbit.")
     to_cover_id, drop_id = None, None

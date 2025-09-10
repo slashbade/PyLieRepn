@@ -176,7 +176,7 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
                             # print("_neutral_element:", _neutral_element)
                             _diagram = get_diagram(ct[0], ct[1], _neutral_element, sp)
                             _marked = get_mark_from_diagram(od, _diagram)
-                            print(f"try mark {k}: {_marked} for {od}")
+                            # print(f"try mark {k}: {_marked} for {od}")
                             if _marked.mark == od.mark:
                                 break
                             k += 1
@@ -281,6 +281,9 @@ if __name__ == "__main__":
         ), (
             ('E', 7, np.array([-1/4, 1/4, 1/4, 1/4, 1/4, 1/4, -5/4, 5/4])),
             ([('D', 6), ('A', 1)], None, 59, None)
+        ), (
+            ('E', 7, np.array([0, 2/8, 2/8, 4/8, 6/8, 6/8, -14/8, 14/8])),
+            ([('D', 4), ('A', 1), ('A', 1)], None, 55, 'D_6(a_2)')
         ), (
             ('E', 8, np.array([1/8, 1/8, 1/8, 1/8, 1/8, 3/8, 7/8, 13/8])),
             ([('D', 6), ('A', 1)], None, None, 'E_7')
