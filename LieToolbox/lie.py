@@ -5,7 +5,7 @@ from werkzeug.exceptions import abort
 
 from re import split
 from LieToolbox.Repn.weight import Weight, HighestWeightModule
-from LieToolbox.Repn.GK_dimension import antidominant
+from LieToolbox.Repn.algorithm.pir import antidominant_wrapper as antidominant
 import json
 import numpy as np
 import traceback
@@ -88,11 +88,19 @@ def antidominant_get():
         weight = np.array(list(map(eval, split(', |,|，| ', input_str))))
         rank = eval(request.form['rank'])
         typ = request.form['lieType']
-        antidominant_weyl, antidominant_weight = antidominant(typ=typ, rank=rank, weight_=weight)
+        error = None
+        try:
+            antidominant_weyl, antidominant_weight = antidominant(typ=typ, rank=rank, weight_=weight)
+            return render_template('lie/antidominant.html', 
+                                antidominant_weyl=str(antidominant_weyl), 
+                                antidominant_weight=str(np.round(antidominant_weight, 3)))
+        except Exception as e:
+            error = str(e)
+        if error is not None:
+            flash(error)
+        return render_template('lie/antidominant.html')
         
-        return render_template('lie/antidominant.html', 
-                               antidominant_weyl=str(antidominant_weyl), 
-                               antidominant_weight=str(np.round(antidominant_weight, 3)))
+        
     else:
         return render_template('lie/antidominant.html')
     

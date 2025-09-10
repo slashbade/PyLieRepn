@@ -1,7 +1,7 @@
 import numpy as np
 
 from .number import Number
-# from ..root_system_data import cartan_matrix_pycox
+from ..root_system_data import cartan_matrix_pycox
 
 def act_on_weight(cmat: np.ndarray, root_index: np.ndarray, weight: np.ndarray) -> np.ndarray:
     """Compute the result of the action of the simple root indexed by root_index on the weight.
@@ -42,4 +42,17 @@ def antidominant(cmat: np.ndarray, weight_: np.ndarray, weyl: list = []) -> tupl
         # print(f"{max_pos_index + 1}th simple root action, new weight: {new_weight}")
         return antidominant(cmat, new_weight, new_weyl)
 
+def antidominant_wrapper(typ: str, rank: int, weight_: np.ndarray) -> tuple[list, np.ndarray]:
+    """A wrapper of antidominant function, which computes the cartan matrix from the type and rank.
 
+    Args:
+        typ (str): Cartan type.
+        rank (int): Rank of the Lie algebra.
+        weight (np.ndarray): weight to compute the antidominant weight,
+        represented in the fundamental weight basis.
+
+    Returns:
+        np.ndarray: the antidominant weight, represented in the fundamental weight basis.
+    """
+    cmat = cartan_matrix_pycox(typ, rank)
+    return antidominant(cmat, weight_)
