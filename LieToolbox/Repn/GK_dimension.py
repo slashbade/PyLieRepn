@@ -172,7 +172,7 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
                     if od.lie_type[0] not in ['A', 'B', 'C', 'D']:
                         k = 0
                         while True:
-                            _neutral_element = get_neutral_element_sum(ct, sp, od, orb, k)
+                            _neutral_element, img = get_neutral_element_sum(ct, sp, od, orb, k)
                             # print("_neutral_element:", _neutral_element)
                             _diagram = get_diagram(ct[0], ct[1], _neutral_element, sp)
                             _marked = get_mark_from_diagram(od, _diagram)
@@ -181,9 +181,9 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
                                 break
                             k += 1
                     else:
-                        _neutral_element = get_neutral_element_sum(ct, sp, od, orb, 0)
+                        _neutral_element, img = get_neutral_element_sum(ct, sp, od, orb, 0)
                     neutral_element_all += _neutral_element
-                    neutral_element_images.append(f'neutral_elements_chosen_ids_{ct[0]}_{ct[1]}.png')
+                    neutral_element_images.append(img)
                 # diagram = get_diagram(typ, rank, neutral_element_all, None)
                 diagram = get_diagram(typ, rank, neutral_element_all, LinearAlgebra.embed_basis(simple_root_data0, dim_ambient))
                 result_bl_orbit = get_mark_from_diagram(result_bl_orbit, diagram)

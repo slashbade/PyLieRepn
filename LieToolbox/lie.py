@@ -12,6 +12,13 @@ import traceback
 
 bp = Blueprint('lie', __name__, url_prefix='/')
 
+def clear_images():
+    import os
+    import glob
+    files = glob.glob('LieToolbox/static/images/neutral_elements_chosen_ids_*.png')
+    for f in files:
+        os.remove(f)
+
 @bp.route('/')
 def index():
     return render_template('lie/index.html')
@@ -41,6 +48,7 @@ def classification():
 
 @bp.route('/lie/GKdim', methods=('GET', 'POST'))
 def GKdim_get():
+    clear_images()
     if request.method == 'POST':
         error = None
         if not request.form['weight']:
@@ -93,7 +101,7 @@ def antidominant_get():
             antidominant_weyl, antidominant_weight = antidominant(typ=typ, rank=rank, weight_=weight)
             return render_template('lie/antidominant.html', 
                                 antidominant_weyl=str(antidominant_weyl), 
-                                antidominant_weight=str(np.round(antidominant_weight, 3)))
+                                antidominant_weight=str(np.round(antidominant_weight, 3).tolist()))
         except Exception as e:
             error = str(e)
         if error is not None:

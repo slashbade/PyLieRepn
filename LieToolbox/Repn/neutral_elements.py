@@ -145,7 +145,7 @@ def get_chosen_neutral_elements(
     drop_id: typing.Optional[int], 
     ct: LieType, 
     k: int
-) -> list[tuple[int, list[int]]]:
+) -> tuple[list[tuple[int, list[int]]], str]:
     # print(f"Getting neutral elements for {ct} with ranks {ranks} and ranks_D {ranks_D}, chosen_id {chosen_id}, drop_id {drop_id}, k {k}")
     diagram = get_dynkin_diagram(simple_roots)
     if not ranks_D == []:
@@ -155,8 +155,9 @@ def get_chosen_neutral_elements(
     else:
         chosen = place_ranks(diagram, ranks)[k]
     flattened_chosen_ids = flatten_grouped_chosen(chosen)
-    visualize_chosen_ids(ct[0], ct[1], diagram, flattened_chosen_ids, save=True)
-    return chosen
+    filename = visualize_chosen_ids(ct[0], ct[1], diagram, flattened_chosen_ids, save=True)
+    assert filename is not None
+    return chosen, filename
 
 def get_neutral_element_sum_for_rank(
     rank: int, 
@@ -182,7 +183,7 @@ def get_neutral_element_sum(
     bl_orbit: BalaCarterOrbit, 
     orbit: NilpotentOrbit | BalaCarterOrbit, 
     k: int
-) -> np.ndarray:
+) -> tuple[np.ndarray, str]:
     """ 
     Get neutral element (Only implemented for summation of type A)
     """
@@ -205,9 +206,9 @@ def get_neutral_element_sum(
         elif orbit.veryEvenType == 'II':
             to_cover_id, drop_id = 0, 1
     # print(f"ranks: {ranks_D}")
-    chosens = get_chosen_neutral_elements(simple_roots, ranks, ranks_D, to_cover_id, drop_id, ct, k)
+    chosens, filename = get_chosen_neutral_elements(simple_roots, ranks, ranks_D, to_cover_id, drop_id, ct, k)
     if not chosens:
-        return np.zeros(simple_roots.shape[1])
+        return np.zeros(simple_roots.shape[1]), filename
     
     # Compute the sum of chosen roots
     sum_of_chosen_roots = np.zeros(simple_roots.shape[1])
@@ -220,7 +221,7 @@ def get_neutral_element_sum(
     # print("chosen roots: ", chosen_roots)
     # sum_of_chosen_roots = np.sum(chosen_roots, axis=0)
     # print("sum of chosen roots: ", sum_of_chosen_roots)
-    return sum_of_chosen_roots
+    return sum_of_chosen_roots, filename
 
 def get_diagram(typ, rank, neutral: np.ndarray, simple_roots: np.ndarray | None) -> list[int]:
     if simple_roots is None:
@@ -248,12 +249,16 @@ def chose_neutral_elements_test(
     chosen_id: Optional[int]=None, 
     drop_id: Optional[int]=None
 ) -> list[tuple[int, list[int]]]:
-    chosen = get_chosen_neutral_elements(simple_root_data(typ, rank), ranks, ranks_D, chosen_id, drop_id, ct, 0)
+    chosen, _ = get_chosen_neutral_elements(simple_root_data(typ, rank), ranks, ranks_D, chosen_id, drop_id, ct, 0)
     return chosen
 
-def visualize_chosen_ids(typ, rank, diagram: nx.Graph, chosen: list[int], save: bool=False) -> None:
+def visualize_chosen_ids(
+        typ, rank, diagram: nx.Graph, chosen: list[int], save: bool=False) -> str | None:
+    import uuid
+    print(f"Chosen ids for {typ}_{rank}: {chosen}")
+    print(diagram.nodes)
     node_colors = ['lightcoral' if node in chosen else '#7bbce6' for node in diagram.nodes]
-
+    print(node_colors)
     pos = nx.spring_layout(diagram, seed=42)
 
     # Get edge weights as labels
@@ -273,11 +278,12 @@ def visualize_chosen_ids(typ, rank, diagram: nx.Graph, chosen: list[int], save: 
     # ax.set_facecolor('#CAE6F6')
     plt.title(f'Chosen Neutral Elements for ${typ}_{rank}$')
     if save:
-        plt.savefig(f'LieToolbox/static/images/neutral_elements_chosen_ids_{typ}_{rank}.png', format='png', facecolor='#dce7f0')
+        filename = f'neutral_elements_chosen_ids_{typ}_{rank}_{uuid.uuid4()}.png'
+        plt.savefig(f'LieToolbox/static/images/{filename}', format='png', facecolor='#dce7f0')
         plt.close()
+        return filename
     else:
         plt.show()
-
 
 if __name__ == '__main__':
 

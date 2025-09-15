@@ -26,17 +26,19 @@ input[type=submit] { align-self: start; min-width: 10em; }
 .image-container {
     display: flex;
     flex-direction: row;
-    justify-content: center; /* centers horizontally */
+    justify-content: flex-start; /* align to start for proper scrolling */
     gap: 10px; /* spacing between images */
     margin-top: 20px; /* optional vertical spacing */
     border: 2px solid #377ba8dd;
     margin-left: auto; /* auto margins for perfect horizontal centering */
     margin-right: auto;
     background-color: #dce7f0;
+    overflow-x: auto; /* enables horizontal scrolling only when needed */
+    padding: 10px; /* add padding for better visual spacing */
 }
 
 .image-container img {
-    width: 400px; /* optional fixed width */
+    width: 400px; /* reduced width to fit 4 images in 960px container */
     height: auto;
 }
 table {
