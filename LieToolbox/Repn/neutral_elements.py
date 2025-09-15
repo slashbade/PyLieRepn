@@ -255,10 +255,10 @@ def chose_neutral_elements_test(
 def visualize_chosen_ids(
         typ, rank, diagram: nx.Graph, chosen: list[int], save: bool=False) -> str | None:
     import uuid
-    print(f"Chosen ids for {typ}_{rank}: {chosen}")
-    print(diagram.nodes)
+    # print(f"Chosen ids for {typ}_{rank}: {chosen}")
+    # print(diagram.nodes)
     node_colors = ['lightcoral' if node in chosen else '#7bbce6' for node in diagram.nodes]
-    print(node_colors)
+    # print(node_colors)
     pos = nx.spring_layout(diagram, seed=42)
 
     # Get edge weights as labels
