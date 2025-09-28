@@ -1355,7 +1355,7 @@ class Partition:
         in the tuple form
         """
         if self.lieType == 'A':
-            return self.entry, []
+            return sorted(self.entry, reverse=True), []
         
         p: list[int] = deepcopy(self.entry)
         if len(p) % 2 == 0:
@@ -1365,11 +1365,11 @@ class Partition:
         bs_odd = [int((i - 1) / 2) for i in s if i % 2 != 0]
         
         if self.lieType == 'B' or self.lieType == 'C':
-            return bs_even, bs_odd
+            return sorted(bs_even, reverse=True), sorted(bs_odd, reverse=True)
         elif self.lieType == 'D':
             ds_even = bs_even
             ds_odd = [0] + [i + 1 for i in bs_odd]
-            return ds_even, ds_odd
+            return sorted(ds_even, reverse=True), sorted(ds_odd, reverse=True)
         else:
             raise ValueError('Invalid Lie type')
 
