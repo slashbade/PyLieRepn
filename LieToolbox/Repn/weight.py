@@ -33,7 +33,7 @@ class Weight:
     It also support 
     """
 
-    def __init__(lbd, entry: list = [], lieType: str = 'B', type: str = 'R'):
+    def __init__(lbd, entry: list, lieType: str = 'B', type: str = 'R'):
         lbd.entry = entry
         lbd.lieType = lieType
         lbd.type = type
@@ -1349,18 +1349,42 @@ class Partition:
                 label = ha.getLabel(pt.entry, 5)
         return label
 
+    def convert_to_bi_partition(self) -> tuple[list[int], list[int]]:
+        """
+        This function constructs a Lusztig Symbol,
+        in the tuple form
+        """
+        if self.lieType == 'A':
+            return self.entry, []
+        
+        p: list[int] = deepcopy(self.entry)
+        if len(p) % 2 == 0:
+            p += [0]
+        s = [p[len(p) - i - 1] + i for i in range(len(p))]
+        bs_even = [int(i / 2) for i in s if i % 2 == 0]
+        bs_odd = [int((i - 1) / 2) for i in s if i % 2 != 0]
+        
+        if self.lieType == 'B' or self.lieType == 'C':
+            return bs_even, bs_odd
+        elif self.lieType == 'D':
+            ds_even = bs_even
+            ds_odd = [0] + [i + 1 for i in bs_odd]
+            return ds_even, ds_odd
+        else:
+            raise ValueError('Invalid Lie type')
+
     def convert2Symbol(self) -> 'Symbol':
         """This function constructs a Lusztig Symbol through partition.
 
         Returns:
             Symbol: a B-Symbol or D-Symbol
         """
-        p = deepcopy(self.entry)
+        p: list[int] = deepcopy(self.entry)
         if len(p) % 2 == 0:
             p += [0]
         s = [p[len(p) - i - 1] + i for i in range(len(p))]
-        bs_even = [int(i / 2) for i in s if i % 2 == 0]
-        bs_odd = [int((i - 1) / 2) for i in s if i % 2 != 0]
+        bs_even = tuple([int(i / 2) for i in s if i % 2 == 0])
+        bs_odd = tuple([int((i - 1) / 2) for i in s if i % 2 != 0])
         if self.lieType == 'B' or self.lieType == 'C':
             return Symbol(bs_even, bs_odd, self.lieType)
         elif self.lieType == 'D':
@@ -1368,7 +1392,9 @@ class Partition:
             ds_odd = [0] + [i + 1 for i in bs_odd]
             return Symbol(ds_even, ds_odd, 'D')
         elif self.lieType == 'A':
-            return Symbol(self.entry, [], 'A')
+            return Symbol(tuple(self.entry), tuple(), 'A')
+        else:
+            raise ValueError('Invalid Lie type')
 
     def transpose(self) -> 'Partition':
         transposed = []
@@ -1385,21 +1411,23 @@ class Symbol:
     """This class handles structure and operation of Lusztig Symbol.
     """
 
-    def __init__(ls,
-                 topEntry: list = [],
-                 bottomEntry: list = [],
+    def __init__(self,
+                 topEntry: tuple[int],
+                 bottomEntry: tuple[int],
                  lieType: str = 'B'):
         Symbol.topEntry = topEntry
         Symbol.bottomEntry = bottomEntry
         Symbol.lieType = lieType
         Symbol.special = False
 
-    def show(ls):
+    # def clone(self) -> "Symbol":
+
+    def show(self):
         """This function shows the Symbol itself.
         """
-        print(ls.lieType, 'Symbol')
-        print('Top row:', ls.topEntry)
-        print('Bottom row', ls.bottomEntry)
+        print(self.lieType, 'Symbol')
+        print('Top row:', self.topEntry)
+        print('Bottom row', self.bottomEntry)
 
     def __repr__(self) -> str:
         if self.lieType == 'A':
@@ -1407,38 +1435,38 @@ class Symbol:
         else:
             return str([self.topEntry, self.bottomEntry])
 
-    def makeSpecial(ls):
+    def makeSpecial(self):
         """This function sorts the top and bottom row to make a special
         Symbol.
         """
-        ls_combine = ls.topEntry + ls.bottomEntry
+        ls_combine = self.topEntry + self.bottomEntry
         ls_combine_sp = sorted(ls_combine)
-        ls.topEntry = [i for i in ls_combine_sp[::2]]
-        ls.bottomEntry = [i for i in ls_combine_sp[1::2]]
-        ls.special = True
+        self.topEntry = tuple([i for i in ls_combine_sp[::2]])
+        self.bottomEntry = tuple([i for i in ls_combine_sp[1::2]])
+        self.special = True
 
-    def convert2Partition(ls) -> Partition:
+    def convert2Partition(self) -> Partition:
         """This function uses Springer correspondance to construct special
         partition from special Symbol.
 
         Returns:
             Partition: special partition
         """
-        if ls.special == False:
+        if self.special == False:
             return None
         else:
-            if ls.lieType == 'B' or ls.lieType == 'D':
-                s_even_sp = [2 * i + 1 for i in ls.topEntry]
-                s_odd_sp = [2 * i for i in ls.bottomEntry]
+            if self.lieType == 'B' or self.lieType == 'D':
+                s_even_sp = [2 * i + 1 for i in self.topEntry]
+                s_odd_sp = [2 * i for i in self.bottomEntry]
                 s_sp = sorted(s_even_sp + s_odd_sp)
                 p_sp = [
                     s_sp[len(s_sp) - i - 1] - (len(s_sp) - i - 1)
                     for i in range(len(s_sp))
                 ]
 
-            elif ls.lieType == 'C':
-                s_even_sp = [2 * i for i in ls.topEntry]
-                s_odd_sp = [2 * i + 1 for i in ls.bottomEntry]
+            elif self.lieType == 'C':
+                s_even_sp = [2 * i for i in self.topEntry]
+                s_odd_sp = [2 * i + 1 for i in self.bottomEntry]
                 s_sp = sorted(s_even_sp + s_odd_sp)
                 p_sp = [
                     s_sp[len(s_sp) - i - 1] - (len(s_sp) - i - 1)
@@ -1447,7 +1475,7 @@ class Symbol:
 
             while p_sp[-1] == 0:
                 p_sp.pop()
-            return Partition(p_sp, ls.lieType)
+            return Partition(p_sp, self.lieType)
 
 
 class NilpotentOrbit(Partition):
