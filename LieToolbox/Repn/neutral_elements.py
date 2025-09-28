@@ -45,7 +45,7 @@ def get_first_feasible_placements_at(diagram: nx.Graph, rank: int, start_node: i
             return path
         for neighbor in diagram.neighbors(node):
             if neighbor not in path:
-                print("neighbor", neighbor, "path", path, "length", length)
+                # print("neighbor", neighbor, "path", path, "length", length)
                 queue.append((neighbor, path + [neighbor], length + 1))
     return placements
 
