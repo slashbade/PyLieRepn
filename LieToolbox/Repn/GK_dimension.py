@@ -1,5 +1,4 @@
-from typing import Literal
-
+import copy
 import numpy as np
 import traceback
 
@@ -19,18 +18,22 @@ from .algorithm.pir import antidominant
 from .neutral_elements import need_to_decide_mark, get_diagram, get_neutral_element_sum 
 from .structs import LieType, Typ
 
+BiPartition = tuple[list, list]
+Character = BiPartition | str
 
-def a_value_integral_classical(typ: Typ, rank: int, weight: np.ndarray) -> tuple[int, Symbol, NilpotentOrbit]:
+def a_value_integral_classical(typ: Typ, rank: int, weight: np.ndarray) -> tuple[int, BiPartition, NilpotentOrbit]:
     weight = Number.round_half(weight)
     lbd = Weight(weight.tolist(), typ) # type: ignore
     L = HighestWeightModule(lbd)
     # obtinfo = L.nilpotentOrbitInfo()
     orbit = L.nilpotentOrbit()
-    character = orbit.convert2Symbol()
+    # character = orbit.convert2Symbol()
+    character = orbit.convert_to_bi_partition()
     # print(typ, rank, weight)
+    # print(character, orbit)
     return L.a_value_integral(), character, orbit
 
-def a_value_integral_exceptional(typ: Typ, rank: int, weight):
+def a_value_integral_exceptional(typ: Typ, rank: int, weight) -> tuple[int, str, BalaCarterOrbit]:
     cananical_sp = simple_root_data(typ, rank)
     weight_ = (2 * weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
     W = pycox.coxeter(typ, rank)
@@ -48,7 +51,7 @@ def a_value_integral_exceptional(typ: Typ, rank: int, weight):
     bl_orbit = from_alvis_notation(cell_repm['special'], (typ, rank))
     return cell_repm['a'], cell_repm['special'], bl_orbit
 
-def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
+def GK_dimension(typ: Typ, rank: int, weight: np.ndarray) -> tuple[str, dict]:
     """Compute the dimension of the Gelfand-Kirillov dimension of a weight.
 
     Args:
@@ -120,11 +123,11 @@ def GK_dimension(typ, rank, weight: np.ndarray) -> tuple[str, dict]:
         transformed_weight_ = (2 * transformed_weight @ cananical_sp.T / np.sum(cananical_sp**2, axis=1))
         transformed_weight_ = np.round(transformed_weight_)
         
-        if ct[0] in ['A', 'B', 'C', 'D']:
+        if ct[0] in ['A', 'B', 'C', 'D']:   
             a_value, character, orbit = a_value_integral_classical(*ct, transformed_weight)
         else:
             a_value, character, orbit = a_value_integral_exceptional(*ct, transformed_weight)
-
+        
         weights.append(weight1)
         weights_.append(weight_)
         transformed_weights.append(transformed_weight)
