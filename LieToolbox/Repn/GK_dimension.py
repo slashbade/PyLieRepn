@@ -232,10 +232,6 @@ def GK_dimension(typ: Typ, rank: int, weight: np.ndarray) -> tuple[str, dict]:
         "neutral_element_images": neutral_element_images,
     }
     return str(gk_dim), info
-    
-    
-    
-
 
 if __name__ == "__main__":
     test_cases = [
