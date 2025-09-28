@@ -297,6 +297,13 @@ if __name__ == "__main__":
             ([('E', 7), ('A', 1)], None, 112, 'E_7(a_2)')
         )
     ]
+    def clear_images():
+        import os
+        import glob
+        files = glob.glob('LieToolbox/static/images/neutral_elements_chosen_ids_*.png')
+        for f in files:
+            os.remove(f)
+    clear_images()
     for i, test_case in enumerate(test_cases):
         print(f"start test case {i}", test_case[0])
         if i in [0]:
