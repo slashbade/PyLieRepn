@@ -36,8 +36,7 @@
             <details>
                 <summary> Instruction </summary>
                 A highest weight module is given by a Lie algebra along with an infinitesimal character. <br>
-                Input sequence of weight seperated by ',' or space, e.g. -3.5,2.5,1.5,3,6,9,-7,2,5,-8,-4 for real case or 3+i,2+i,1.5+i,i for complex case. 
-                This algorithm depends on H-algorithm and PyCox package.
+                Input sequence of weight seperated by ',' or space, e.g. -3.5,2.5,1.5,3,6,9,-7,2,5,-8,-4. The program currently supports rational inputs. This algorithm depends on H-algorithm and PyCox package.
                 <br>
                 <strong>Reference:</strong> <br> 
                 <a href="https://arxiv.org/abs/2304.03475"> A combinatorial characterization of the annihilator varieties of highest weight modules for classical Lie algebras </a>
@@ -118,10 +117,10 @@
                         <td width="10%"> Cananical simple roots </td>
                         <td width="10%"> Weight </td>
                         <td width="10%"> Transformed weight </td>
-                        <td width="10%"> \(\mathfrak{a}\) value </td>
+                        <td width="10%"> \(\mathfrak{a}\) </td>
                         <td width="10%"> Character </td>
-                        <td width="10%"> Orbit </td>
-                        <td width="10%"> Dual orbit </td>
+                        <td width="15%"> \(\mathcal{O}(\pi_{\omega_\lambda})\) </td>
+                        <td width="10%"> {% if info['cartan_type'] == 'F_4' %} \(\mathcal{O}_{L}\) {% else %} \(\mathcal{O}_{L^\vee}\) {% endif %} </td>
                     </tr>
                     {% for ct in info['cartan_types']%}
                     <tr>    
@@ -144,7 +143,7 @@
                 {% else %}
                 which is empty. Hence, \(\mathfrak{a}(\omega_{\lambda})=0\).</p>
                 {% endif %}
-		<p> The Gelfand-Kirillov dimension for \(L(\lambda)\) is computed by the formula \(\text{GKdim} = |\Phi^+| - \mathfrak{a}(\omega_{\lambda}) = {{gkdim}}\). The summed dual orbit is \(\mathcal{O}({{info['result_bl_orbit']}})\), and thus the result orbit is \(\mathcal{O}({{info['dual']}})\).</p>
+		<p> The Gelfand-Kirillov dimension for \(L(\lambda)\) is computed by the formula \(\text{GKdim} = |\Phi^+| - \mathfrak{a}(\omega_{\lambda}) = {{gkdim}}\). The summed dual orbit is \(\mathcal{O}_{L^\vee}=\mathcal{O}({{info['result_bl_orbit']}})\), and thus the result orbit is \(\mathcal{O}_{\text{Ann}(L(\lambda))}=\mathcal{O}({{info['dual']}})\).</p>
 		
 		{% if info['neutral_element_images'] %}
 		<p>The choice of neutral element is illustrated below:</p>
