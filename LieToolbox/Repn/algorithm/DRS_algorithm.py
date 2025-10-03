@@ -4,7 +4,8 @@ import json
 
 def w2DominoTableau(w):
     node = execjs.get()
-    ctx2 = node.compile(open('LieToolbox/Repn/algorithm/Tableau.js',encoding='utf-8').read())
+    with open('LieToolbox/Repn/algorithm/Tableau.js',encoding='utf-8') as f:
+        ctx2 = node.compile(f.read())
     strw = [str(i) for i in w]
     ent = ' '.join(strw)
     rst = ctx2.call("calc", ent)
