@@ -4,6 +4,12 @@ import numpy as np
 from .algorithm import Number
 from .structs import Typ, LieType
 
+def clear_images():
+    import os
+    import glob
+    files = glob.glob('LieToolbox/static/images/neutral_elements_chosen_ids_*.png')
+    for f in files:
+        os.remove(f)
 
 class PPUtil:
     @staticmethod

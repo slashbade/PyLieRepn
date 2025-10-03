@@ -1,20 +1,17 @@
-import copy
 import numpy as np
 import traceback
 
 from LieToolbox.Repn.utils import PPUtil
-# from .utils import *
 from .roots import (
     integral_root_system, simple_root_data, get_cartan_type, 
     reorder_simple_roots, compute_fundamental_weights)
 from .root_system_data import cartan_matrix_pycox, num_positive_roots_data
 from ..PyCox import chv1r6180 as pycox
-from .weight import HighestWeightModule, Symbol, Weight, NilpotentOrbit
+from .weight import HighestWeightModule, Weight, NilpotentOrbit
 from .orbit import (BalaCarterOrbit, from_orbit_string, from_alvis_notation, 
                     from_partition_dual, get_mark_from_diagram)
 from .algorithm import Number, LinearAlgebra
 from .algorithm.pir import antidominant
-# from .algorithm.partition_equivalence import weight_partition
 from .neutral_elements import need_to_decide_mark, get_diagram, get_neutral_element_sum 
 from .structs import LieType, Typ
 
@@ -25,12 +22,8 @@ def a_value_integral_classical(typ: Typ, rank: int, weight: np.ndarray) -> tuple
     weight = Number.round_half(weight)
     lbd = Weight(weight.tolist(), typ) # type: ignore
     L = HighestWeightModule(lbd)
-    # obtinfo = L.nilpotentOrbitInfo()
     orbit = L.nilpotentOrbit()
-    # character = orbit.convert2Symbol()
     character = orbit.convert_to_bi_partition()
-    # print(typ, rank, weight)
-    # print(character, orbit)
     return L.a_value_integral(), character, orbit
 
 def a_value_integral_exceptional(typ: Typ, rank: int, weight) -> tuple[int, str, BalaCarterOrbit]:
@@ -39,15 +32,8 @@ def a_value_integral_exceptional(typ: Typ, rank: int, weight) -> tuple[int, str,
     W = pycox.coxeter(typ, rank)
     
     cmat = cartan_matrix_pycox(typ, rank)
-    w, adw = antidominant(cmat, weight_)
+    w, _ = antidominant(cmat, weight_)
     cell_repm = pycox.klcellrepelm(W, w)
-    # print('input weight fundam:', np.round(weight_,2))
-    # print('weyl:', w)
-    # print('antidom weight', np.round(adw))
-    # print('repm:', cell_repm)
-    # character = cell_repm['character']
-    # character = cell_repm['special']
-    # orbit = find_orbit_from_character(typ, rank, cell_repm['special'])
     bl_orbit = from_alvis_notation(cell_repm['special'], (typ, rank))
     return cell_repm['a'], cell_repm['special'], bl_orbit
 
@@ -63,15 +49,13 @@ def GK_dimension(typ: Typ, rank: int, weight: np.ndarray) -> tuple[str, dict]:
     Returns:
         int: the Gelfand-Kirillov dimension.
     """
-    # print(weight)
     is_integral_weight = Number.is_integer_array(weight)
     simple_root_data0 = simple_root_data(typ, rank)
     weight0_ = (2 * weight @ simple_root_data0.T / np.sum(simple_root_data0**2, axis=1))
     dim_ambient = weight.shape[0]
-    # print(typ, rank, weight)
+    
     # Integral root system decomposition
     rt, _ = integral_root_system(typ, rank, weight)
-    # print(rt)
     cts, sps = get_cartan_type(rt)
     
     # Find a sufficiently large ambiant space
@@ -158,16 +142,13 @@ def GK_dimension(typ: Typ, rank: int, weight: np.ndarray) -> tuple[str, dict]:
             result_bl_orbit = result_bl_orbit + bl_orbit_dual
     
     if is_integral_weight:
-        # print(cts)
         neutral_element_images = None
         result_bl_orbit = orbit_duals[0]
         dual = orbits[0]
     else:
-        # print('Decomposed root system: ', cts)
-        # print('Summed dual orbits: ', result_bl_orbit)
         neutral_element_images = []
         try:
-        # Compute mark ' or " for the orbit
+            # Compute mark ' or " for the orbit
             if need_to_decide_mark(result_bl_orbit):
                 neutral_element_all = np.zeros(dim_ambient)
                 for ct, sp, orb, od in zip(cts, sps, orbits, orbit_duals):
@@ -176,10 +157,8 @@ def GK_dimension(typ: Typ, rank: int, weight: np.ndarray) -> tuple[str, dict]:
                         k = 0
                         while True:
                             _neutral_element, img = get_neutral_element_sum(ct, sp, od, orb, k)
-                            # print("_neutral_element:", _neutral_element)
-                            _diagram = get_diagram(ct[0], ct[1], _neutral_element, sp)
+                            _diagram = get_diagram(ct, _neutral_element, sp)
                             _marked = get_mark_from_diagram(od, _diagram)
-                            # print(f"try mark {k}: {_marked} for {od}")
                             if _marked.mark == od.mark:
                                 break
                             k += 1
@@ -187,8 +166,8 @@ def GK_dimension(typ: Typ, rank: int, weight: np.ndarray) -> tuple[str, dict]:
                         _neutral_element, img = get_neutral_element_sum(ct, sp, od, orb, 0)
                     neutral_element_all += _neutral_element
                     neutral_element_images.append(img)
-                # diagram = get_diagram(typ, rank, neutral_element_all, None)
-                diagram = get_diagram(typ, rank, neutral_element_all, LinearAlgebra.embed_basis(simple_root_data0, dim_ambient))
+                
+                diagram = get_diagram((typ, rank), neutral_element_all, LinearAlgebra.embed_basis(simple_root_data0, dim_ambient))
                 result_bl_orbit = get_mark_from_diagram(result_bl_orbit, diagram)
             dual = result_bl_orbit.dual()
         except Exception as e:
@@ -198,8 +177,7 @@ def GK_dimension(typ: Typ, rank: int, weight: np.ndarray) -> tuple[str, dict]:
     total_a_value = sum(a_values)
     num_postive_roots = num_positive_roots_data(typ, rank)
     gk_dim = num_postive_roots - total_a_value
-    # print(cts)
-    # print([str(od) for od in orbit_duals])
+    
     info = {
         "cartan_type": PPUtil.pretty_print_lietype((typ, rank)),
         "simple_roots_weight": PPUtil.pretty_print_basis(simple_root_data0),
@@ -232,91 +210,4 @@ def GK_dimension(typ: Typ, rank: int, weight: np.ndarray) -> tuple[str, dict]:
         "neutral_element_images": neutral_element_images,
     }
     return str(gk_dim), info
-
-if __name__ == "__main__":
-    test_cases = [
-        (
-            ('D', 8, np.array([2, 1, 1.1, 3, 0.9, 1.9, 4, 2.1])), 
-            ([('A', 3), ('D', 4)], 5, 51, None)
-        ), (
-            ('F', 4, np.array([4, 5, 3/2, 1/2])),
-            ([('C', 4)], 9, 15, 'A_2')
-        ), (
-            ('F', 4, np.array([2, 4, 5, 7])),
-            ([('B', 3)], 3, 21, 'B_3')
-        ), (
-            ('F', 4, np.array([2, 4, 1, 7])),
-            ([('F', 4)], 10, 14, 'A_1 + \\tilde{A}_1')
-        ), (
-            ('F', 4, np.array([7/4, 1/4, 5/4, -3/4])),
-            ([('B', 3), ('A', 1)], 5, 19, None)
-        ), (
-            ('E', 6, np.array([1, 2, 1, 4, 4.5, 0.5, 0.5, -0.5])), 
-            ([('D', 5)], 7, 29, None)
-        ), (
-            ('E', 7, np.array([1/4, 1/4, 1/4, 1/4, 1/4, -3/4, -1, 1])), 
-            ([('A', 7)], 3, 60, None)
-        ), (
-            ('E', 8, np.array([1, 5, 9, 13, 9, 1, 5, 9])/4), 
-            ([('D', 8)], 17, 103, None)
-        ), (
-            ('E', 8, np.array([1/2, -3/2, -3, -2, -1, -4, -5, -19])),
-            ([('E', 7), ('A', 1)], 3, 117, None)
-        ), (
-            ('E', 7, np.array([1, 3, -5, -7, -9, -11, -1/2, 1/2])), 
-            ([('D', 6), ('A', 1)], 7, 60, 'E_6')
-        ), (
-            ('E', 8, np.array([1, 1, 1, 1, 1, 1, 1/2, 5/2])), 
-            ([('E', 7), ('A', 1)], 7, 113, 'D_7')
-        ), (
-            ('E', 8, np.array([0, 0, 1/3, 1/3, 1/3, 1/3, 2/3, 6/3])), 
-            ([('E', 8)], 7, 113, 'E_8(b_5)')
-        ), (
-            ('E', 8, np.array([0, 0, 1/4, 1/4, 2/4, 4/4, 6/4, 16/4])), 
-            ([('E', 8)], 16, 104, 'A_1 + D_5')
-        ), (
-            ('E', 7, np.array([2.1, 1.1, -0.1, 2.1, 2, 4, 2, 0.9])),
-            ([('D', 6), ('A', 1)], None, None, None)
-        ), (
-            ('E', 7, np.array([-1/4, 1/4, 1/4, 1/4, 1/4, 1/4, -5/4, 5/4])),
-            ([('D', 6), ('A', 1)], None, 59, None)
-        ), (
-            ('E', 7, np.array([0, 2/8, 2/8, 4/8, 6/8, 6/8, -14/8, 14/8])),
-            ([('D', 4), ('A', 1), ('A', 1)], None, 55, 'D_6(a_2)')
-        ), (
-            ('E', 8, np.array([1/8, 1/8, 1/8, 1/8, 1/8, 3/8, 7/8, 13/8])),
-            ([('D', 6), ('A', 1)], None, None, 'E_7')
-        ), (
-            ('E', 8, np.array([1, 3, -5, -7, -9, -11, -1/2, 1/2])),
-            ([('D', 6), ('A', 1)], None, 113, 'E_8(b_5)')
-        ), (
-            ('E', 8, np.array([0, 0, 0, 0, 0, 1/2, 1, 3/2])),
-            ([('E', 7), ('A', 1)], None, 116, 'E_7')
-        ), (
-            ('E', 8, np.array([0, 0, 0, 0, 0, 1/2, 1, 5/2])),
-            ([('E', 7), ('A', 1)], None, 112, 'E_7(a_2)')
-        )
-    ]
-    def clear_images():
-        import os
-        import glob
-        files = glob.glob('LieToolbox/static/images/neutral_elements_chosen_ids_*.png')
-        for f in files:
-            os.remove(f)
-    clear_images()
-    for i, test_case in enumerate(test_cases):
-        print(f"start test case {i}", test_case[0])
-        if i in [0]:
-            continue
-        typ, rank, weight = test_case[0]
-        gk_dim, info = GK_dimension(typ, rank, weight)
-        print(gk_dim)
-        print(info['dual'])
-        if test_case[1][3] is not None:
-            assert info['dual'] == test_case[1][3], f"{info['dual']} {test_case[1][3]}"
-        if test_case[1][2] is not None:
-            assert eval(gk_dim) == test_case[1][2], f"{gk_dim}"
-        print(f"finish test case {weight}")
-    print("All test cases passed.")
-    clear_images()
 
