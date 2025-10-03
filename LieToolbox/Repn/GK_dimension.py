@@ -318,4 +318,5 @@ if __name__ == "__main__":
             assert eval(gk_dim) == test_case[1][2], f"{gk_dim}"
         print(f"finish test case {weight}")
     print("All test cases passed.")
+    clear_images()
 
