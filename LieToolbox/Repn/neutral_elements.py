@@ -3,6 +3,7 @@ from functools import reduce
 from typing import Optional
 import typing
 
+import os
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -280,6 +281,8 @@ def visualize_chosen_ids(
     plt.title(f'Chosen Neutral Elements for ${typ}_{rank}$')
     if save:
         filename = f'neutral_elements_chosen_ids_{typ}_{rank}_{uuid.uuid4()}.png'
+        if not os.path.exists('LieToolbox/static/images'):
+            os.mkdir('LieToolbox/static/images')
         plt.savefig(f'LieToolbox/static/images/{filename}', format='png', facecolor='#dce7f0')
         plt.close()
         return filename
