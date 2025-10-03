@@ -223,7 +223,8 @@ def get_neutral_element_sum(
     # print("sum of chosen roots: ", sum_of_chosen_roots)
     return sum_of_chosen_roots, filename
 
-def get_diagram(typ, rank, neutral: np.ndarray, simple_roots: np.ndarray | None) -> list[int]:
+def get_diagram(ct: LieType, neutral: np.ndarray, simple_roots: np.ndarray | None) -> list[int]:
+    typ, rank = ct
     if simple_roots is None:
         weight_ = neutral @ simple_root_data(typ, rank).T
         cmat = cartan_matrix_pycox(typ, rank)
